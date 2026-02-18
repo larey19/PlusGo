@@ -9,5 +9,4 @@ class config:
     MYSQL_PASSWORD  = os.getenv("MYSQL_PASSWORD")
     MYSQL_PORT      = int(os.getenv("MYSQL_PORT"))
     MYSQL_DB        = os.getenv("MYSQL_DB")
-    secret_key      = os.getenv("SECRET_KEY")
 
