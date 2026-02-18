@@ -87,57 +87,6 @@
 
                             </td>
                         </tr>
-
-                        <!-- Modal Editar -->
-                        <div class="modal fade" id="editModal{{acc[0]}}" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Editar Cuenta</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-
-                                    <form action="{{url_for('account.putAccount', acc_id = acc[0])}}" method="post"
-                                        id="form_upd{{acc[0]}}">
-
-                                        <div class="modal-body">
-
-                                            <input type="text" class="form-control mb-2" name="acc_nickname"
-                                                value="{{acc[1]}}" required>
-
-                                            <input type="text" class="form-control mb-2" name="acc_provider"
-                                                value="{{acc[2]}}" required>
-
-                                            <input type="date" class="form-control mb-2" name="acc_date_pay"
-                                                value="{{acc[3]}}" required>
-
-                                            <input type="email" class="form-control mb-2" name="acc_email"
-                                                value="{{acc[4]}}">
-
-                                            <input type="tel" class="form-control mb-2" name="acc_number_phone"
-                                                value="{{acc[5]}}">
-
-                                            <input type="password" class="form-control" name="acc_password"
-                                                value="{{acc[6]}}">
-
-                                            <input type="hidden" name="pla_id"
-                                                value="{{ request.view_args['pla_id'] }}">
-                                        </div>
-
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn w-100"
-                                                style="background-color: rgba(4,17,43,0.92); color: white;"
-                                                onclick="confirmUpdate('{{acc[0]}}')">
-                                                Guardar Cambios
-                                            </button>
-                                        </div>
-                                    </form>
-
-                                </div>
-                            </div>
-                        </div>
-
                         {% endfor %}
                     </tbody>
                 </table>
@@ -147,6 +96,50 @@
     </div>
 </div>
 
+{% for acc in account %}
+
+<!-- Modal Editar -->
+<div class="modal fade" id="editModal{{acc[0]}}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Cuenta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="{{url_for('account.putAccount', acc_id = acc[0])}}" method="post" id="form_upd{{acc[0]}}">
+
+                <div class="modal-body">
+
+                    <input type="text" class="form-control mb-2" name="acc_nickname" value="{{acc[1]}}" required>
+
+                    <input type="text" class="form-control mb-2" name="acc_provider" value="{{acc[2]}}" required>
+
+                    <input type="date" class="form-control mb-2" name="acc_date_pay" value="{{acc[3]}}" required>
+
+                    <input type="email" class="form-control mb-2" name="acc_email" value="{{acc[4]}}">
+
+                    <input type="tel" class="form-control mb-2" name="acc_number_phone" value="{{acc[5]}}">
+
+                    <input type="password" class="form-control" name="acc_password" value="{{acc[6]}}">
+
+                    <input type="hidden" name="pla_id" value="{{ request.view_args['pla_id'] }}">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn w-100" style="background-color: rgba(4,17,43,0.92); color: white;"
+                        onclick="confirmUpdate('{{acc[0]}}')">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endfor %}
 
 <!-- Modal Crear -->
 <div class="modal fade" id="createModal" tabindex="-1">
