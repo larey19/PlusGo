@@ -2,8 +2,7 @@ import imaplib
 import email
 import pytz
 from datetime import datetime, timedelta
-import locale
-locale.setlocale(locale.LC_TIME, 'en_US.UTF-8') 
+
 
 def code(account, imap, password, de):
     print(f"\n📧 Revisando: {account} {de}")
