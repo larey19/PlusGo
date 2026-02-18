@@ -41,9 +41,7 @@
             <!-- HEADER -->
             <div class="d-flex align-items-center gap-3 px-4 pt-4 pb-3">
 
-                <img src="{{ url_for('static', filename='plusgo.png') }}"
-                    alt="PlusGo"
-                    style="width: 85px;">
+                <img src="{{ url_for('static', filename='plusgo.png') }}" alt="PlusGo" style="width: 85px;">
 
                 <div>
                     <h5 class="fw-bold mb-1">
@@ -58,7 +56,8 @@
             </div>
 
             <!-- FORM MOBILE FULL -->
-            <div class="bg-white text-dark flex-grow-1 p-4 rounded-top-4 shadow-lg d-flex flex-column justify-content-center">
+            <div
+                class="bg-white text-dark flex-grow-1 p-4 rounded-top-4 shadow-lg d-flex flex-column justify-content-start">
 
                 <h2 class="fw-bold mb-4 text-center">
                     Iniciar Sesión
@@ -74,11 +73,8 @@
                                 <i class="bi bi-person-fill"></i>
                             </span>
 
-                            <input type="text"
-                                class="form-control shadow-sm"
-                                name="adm_user"
-                                value="{% if data %}{{ data.user }}{% endif %}"
-                                required minlength="5">
+                            <input type="text" class="form-control shadow-sm" name="adm_user"
+                                value="{% if data %}{{ data.user }}{% endif %}" required minlength="5"  placeholder="user">
                         </div>
                     </div>
 
@@ -90,11 +86,8 @@
                                 <i class="bi bi-lock-fill"></i>
                             </span>
 
-                            <input type="password"
-                                class="form-control shadow-sm"
-                                name="adm_password"
-                                value="{% if data %}{{ data.password }}{% endif %}"
-                                required minlength="5">
+                            <input type="password" class="form-control shadow-sm" name="adm_password"
+                                value="{% if data %}{{ data.password }}{% endif %}" required minlength="5" placeholder="****">
                         </div>
                     </div>
 
@@ -112,7 +105,8 @@
 
 
         <!-- ========= DERECHA DESKTOP ========= -->
-        <div class="col-lg-5 d-none d-lg-flex align-items-center justify-content-center bg-white position-relative z-1">
+        <div
+            class="col-lg-5 d-none d-lg-flex align-items-center justify-content-center bg-white position-relative z-1">
 
             <div class="w-100" style="max-width: 380px;" data-aos="zoom-in-up">
 
@@ -128,11 +122,8 @@
                                 <i class="bi bi-person-fill"></i>
                             </span>
 
-                            <input type="text"
-                                class="form-control shadow-sm"
-                                name="adm_user"
-                                value="{% if data %}{{ data.user }}{% endif %}"
-                                required minlength="5" 
+                            <input type="text" class="form-control shadow-sm" name="adm_user"
+                                value="{% if data %}{{ data.user }}{% endif %}" required minlength="5"
                                 placeholder="Usuario">
                         </div>
                     </div>
@@ -145,11 +136,8 @@
                                 <i class="bi bi-lock-fill"></i>
                             </span>
 
-                            <input type="password"
-                                class="form-control shadow-sm"
-                                name="adm_password"
-                                value="{% if data %}{{ data.password }}{% endif %}"
-                                required minlength="5"
+                            <input type="password" class="form-control shadow-sm" name="adm_password"
+                                value="{% if data %}{{ data.password }}{% endif %}" required minlength="5"
                                 placeholder="*****">
                         </div>
                     </div>
@@ -172,21 +160,19 @@
 {% block script %}
 
 <style>
-
-/* Fondo solo móvil */
-.login-bg{
-    background: linear-gradient(135deg, rgba(0,0,0,1), rgba(4,17,43,0.92)),
-    url("{{ url_for('static', filename='pattern.png') }}");
-    background-size: cover;
-}
-
-/* Desktop sin fondo */
-@media (min-width: 992px){
-    .login-bg{
-        background: none;
+    /* Fondo solo móvil */
+    .login-bg {
+        background: linear-gradient(90deg, rgba(0, 0, 0, 1), rgba(4, 17, 43, 0.92)),
+        url("{{ url_for('static', filename='pattern.png') }}");
+        background-size: cover;
     }
-}
 
+    /* Desktop sin fondo */
+    @media (min-width: 992px) {
+        .login-bg {
+            background: none;
+        }
+    }
 </style>
 
 <script>
