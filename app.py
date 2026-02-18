@@ -11,3 +11,5 @@ app.config.from_object(config)
 mysql = MySQL(app) 
 app.mysql=mysql
 routes(app)
+app.secret_key = os.getenv("SECRET_KEY")
+
