@@ -61,12 +61,13 @@
                     <hr>
 
                     <div class="d-flex gap-2">
-                        <button class="btn btn-sm w-100" style="background-color: rgba(4,17,43,0.92); color: white;" data-bs-toggle="modal"
-                            data-bs-target="#editModal{{p[0]}}">
+                        <button class="btn btn-sm w-100" style="background-color: rgba(4,17,43,0.92); color: white;"
+                            data-bs-toggle="modal" data-bs-target="#editModal{{p[0]}}">
                             Editar
                         </button>
 
-                        <button type="button" class="btn btn-sm btn-outline-danger w-100" onclick="confirmDelete('{{p[0]}}')">
+                        <button type="button" class="btn btn-sm btn-outline-danger w-100"
+                            onclick="confirmDelete('{{p[0]}}')">
                             Eliminar
                         </button>
                     </div>
@@ -76,60 +77,61 @@
 
         </div>
 
-        <!-- Modal Editar -->
-        <div class="modal fade" id="editModal{{p[0]}}" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-
-                    <div class="modal-header">
-                        <h5 class="modal-title">Editar Perfil</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <form action="{{url_for('profile.putProfile', pro_id=p[0])}}" method="post" id = "form_upd{{p[0]}}">
-                        <div class="modal-body">
-
-                            <div class="mb-3">
-                                <label class="form-label">Nombre</label>
-                                <input type="text" name="pro_profile" class="form-control" value="{{p[1]}}" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">PIN</label>
-                                <input type="text" name="pro_pin_profile" class="form-control" value="{{p[3]}}"
-                                    maxlength="6">
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Estado</label>
-                                <select name="pro_state" class="form-select">
-                                    <option value="enable" {{'selected' if p[2]=='enable' }}>Disponible</option>
-                                    <option value="disable" {{'selected' if p[2]=='disable' }}>No Disponible</option>
-                                    <option value="pending" {{'selected' if p[2]=='pending' }}>Pendiente</option>
-                                </select>
-                            </div>
-
-                            <input type="hidden" name="acc_id" value="{{request.view_args['acc_id']}}">
-
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn w-100" style="background-color: rgba(4,17,43,0.92); color: white;" onclick="confirmUpdate('{{p[0]}}')">
-                                Guardar Cambios
-                            </button>
-                        </div>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-
         {% endfor %}
 
     </div>
 </div>
 
+{% for p in profile %}
+<!-- Modal Editar -->
+<div class="modal fade" id="editModal{{p[0]}}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
 
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="{{url_for('profile.putProfile', pro_id=p[0])}}" method="post" id="form_upd{{p[0]}}">
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" name="pro_profile" class="form-control" value="{{p[1]}}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">PIN</label>
+                        <input type="text" name="pro_pin_profile" class="form-control" value="{{p[3]}}" maxlength="6">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Estado</label>
+                        <select name="pro_state" class="form-select">
+                            <option value="enable" {{'selected' if p[2]=='enable' }}>Disponible</option>
+                            <option value="disable" {{'selected' if p[2]=='disable' }}>No Disponible</option>
+                            <option value="pending" {{'selected' if p[2]=='pending' }}>Pendiente</option>
+                        </select>
+                    </div>
+
+                    <input type="hidden" name="acc_id" value="{{request.view_args['acc_id']}}">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn w-100" style="background-color: rgba(4,17,43,0.92); color: white;"
+                        onclick="confirmUpdate('{{p[0]}}')">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endfor %}
 <!-- Modal Crear -->
 <div class="modal fade" id="createModal" tabindex="-1">
     <div class="modal-dialog">
@@ -140,7 +142,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="{{url_for('profile.crtProfile')}}" method="post" id ="form_crt">
+            <form action="{{url_for('profile.crtProfile')}}" method="post" id="form_crt">
                 <div class="modal-body">
                     {{form.hidden_tag()}}
 
@@ -155,7 +157,9 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn w-100" type="button"  style="background-color: rgba(4,17,43,0.92); color: white;" onclick="confirmCreate()">Guardar</button>
+                    <button type="button" class="btn w-100" type="button"
+                        style="background-color: rgba(4,17,43,0.92); color: white;"
+                        onclick="confirmCreate()">Guardar</button>
                 </div>
             </form>
 
