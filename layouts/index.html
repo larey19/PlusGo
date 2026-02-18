@@ -40,8 +40,11 @@
             <h3 class="fw-bold m-0">Dashboard</h3>
             <small class="text-muted">Informacion general PlusGo</small>
         </div>
-        <button class="btn rounded-pill" style="background-color: rgba(4,17,43,0.92); color: white">Cerrar
-            Sesion</button>
+        <button class="btn rounded-pill" style="background-color: rgba(4,17,43,0.92); color: white">
+            <a href="{{url_for('login.logout')}}" class="text-white text-decoration-none fs-5 mt-auto">
+                Cerrar Sesion
+            </a>
+        </button>
     </div>
 
     <!-- Cards -->
@@ -51,7 +54,7 @@
             <canvas id="myChart" data-aos="zoom-in-up"></canvas>
         </div>
 
-        <div class="col-md-4"  data-aos="zoom-in-up">
+        <div class="col-md-4" data-aos="zoom-in-up">
             <div class="card border-0 shadow">
                 <div class="card-body">
                     <p>Pending Messages</p>
@@ -63,7 +66,7 @@
             </div>
         </div>
 
-        <div class="col-md-4"  data-aos="zoom-in-up">
+        <div class="col-md-4" data-aos="zoom-in-up">
             <div class="card border-0 shadow">
                 <div class="card-body">
                     <p>Comments</p>
@@ -80,7 +83,7 @@
     <!-- Segunda fila -->
     <div class="row g-4 mt-2">
 
-        <div class="col-md-8"  data-aos="zoom-in-up">
+        <div class="col-md-8" data-aos="zoom-in-up">
             <div class="card border-0 shadow">
                 <div class="card-body">
                     <h5 class="mb-3">Ventas por vencer</h5>
@@ -122,7 +125,7 @@
             </div>
         </div>
 
-        <div class="col-md-4"  data-aos="zoom-in-up">
+        <div class="col-md-4" data-aos="zoom-in-up">
             <div class="card border-0 shadow">
                 <div class="card-body">
                     <h5>Completed Posts</h5>
