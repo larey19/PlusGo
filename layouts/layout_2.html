@@ -90,10 +90,12 @@
             <div class="offcanvas offcanvas-start bg-dark text-white"
                 style="background: linear-gradient(135deg,rgba(0,0,0,1), rgba(4,17,43,0.92)),url('{{ url_for('static', filename='pattern.png') }}');background-size: cover; box-shadow: 3px 0 20px rgba(0,0,0,.45);"
                 tabindex="-1" id="mobileSidebar">
-
-                <a href="{{url_for('dashboard.dashboard')}}">
-                    <img src="{{ url_for('static', filename='plusgo.png') }}" class="m-3" style="width:100px;">
-                </a>
+                <div class="d-flex justify-content-between">
+                    <a href="{{url_for('dashboard.dashboard')}}">
+                        <img src="{{ url_for('static', filename='plusgo.png') }}" class="m-3" style="width:100px;">
+                    </a>
+                   <button type="button" class="btn-close btn-close-white m-3" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
 
                 <div class="offcanvas-body d-flex flex-column">
 
