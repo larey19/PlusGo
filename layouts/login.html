@@ -1,0 +1,196 @@
+{% extends 'layout_1.html' %}
+{% block body %}
+
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<script>
+    Swal.fire({
+        title: '{{ message }}',
+        icon: '{{ "error" if category=="error" else "success" if category=="success" else "info" }}',
+        timer: 3000,
+        showConfirmButton: false
+    });
+</script>
+{% endfor %}
+
+<div class="container-fluid min-vh-100 login-bg">
+    <div class="row min-vh-100">
+
+        <!-- ========= IZQUIERDA DESKTOP ========= -->
+        <div class="col-lg-7 d-none d-lg-flex flex-column justify-content-between text-white px-5 py-5 position-relative z-2"
+            style="background: linear-gradient(135deg, rgba(0,0,0,1), rgba(4,17,43,0.92)), url('{{ url_for('static', filename='pattern.png') }}'); background-size: cover;  box-shadow: 10px 0 25px rgba(0,0,0,.45);">
+
+            <div class="m-5">
+                <img src="{{ url_for('static', filename='plusgo.png') }}" alt="PlusGo" class="mb-4"
+                    style="width: 220px;">
+
+                <h2 class="fw-bold mb-3">
+                    Todo en un solo lugar
+                </h2>
+
+                <p class="fs-5 opacity-75" style="max-width: 420px;">
+                    Lleva el control sin complicaciones,
+                    desde cualquier dispositivo.
+                </p>
+            </div>
+        </div>
+
+
+        <!-- ========= MOBILE ========= -->
+        <div class="col-12 d-lg-none d-flex flex-column px-0 text-white min-vh-100">
+
+            <!-- HEADER -->
+            <div class="d-flex align-items-center gap-3 px-4 pt-4 pb-3">
+
+                <img src="{{ url_for('static', filename='plusgo.png') }}"
+                    alt="PlusGo"
+                    style="width: 85px;">
+
+                <div>
+                    <h5 class="fw-bold mb-1">
+                        Todo en un solo lugar
+                    </h5>
+
+                    <p class="small opacity-75 mb-0">
+                        Lleva el control sin complicaciones
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- FORM MOBILE FULL -->
+            <div class="bg-white text-dark flex-grow-1 p-4 rounded-top-4 shadow-lg d-flex flex-column justify-content-center">
+
+                <h2 class="fw-bold mb-4 text-center">
+                    Iniciar Sesión
+                </h2>
+
+                <form action="login" method="POST" class="w-100">
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Usuario</label>
+
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text">
+                                <i class="bi bi-person-fill"></i>
+                            </span>
+
+                            <input type="text"
+                                class="form-control shadow-sm"
+                                name="adm_user"
+                                value="{% if data %}{{ data.user }}{% endif %}"
+                                required minlength="5">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Contraseña</label>
+
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text">
+                                <i class="bi bi-lock-fill"></i>
+                            </span>
+
+                            <input type="password"
+                                class="form-control shadow-sm"
+                                name="adm_password"
+                                value="{% if data %}{{ data.password }}{% endif %}"
+                                required minlength="5">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-lg w-100 shadow"
+                        style="background-color: rgba(4, 17, 43, 0.92);color: white;">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                        Ingresar
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========= DERECHA DESKTOP ========= -->
+        <div class="col-lg-5 d-none d-lg-flex align-items-center justify-content-center bg-white position-relative z-1">
+
+            <div class="w-100" style="max-width: 380px;" data-aos="zoom-in-up">
+
+                <h2 class="fw-bold mb-4">Iniciar Sesión</h2>
+
+                <form action="login" method="POST">
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Usuario</label>
+
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text">
+                                <i class="bi bi-person-fill"></i>
+                            </span>
+
+                            <input type="text"
+                                class="form-control shadow-sm"
+                                name="adm_user"
+                                value="{% if data %}{{ data.user }}{% endif %}"
+                                required minlength="5" 
+                                placeholder="Usuario">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Contraseña</label>
+
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text">
+                                <i class="bi bi-lock-fill"></i>
+                            </span>
+
+                            <input type="password"
+                                class="form-control shadow-sm"
+                                name="adm_password"
+                                value="{% if data %}{{ data.password }}{% endif %}"
+                                required minlength="5"
+                                placeholder="*****">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-lg w-100 shadow"
+                        style="background-color: rgba(4, 17, 43, 0.92);color: white;">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                        Ingresar
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+{% block script %}
+
+<style>
+
+/* Fondo solo móvil */
+.login-bg{
+    background: linear-gradient(135deg, rgba(0,0,0,1), rgba(4,17,43,0.92)),
+    url("{{ url_for('static', filename='pattern.png') }}");
+    background-size: cover;
+}
+
+/* Desktop sin fondo */
+@media (min-width: 992px){
+    .login-bg{
+        background: none;
+    }
+}
+
+</style>
+
+<script>
+    AOS.init();
+</script>
+
+{% endblock %}

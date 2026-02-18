@@ -1,0 +1,180 @@
+{% extends 'layout_2.html'%}
+{% block body %}
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<script>
+    Swal.fire({
+        title: '{{ message }}',
+        icon: '{{ "error" if category=="error" else "success" if category=="success" else "info" }}',
+        timer: 3000,
+        showConfirmButton: false
+    });
+</script>
+{% endfor %}
+
+<div class="col p-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold">Plataformas</h3>
+        <div>
+            <button class="btn" data-bs-toggle="modal" data-bs-target="#createModal"
+                style="background-color: rgba(4,17,43,0.92); color: white;">
+                <i class="bi bi-plus-lg"></i> Nueva Plataforma
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card shadow border-0">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Perfiles</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in platform %}
+                        <tr>
+                            <td class="fw-semibold">{{ p[1] }}</td>
+                            <td>
+                                <span class="badge bg-primary">
+                                    {{ p[2] }} perfiles
+                                </span>
+                            </td>
+
+                            <td class="text-end">
+
+                                <!-- Ver cuentas -->
+                                <a href="{{url_for('account.getAccount', pla_id = p[0])}}"
+                                    class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-collection"></i>
+                                </a>
+
+                                <!-- Editar -->
+                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#editModal{{p[0]}}">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+
+                            </td>
+                        </tr>
+
+                        <!-- Modal Editar -->
+                        <div class="modal fade" id="editModal{{p[0]}}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Editar Plataforma</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+
+                                    <form action="platform/{{p[0]}}" method="post" id="form_upd{{p[0]}}">
+                                        <div class="modal-body">
+
+                                            <input type="text" class="form-control mb-3" name="pla_name"
+                                                value="{{p[1]}}" required>
+
+                                            <input type="number" class="form-control" name="pla_profiles"
+                                                value="{{p[2]}}" required>
+
+                                        </div>
+
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn" style="background-color: rgba(4,17,43,0.92); color: white;" onclick='confirmUpdate("{{p[0]}}")'>
+                                                Guardar Cambios
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Crear -->
+<div class="modal fade" id="createModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Nueva Plataforma</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="{{url_for('platform.crtPlatform')}}" method="post" id="form_crt">
+                <div class="modal-body">
+                    {{ form.hidden_tag() }}
+
+                    {{ form.planame(class="form-control mb-3",
+                    placeholder="Nombre Plataforma") }}
+
+                    {{ form.plaprofiles(class="form-control",
+                    placeholder="Perfiles máximos") }}
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn w-100" style="background-color: rgba(4,17,43,0.92); color: white;"
+                        onclick="confirmCreate()">
+                        Crear Plataforma
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+
+<script>
+    function confirmUpdate(pla_id) {
+        Swal.fire({
+            title: "¿Actualizar Plataforma?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "rgba(4,17,43,0.92)",
+            confirmButtonText: "Sí, guardar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                document.getElementById("form_upd" + pla_id).submit();
+            }
+        });
+    }
+    function confirmCreate() {
+        Swal.fire({
+            title: "¿Registar Plataforma?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "rgba(4,17,43,0.92)",
+            confirmButtonText: "Sí, guardar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("form_crt").submit();
+            }
+        });
+    }
+    $(document).ready(function () {
+        $('#table').DataTable({
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            }
+        });
+    });
+</script>
+
+{% endblock %}

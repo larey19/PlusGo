@@ -1,0 +1,167 @@
+{% extends 'layout_2.html'%}
+{% block body %}
+{% for category, message in get_flashed_messages(with_categories=true) %}
+{% if category == 'error' %}
+<script>
+    Swal.fire({
+        title: '{{ message  }}',
+        icon: 'warning',
+        timer: 3000,
+        showConfirmButton: false
+    });
+</script>
+{% elif category == 'success' %}
+<script>
+    Swal.fire({
+        title: '{{ message }}',
+        icon: 'success',
+        timer: 3000,
+        showConfirmButton: false
+    });
+</script>
+{% else %}
+<script>
+    Swal.fire({
+        title: '{{ message }}',
+        icon: 'info',
+        timer: 3000,
+        showConfirmButton: false
+    });
+</script>
+{% endif %}
+{% endfor %}
+
+<!-- Main Content -->
+<div class="col p-4">
+
+    <!-- Topbar -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold m-0">Dashboard</h3>
+            <small class="text-muted">Informacion general PlusGo</small>
+        </div>
+        <button class="btn rounded-pill" style="background-color: rgba(4,17,43,0.92); color: white">Cerrar
+            Sesion</button>
+    </div>
+
+    <!-- Cards -->
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <canvas id="myChart" data-aos="zoom-in-up"></canvas>
+        </div>
+
+        <div class="col-md-4"  data-aos="zoom-in-up">
+            <div class="card border-0 shadow">
+                <div class="card-body">
+                    <p>Pending Messages</p>
+                    <h2 class="fw-bold">20K</h2>
+                    <div class="progress mt-3" style="height:8px;">
+                        <div class="progress-bar bg-warning" style="width:70%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4"  data-aos="zoom-in-up">
+            <div class="card border-0 shadow">
+                <div class="card-body">
+                    <p>Comments</p>
+                    <h2 class="fw-bold">3K</h2>
+                    <div class="progress mt-3" style="height:8px;">
+                        <div class="progress-bar bg-primary" style="width:40%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Segunda fila -->
+    <div class="row g-4 mt-2">
+
+        <div class="col-md-8"  data-aos="zoom-in-up">
+            <div class="card border-0 shadow">
+                <div class="card-body">
+                    <h5 class="mb-3">Ventas por vencer</h5>
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Vencimineto</th>
+                                <th>Plataforma</th>
+                                <th>Cuenta</th>
+                                <th>Perfil</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Juanchito</td>
+                                <td>02/03/2026</td>
+                                <td>Netflix</td>
+                                <td>estreaming@gmail.com</td>
+                                <td>01</td>
+                            </tr>
+                            <tr>
+                                <td>Maria</td>
+                                <td>02/03/2026</td>
+                                <td>Netflix</td>
+                                <td>estreaming@gmail.com</td>
+                                <td>03</td>
+                            </tr>
+                            <tr>
+                                <td>Rosa</td>
+                                <td>02/03/2026</td>
+                                <td>Hbo</td>
+                                <td>estreaming@gmail.com</td>
+                                <td>03</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4"  data-aos="zoom-in-up">
+            <div class="card border-0 shadow">
+                <div class="card-body">
+                    <h5>Completed Posts</h5>
+                    <h2 class="fw-bold">874</h2>
+                    <p class="text-muted">Current Week</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{%block script%}
+<script>
+    AOS.init();
+</script>
+<script>
+    const ctx = document.getElementById('myChart');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+{%endblock%}

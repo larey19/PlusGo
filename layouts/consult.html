@@ -1,0 +1,121 @@
+{% extends 'layout_2.html' %}
+{% block body %}
+
+<!-- Alerts -->
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<script>
+    Swal.fire({
+        title: '{{ message }}',
+        icon: '{{ "warning" if category=="error" else "success" if category=="success" else "info" }}',
+        timer: 3000,
+        showConfirmButton: false
+    });
+</script>
+{% endfor %}
+
+<div class="col p-4">
+
+    <!-- Header -->
+    <div class="mb-4">
+        <h4 class="fw-bold mb-0">Consultar códigos</h4>
+        <small class="text-muted">Gestión de cuentas de la plataforma</small>
+
+    </div>
+
+
+    <!-- Formulario -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <form action="{{url_for('manage.getConsult')}}" method="post" class="row g-2">
+                {{ form.hidden_tag() }}
+
+                <div>
+                    {{ form.mngemail(class="form-control", placeholder="Correo a consultar") }}
+                </div>
+
+                <div>
+                    {{ form.submit(class="btn w-100",
+                        style="background-color: rgba(4,17,43,0.92); color:white;") }}
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+
+    {% if result %}
+
+    <!-- Tabla resultados -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>De</th>
+                        <th>Fecha</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for rst in result %}
+                    <tr>
+                        <td>{{ rst['DE'] }}</td>
+                        <td>{{ rst['FECHA'] }}</td>
+
+                        <td class="text-center">
+
+                            <button class="btn btn-sm btn-outline-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#mailModal{{loop.index}}">
+                                <i class="bi bi-envelope-open"></i>
+                            </button>
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- ================= MODALES CORREOS ================= -->
+
+{% for rst in result %}
+
+<div class="modal fade" id="mailModal{{loop.index}}" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Correo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <iframe srcdoc='{{ rst["CUERPO"] | e }}'
+                        style="width:100%; height:70vh; border:none;"
+                        sandbox="allow-popups allow-popups-to-escape-sandbox"
+                        loading="lazy">
+                </iframe>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+
+{% endblock %}

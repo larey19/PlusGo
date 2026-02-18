@@ -1,0 +1,16 @@
+Flask
+flask-mysqldb
+# variables sensibles
+python-dotenv
+# token
+pyjwt
+# zona horaria
+pytz
+# validador de correos
+email_validator
+# validador de telefono
+phonenumbers
+# validacio de formularios
+flask-wtf
+# para obtener los emails
+imaplib

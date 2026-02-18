@@ -1,0 +1,251 @@
+{% extends 'layout_2.html' %}
+{% block body %}
+<!-- SweetAlert -->
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<script>
+    Swal.fire({
+        title: '{{ message }}',
+        icon: '{{ "warning" if category=="error" else "success" if category=="success" else "info" }}',
+        timer: 3000,
+        showConfirmButton: false
+    });
+</script>
+{% endfor %}
+
+<div class="col p-4">
+
+        <div class="mb-4">
+            <h3 class="fw-bold mb-0">Panel de codigos</h3>
+            <small class="text-muted">Gestión de cuentas para consultar codigo</small>
+        </div>
+
+
+    <!-- Formulario -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form action="{{url_for('manage.crtManage')}}" method="post" class="row g-2" id ="form_crt{{data['mng_id']}}">
+                {{ form.hidden_tag() }}
+
+                <div class="col-md-3">
+                    {{ form.mngemail(class="form-control", placeholder="Correo") }}
+                </div>
+
+                <div class="col-md-3">
+                    {{ form.mngimap(class="form-control", placeholder="IMAP") }}
+                </div>
+
+                <div class="col-md-2">
+                    {{ form.mngpassword(class="form-control", placeholder="Clave de App") }}
+                </div>
+
+                <div class="col-md-2">
+                    {{ form.mngfrom(class="form-control", placeholder="Remitente") }}
+                </div>
+
+                <div class="col-md-1">
+                    {{ form.submit(class="btn", style="background-color: rgba(4,17,43,0.92); color: white;", onclick="confirmCreate()") }}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <table class="table table-hover align-middle mb-0" id ="table">
+                <thead>
+                    <tr>
+                        <th>Correo</th>
+                        <th>IMAP</th>
+                        <th>Remitente</th>
+                        <th>Estado</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in data %}
+                    <tr>
+                        <td>{{data['mng_email']}}</td>
+                        <td>{{data['mng_imap']}}</td>
+                        <td>{{data['mng_from']}}</td>
+                        <td>
+                            {% if data['mng_state'] == 'active' %}
+                            <span class="badge bg-success">Activo</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Inactivo</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                data-bs-target="#putManage{{data['mng_id']}}">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal"
+                                data-bs-target="#putPassword{{data['mng_id']}}">
+                                <i class="bi bi-shield-lock"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-outline-danger" onclick='confirmState(`{{data["mng_state"]}}`,`{{data["mng_id"]}}`)'>
+                                <i class="bi bi-power"></i>
+                            </button>
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ================= MODALES (exactamente como los tenías, pero con Bootstrap bonito) ================= -->
+
+{% for data in data %}
+
+<div class="modal fade" id="putManage{{data['mng_id']}}" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizar Cuenta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form action="{{url_for('manage.putManage', mng_id=data['mng_id'])}}" method="post" id = "form_upd{{data['mng_id']}}">
+
+                    <div class="mb-3">
+                        <input type="email" name="mngemail" class="form-control" value="{{data['mng_email']}}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <input type="text" name="mngimap" class="form-control" value="{{data['mng_imap']}}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <input type="text" name="mngfrom" class="form-control" value="{{data['mng_from']}}" required>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="button" class="btn" style="background-color: rgba(4,17,43,0.92); color: white;" onclick="confirmUpdate(`{{data['mng_id']}}`)">
+                            Guardar
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="putPassword{{data['mng_id']}}" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizar Clave</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form action="{{url_for('manage.putPassword', mng_id=data['mng_id'])}}" method="post" id="form_pass{{data['mng_id']}}">
+
+                    <div class="mb-3">
+                        <input type="password" name="mngpassword" class="form-control" placeholder="Clave de app"
+                            required minlength="16">
+                    </div>
+                    <div class="d-grid">
+                        <button type="button" class="btn" style="background-color: rgba(4,17,43,0.92); color: white;" onclick='confirmPassword(`{{data["mng_id"]}}`)'>
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+    function confirmUpdate(id) {
+        Swal.fire({
+            title: "¿Actualizar Cuenta?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "rgba(4,17,43,0.92)",
+            confirmButtonText: "Sí, guardar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                document.getElementById("form_upd" + id).submit();
+            }
+        });
+    }
+    function confirmPassword(id) {
+        Swal.fire({
+            title: "¿Actualizar Contraseña de App?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "rgba(4,17,43,0.92)",
+            confirmButtonText: "Sí, guardar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                document.getElementById("form_pass" + id).submit();
+            }
+        });
+    }
+    function confirmCreate() {
+        Swal.fire({
+            title: "¿Registar Cuenta?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "rgba(4,17,43,0.92)",
+            confirmButtonText: "Sí, guardar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("form_crt").submit();
+            }
+        });
+    }
+    function confirmState(state, id) {
+        Swal.fire({
+            title: "¿Cambiar estado de la cuenta?",
+            text: "Recuerda, no podras realizar consultas de codigo a este correo",
+
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            confirmButtonText: "Sí, cambiar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "/manage/state/"+ state +"/" + id;
+            }
+        });
+    }
+    $(document).ready(function () {
+        $('#table').DataTable({
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            }
+        });
+    });
+</script>
+
+{% endblock %}

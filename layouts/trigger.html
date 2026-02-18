@@ -1,0 +1,456 @@
+{%extends 'layout_2.html'%}
+{% block body %}
+
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<script>
+    Swal.fire({
+        title: '{{ message }}',
+        icon: '{{ "error" if category=="error" else "success" if category=="success" else "info" }}',
+        timer: 3000,
+        showConfirmButton: false
+    });
+</script>
+{% endfor %}
+
+<div class="col p-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold mb-0">Historial</h3>
+            <small class="text-muted">Gestión de cuentas de la plataforma</small>
+        </div>
+        <div class="btn-group">
+            <a href="{{url_for('trigger.getTriggerSale')}}" class="btn btn-sm">Ventas</a>
+            <a href="{{url_for('trigger.getTriggerAccount')}}" class="btn btn-sm">Cuentas</a>
+            <a href="{{url_for('trigger.getTriggerPlatform')}}" class="btn btn-sm">Plataformas</a>
+            <a href="{{url_for('trigger.getTriggerProfile')}}" class="btn btn-sm">Perfiles</a>
+        </div>
+    </div>
+
+    <!-- ================= VENTAS ================= -->
+    {% if sale %}
+    <div class="card shadow card border-0 mb-4">
+        <div class="card-body table-responsive">
+            <table class="table table-hover align-middle" id="tableSale">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Acción</th>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Precio</th>
+                        <th class="text-end">Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in sale %}
+                    <tr>
+                        <td>{{data['trg_id']}}</td>
+                        <td>{{data['trg_action']}}</td>
+                        <td>{{data['trg_date']}}</td>
+                        <td>{{data['cst_name']}} {{data['cst_lastname']}}</td>
+                        <td>{{data['sal_price']}} </td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                data-bs-target="#getTrigger{{data['trg_id']}}">
+                                <i class="bi bi-list-columns-reverse"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ================= CUENTAS ================= -->
+    {% if account %}
+    <div class="card shadow card border-0 mb-4">
+        <div class="card-body table-responsive">
+            <table class="table table-hover align-middle" id="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Acción</th>
+                        <th>Fecha</th>
+                        <th>Correo</th>
+                        <th>Plataforma</th>
+                        <th class="text-end">Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in account %}
+                    <tr>
+                        <td>{{data['trg_id']}}</td>
+                        <td>{{data['trg_action']}}</td>
+                        <td>{{data['trg_date']}}</td>
+                        <td>{{data['acc_email']}}</td>
+                        <td>{{data['pla_name']}}</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                data-bs-target="#getTrigger{{data['trg_id']}}">
+                                <i class="bi bi-list-columns-reverse"></i>
+
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ================= PLATAFORMAS ================= -->
+    {% if platform %}
+    <div class="card shadow card border-0 mb-4">
+        <div class="card-body table-responsive">
+            <table class="table table-hover align-middle" id="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Acción</th>
+                        <th>Fecha</th>
+                        <th>Plataforma</th>
+                        <th class="text-end">Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in platform %}
+                    <tr>
+                        <td>{{data['trg_id']}}</td>
+                        <td>{{data['trg_action']}}</td>
+                        <td>{{data['trg_date']}}</td>
+                        <td>{{data['pla_name']}}</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                data-bs-target="#getTrigger{{data['trg_id']}}">
+                                <i class="bi bi-list-columns-reverse"></i>
+
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ================= PERFILES ================= -->
+    {% if profile %}
+    <div class="card shadow card border-0 mb-4">
+        <div class="card-body table-responsive">
+            <table class="table table-hover align-middle" id="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Acción</th>
+                        <th>Perfil</th>
+                        <th>Fecha</th>
+                        <th class="text-end">Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in profile %}
+                    <tr>
+                        <td>{{data['trg_id']}}</td>
+                        <td>{{data['trg_action']}}</td>
+                        <td>{{data['pro_profile']}}</td>
+                        <td>{{data['trg_date']}}</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                data-bs-target="#getTrigger{{data['trg_id']}}">
+                                <i class="bi bi-list-columns-reverse"></i>
+
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+    {% for data in sale %}
+    <div class="modal fade" id="getTrigger{{data['trg_id']}}" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold">
+                        Detalle de Venta
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-1">Cliente</h6>
+                        <p class="fw-semibold mb-0">
+                            {{data['cst_name']}} {{data['cst_lastname']}}
+                        </p>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">Inicio</small>
+                            <p class="mb-2">{{data['sal_date_start']}}</p>
+                        </div>
+
+                        <div class="col-6">
+                            <small class="text-muted">Fin</small>
+                            <p class="mb-2">{{data['sal_date_end']}}</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted">Precio</small>
+                        <p class="fw-bold text-success mb-0">
+                            {{data['sal_price']}} COP
+                        </p>
+                    </div>
+
+                    <hr>
+
+                    <small class="text-muted">Acción</small>
+                    <p class="mb-1">{{data['trg_action']}}</p>
+
+                    <small class="text-muted">Fecha del Registro</small>
+                    <p class="mb-0">{{data['trg_date']}}</p>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% for data in account %}
+    <div class="modal fade" id="getTrigger{{data['trg_id']}}" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold">
+                        Detalle de Cuenta
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <small class="text-muted">Correo</small>
+                        <p class="fw-semibold mb-0">
+                            {{data['acc_email']}}
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted">Plataforma</small>
+                        <p class="mb-0">{{data['pla_name']}}</p>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">Apodo</small>
+                            <p>{{data['acc_nickname']}}</p>
+                        </div>
+
+                        <div class="col-6">
+                            <small class="text-muted">Proveedor</small>
+                            <p>{{data['acc_provider']}}</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted">Fecha de Pago</small>
+                        <p class="mb-0">{{data['acc_date_pay']}}</p>
+                    </div>
+
+                    <hr>
+
+                    <small class="text-muted">Acción</small>
+                    <p class="mb-1">{{data['trg_action']}}</p>
+
+                    <small class="text-muted">Fecha del Registro</small>
+                    <p class="mb-0">{{data['trg_date']}}</p>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% for data in platform %}
+    <div class="modal fade" id="getTrigger{{data['trg_id']}}" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold">
+                        Detalle de Plataforma
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <small class="text-muted">Nombre</small>
+                        <p class="fw-semibold mb-0">
+                            {{data['pla_name']}}
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted">Perfiles Máximos</small>
+                        <p class="mb-0">{{data['pla_profiles']}}</p>
+                    </div>
+
+                    <hr>
+
+                    <small class="text-muted">Acción</small>
+                    <p class="mb-1">{{data['trg_action']}}</p>
+
+                    <small class="text-muted">Fecha del Registro</small>
+                    <p class="mb-0">{{data['trg_date']}}</p>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% for data in profile %}
+    <div class="modal fade" id="getTrigger{{data['trg_id']}}" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold">
+                        Detalle de Perfil
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <small class="text-muted">Perfil</small>
+                        <p class="fw-semibold mb-0">
+                            {{data['pro_profile']}}
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted">Cuenta</small>
+                        <p class="mb-0">{{data['acc_email'] if data['acc_email'] else data['acc_number_phone'] }}</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted">PIN</small>
+                        <p class="mb-0">
+                            {{data['pro_pin_profile'] if data['pro_pin_profile'] else 'Sin PIN'}}
+                        </p>
+                    </div>
+
+                    <hr>
+
+                    <small class="text-muted">Acción</small>
+                    <p class="mb-1">{{data['trg_action']}}</p>
+
+                    <small class="text-muted">Fecha del Registro</small>
+                    <p class="mb-0">{{data['trg_date']}}</p>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+
+</div>
+{% endblock %}
+
+{%block script%}
+<script>
+    $(document).ready(function () {
+        $('#table').DataTable({
+            order: [[0, "desc"]],
+            pageLength: 10,
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            },
+            "columnDefs": [
+                {
+                    targets: [2], // Ajusta al índice de tu columna de fecha
+                    render: function (data, type, row) {
+                        if (type === 'display' && data) {
+                            // Para formato ISO con hora: "2024-01-15 14:30:00"
+                            let partes = data.split(' ');
+                            if (partes.length === 2) {
+                                let fechaPartes = partes[0].split('-');
+                                if (fechaPartes.length === 3) {
+                                    return `${fechaPartes[2]}/${fechaPartes[1]}/${fechaPartes[0]} ${partes[1]}`; // DD/MM/YYYY HH:MM:SS
+                                }
+                            }
+                        }
+                        return data;
+                    }
+                }
+            ]
+        });
+        $('#tableSale').DataTable({
+            order: [[0, "desc"]],
+            pageLength: 10,
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            },
+            "columnDefs": [
+                {
+                    targets: [2], // Ajusta al índice de tu columna de fecha
+                    render: function (data, type, row) {
+                        if (type === 'display' && data) {
+                            // Para formato ISO con hora: "2024-01-15 14:30:00"
+                            let partes = data.split(' ');
+                            if (partes.length === 2) {
+                                let fechaPartes = partes[0].split('-');
+                                if (fechaPartes.length === 3) {
+                                    return `${fechaPartes[2]}/${fechaPartes[1]}/${fechaPartes[0]} ${partes[1]}`; // DD/MM/YYYY HH:MM:SS
+                                }
+                            }
+                        }
+                        return data;
+                    }
+                },
+                {
+                    "targets": [4],
+                    "render": function (data, type, row) {
+                        if (type === 'display') {
+                            let formateado = new Intl.NumberFormat('es-CO', {
+                                style: 'currency',
+                                currency: 'COP',
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0
+                            }).format(data);
+
+                            return formateado;
+
+                        }
+                        return data;
+                    }
+                }
+            ]
+        });
+    });
+</script>
+{%endblock%}

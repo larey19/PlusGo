@@ -1,0 +1,217 @@
+{% extends 'layout_2.html'%}
+{% block body %}
+
+<!-- Alerts -->
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<script>
+    Swal.fire({
+        title: "{{ message }}",
+        icon: "{{ 'warning' if category == 'error' else 'success' if category == 'success' else 'info' }}",
+        timer: 2500,
+        showConfirmButton: false
+    });
+</script>
+{% endfor %}
+
+<div class="col p-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-0">Perfiles</h3>
+            <small class="text-muted">Gestión de perfiles de cuentas estreaming</small>
+        </div>
+
+        <div>
+            <a href="{{session.get('url_back_get')}}" class="btn btn-outline-secondary btn-sm me-2">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+
+            <button class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#createModal">
+                + Nuevo Perfil
+            </button>
+        </div>
+    </div>
+
+    <!-- Lista de perfiles -->
+    <div class="row g-4">
+
+        {% for p in profile %}
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-semibold mb-0">{{p[1]}}</h6>
+
+                        {% if p[2] == 'enable' %}
+                        <span class="badge bg-success">Disponible</span>
+                        {% elif p[2] == 'disable' %}
+                        <span class="badge bg-danger">No Disponible</span>
+                        {% else %}
+                        <span class="badge bg-warning text-dark">Pendiente</span>
+                        {% endif %}
+                    </div>
+
+                    <small class="text-muted">
+                        PIN: {{ p[3] if p[3] else 'Sin PIN' }}
+                    </small>
+
+                    <hr>
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm w-100" style="background-color: rgba(4,17,43,0.92); color: white;" data-bs-toggle="modal"
+                            data-bs-target="#editModal{{p[0]}}">
+                            Editar
+                        </button>
+
+                        <button type="button" class="btn btn-sm btn-outline-danger w-100" onclick="confirmDelete('{{p[0]}}')">
+                            Eliminar
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Modal Editar -->
+        <div class="modal fade" id="editModal{{p[0]}}" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Perfil</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <form action="{{url_for('profile.putProfile', pro_id=p[0])}}" method="post" id = "form_upd{{p[0]}}">
+                        <div class="modal-body">
+
+                            <div class="mb-3">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" name="pro_profile" class="form-control" value="{{p[1]}}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">PIN</label>
+                                <input type="text" name="pro_pin_profile" class="form-control" value="{{p[3]}}"
+                                    maxlength="6">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Estado</label>
+                                <select name="pro_state" class="form-select">
+                                    <option value="enable" {{'selected' if p[2]=='enable' }}>Disponible</option>
+                                    <option value="disable" {{'selected' if p[2]=='disable' }}>No Disponible</option>
+                                    <option value="pending" {{'selected' if p[2]=='pending' }}>Pendiente</option>
+                                </select>
+                            </div>
+
+                            <input type="hidden" name="acc_id" value="{{request.view_args['acc_id']}}">
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn w-100" style="background-color: rgba(4,17,43,0.92); color: white;" onclick="confirmUpdate('{{p[0]}}')">
+                                Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+
+    </div>
+</div>
+
+
+<!-- Modal Crear -->
+<div class="modal fade" id="createModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Nuevo Perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="{{url_for('profile.crtProfile')}}" method="post" id ="form_crt">
+                <div class="modal-body">
+                    {{form.hidden_tag()}}
+
+                    <div class="mb-3">
+                        {{form.proprofile(class="form-control",placeholder="Nombre del Perfil")}}
+                    </div>
+
+                    <div class="mb-3">
+                        {{form.propin(class="form-control",
+                        placeholder="PIN (opcional)")}}
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn w-100" type="button"  style="background-color: rgba(4,17,43,0.92); color: white;" onclick="confirmCreate()">Guardar</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block script %}
+
+<script>
+
+    function confirmUpdate(id) {
+        Swal.fire({
+            title: "¿Actualizar Perfil?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "rgba(4,17,43,0.92)",
+            confirmButtonText: "Sí, guardar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("form_upd" + id).submit();
+            }
+        });
+    }
+
+    function confirmCreate() {
+        Swal.fire({
+            title: "¿Crear Perfil?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "rgba(4,17,43,0.92)",
+            confirmButtonText: "Sí, crear",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("form_crt").submit();
+            }
+        });
+    }
+    function confirmDelete(id) {
+        Swal.fire({
+            title: "¿Eliminar perfil?",
+            text: "Esta acción no se puede deshacer",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "/profile/delete/" + id;
+            }
+        });
+    }
+</script>
+
+{% endblock %}

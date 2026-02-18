@@ -1,0 +1,457 @@
+{% extends 'layout_2.html'%}
+{% block body %}
+
+<!-- Alerts -->
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<script>
+    Swal.fire({
+        title: '{{ message }}',
+        icon: '{{ "warning" if category=="error" else "success" if category=="success" else "info" }}',
+        timer: 3000,
+        showConfirmButton: false
+    });
+</script>
+{% endfor %}
+
+
+<div class="col p-4">
+
+    <!-- Header -->
+    <div class="mb-4">
+
+        <h4 class="fw-bold mb-0">Ventas</h4>
+        <small class="text-muted">Gestión de ventas</small>
+    </div>
+
+
+    <!-- Plataformas -->
+    <div class="mb-3 overflow-auto list-group list-group-horizontal">
+        {% for platform in platform %}
+        <a href="{{url_for('sale.getSale', pla_id=platform['pla_id'])}}" class="btn btn-sm mb-2">
+            {{platform['pla_name']}}
+        </a>
+        {% endfor %}
+    </div>
+
+
+
+    <!-- Tabla -->
+    <div class="card shadow card border-0 mb-4">
+
+        <div class="card-body table-responsive">
+
+            <table class="table table-hover align-middle mb-0" id="table">
+
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Inicio</th>
+                        <th>Fin</th>
+                        <th>Precio</th>
+                        <th>Cuenta</th>
+                        <th>Perfil</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for data in data %}
+                    <tr>
+                        <td>
+                            {{data['cst_name'] | default('', True)}}
+                            {{data['cst_lastname'] | default('', True)}}
+                        </td>
+
+                        <td>{{data['sal_date_start'] | default('', True)}}</td>
+                        <td>{{data['sal_date_end'] | default('', True)}}</td>
+
+                        <td>
+
+                            {{data['sal_price'] if data['sal_price'] else (data['sal_price'] if data['sal_price']
+                            == 0.00 else '')}}
+
+                        </td>
+
+                        <td>
+                            {{data['acc_email'] if data['acc_email'] else (data['acc_number_phone'] if
+                            data['acc_number_phone'] else '' )}}
+                        </td>
+
+                        <td>{{data['pro_profile']}}</td>
+
+                        <td class="text-center">
+                            <!-- Vender -->
+                            <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal"
+                                data-bs-target="#crtSale{{data['sal_id']}}" onclick="proid(`{{data['pro_id']}}`)">
+                                <i class="bi bi-cash"></i>
+                            </button>
+
+                            <!-- Ver -->
+                            <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal"
+                                data-bs-target="#getSale{{data['sal_id'] if data['sal_id'] != None}}">
+                                <i class="bi bi-eye"></i>
+                            </button>
+
+
+                            <!-- Editar -->
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                data-bs-target="#putSale{{data['sal_id']}}">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+
+                            <!-- Eliminar -->
+                            <button class="btn btn-sm btn-outline-danger"
+                                onclick="confirmDelete(`{{data['sal_id'] if data['sal_id'] != None}}`)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+
+{% for data in data %}
+<div class="modal fade" id="getSale{{data['sal_id']}}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalles de Venta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="ms-3">
+                        <h5 class="mb-0 fw-bold text-dark">
+                            {{data['cst_name'] if data['cst_name'] else ''}} {{data['cst_lastname'] if
+                            data['cst_lastname'] else ''}}
+                        </h5>
+                        <small class="text-muted"><i class="bi bi-tag-fill me-1"></i>Perfil:
+                            {{data['pro_profile']}}</small>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-3 border rounded bg-light">
+                            <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Fecha
+                                Inicio</small>
+                            <span class="text-dark"><i class="bi bi-calendar-event me-2"></i>{{data['sal_date_start'] if
+                                data['sal_date_start'] else '--'}}</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 border rounded bg-light">
+                            <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Fecha
+                                Fin</small>
+                            <span class="text-dark"><i class="bi bi-calendar-check me-2"></i>{{data['sal_date_end'] if
+                                data['sal_date_end'] else '--'}}</span>
+                        </div>
+                    </div>
+
+                    <!-- Precio Destacado -->
+                    <div class="col-12">
+                        <div class="p-3 border rounded bg-opacity-10 d-flex justify-content-between align-items-center">
+                            <span class="fw-bold"><i class="bi bi-cash-stack me-2"></i>PRECIO TOTAL</span>
+                            <h5 class="mb-0 fw-bold" id="modal-precio-formateado">
+                                $ {{data['sal_price'] if data['sal_price'] else '0'}}
+                            </h5>
+                        </div>
+                    </div>
+
+                    <!-- Cuenta/Contacto -->
+                    <div class="col-12">
+                        <div class="p-3 border rounded">
+                            <small class="text-muted d-block text-uppercase fw-bold mb-1"
+                                style="font-size: 0.7rem;">Información de Cuenta</small>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-envelope-at me-2 text-secondary"></i>
+                                <span>{{data['acc_email'] if data['acc_email'] else (data['acc_number_phone'] if
+                                    data['acc_number_phone'] else 'Sin contacto')}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="col-12">
+                        <div class="p-3 border rounded">
+                            <small class="text-muted d-block text-uppercase fw-bold mb-1"
+                                style="font-size: 0.7rem;">Descripción</small>
+                            <p class="mb-0 small italic">
+                                <i class="bi bi-info-circle me-1"></i> {{data['sal_description'] if
+                                data['sal_description'] else 'Ninguna observación registrada.'}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+
+<!-- ================= MODAL CREAR ================= -->
+
+<div class="modal fade" id="crtSaleNone" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Registrar Venta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form action="{{url_for('sale.crtSale')}}" method="post" id="form_crt">
+
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-2">
+                        {{ form.cstid(class="js-example-responsive form-select", style = "width:100%")}}
+                    </div>
+
+                    <div class="mb-2">
+                        {{ form.saldatestart(class="form-control") }}
+                    </div>
+
+                    <div class="mb-2">
+                        {{ form.saldateend(class="form-control") }}
+                    </div>
+
+                    <div class="mb-2">
+                        {{ form.salprice(class="form-control inputPrice", placeholder="Precio") }}
+                    </div>
+
+                    <div class="mb-2">
+                        {{ form.saldescription(class="form-control", placeholder="Descripción") }}
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="button" class="btn" style="background-color: rgba(4,17,43,0.92); color:white;"
+                            onclick="confirmCreate()">
+                            Guardar
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- ================= MODAL EDITAR ================= -->
+
+{% for data in data %}
+<div class="modal fade" id="putSale{{data['sal_id'] if data['sal_id'] != None}}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizar Venta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form action="{{url_for('sale.putSale', sal_id=data['sal_id'] or 0)}}" method="post"
+                    id="form_upd{{data['sal_id']}}">
+
+                    <select name="cst_id" class="form-control mb-2" required>
+                        {% for customer in customer %}
+                        <option value="{{customer['cst_id']}}" {{'selected' if data['cst_id']==customer['cst_id']}}>
+                            {{customer['cst_name']}}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                    <input type="date" class="form-control mb-2" name="sal_date_start"
+                        value="{{data['sal_date_start']}}">
+
+                    <input type="date" class="form-control mb-2" name="sal_date_end" value="{{data['sal_date_end']}}">
+
+                    <input type="number" class="form-control inputPrice mb-2" name="sal_price"
+                        value="{{data['sal_price']}}" maxlength="6" min="1000" placeholder="Precio">
+
+                    <textarea name="sal_description" class="form-control mb-2">{{data['sal_description']}}</textarea>
+
+                    <div class="d-grid">
+                        <button type="button" class="btn" style="background-color: rgba(4,17,43,0.92); color:white;"
+                            onclick="confirmUpdate(`{{data['sal_id']}}`)">
+                            Guardar
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+
+
+{% endblock %}
+{% block script %}
+
+<script>
+
+    function proid(proid) {
+        document.getElementById("proid").value = proid;
+    }
+
+
+    function confirmCreate() {
+        Swal.fire({
+            title: "¿Registrar venta?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "rgba(4,17,43,0.92)",
+            confirmButtonText: "Sí, guardar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("form_crt").submit();
+            }
+        });
+    }
+
+
+    function confirmUpdate(id) {
+        Swal.fire({
+            title: "¿Actualizar venta?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "rgba(4,17,43,0.92)",
+            confirmButtonText: "Sí, guardar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("form_upd" + id).submit();
+            }
+        });
+    }
+
+
+    function confirmDelete(id) {
+        if (id != null && id != '') {
+            Swal.fire({
+                title: "¿Eliminar venta?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/sale/state/" + id;
+                }
+            });
+        }
+    }
+
+
+    $(document).ready(function () {
+        $('#table').DataTable({
+            stateSave: true,
+            order: [],
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            },
+            "columnDefs": [
+                {
+                    targets: [2], // Ajusta al índice de tu columna de fecha
+                    render: function (data, type, row) {
+                        if (type === 'display' && data) {
+                            // Para formato ISO: "2024-01-15"
+                            let partes = data.split('-');
+                            if (partes.length === 3) {
+                                return `${partes[2]}/${partes[1]}/${partes[0]}`; // DD/MM/YYYY
+                            }
+                        }
+                        return data;
+                    }
+                },
+                {
+                    targets: [1], // Ajusta al índice de tu columna de fecha
+                    render: function (data, type, row) {
+                        if (type === 'display' && data) {
+                            // Para formato ISO: "2024-01-15"
+                            let partes = data.split('-');
+                            if (partes.length === 3) {
+                                return `${partes[2]}/${partes[1]}/${partes[0]}`; // DD/MM/YYYY
+                            }
+                        }
+                        return data;
+                    }
+                },
+                {
+                    "targets": [3],
+                    "render": function (data, type, row) {
+                        if (type === 'display') {
+                            if (data != null && data != '') {
+                                let formateado = new Intl.NumberFormat('es-CO', {
+                                    style: 'currency',
+                                    currency: 'COP',
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
+                                }).format(data);
+
+                                return `<span class="badge bg-success">${formateado}</span>`;
+                            }
+
+                        }
+                        return data;
+                    }
+                }
+            ]
+        });
+    });
+
+    $('#crtSaleNone').on('shown.bs.modal', function () {
+
+        $(this).find('.js-example-responsive').select2({
+            theme: 'bootstrap-5',
+            width: '100%',
+            placeholder: 'Cliente',
+            allowClear: true,
+            dropdownParent: $(this),
+            language: {
+                noResults: function () { return "No se encontró el cliente"; }
+            }
+        });
+
+    });
+    $(document).on('hidden.bs.modal', '.modal', function () {
+        $(this).find('.select2-edit').select2('destroy');
+    });
+    document.querySelectorAll('.inputPrice').forEach(function (el) {
+        new Cleave(el, {
+            numeral: true,
+            numeralThousandsGroupStyle: 'thousand',
+            delimiter: '.',
+            numeralDecimalMark: ',',
+            numeralDecimalScale: 0
+        });
+    });
+
+</script>
+
+{% endblock %}
