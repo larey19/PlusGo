@@ -1,5 +1,6 @@
 Flask
 flask-mysqldb
+gunicorn 
 # variables sensibles
 python-dotenv
 # token
@@ -12,3 +13,4 @@ email_validator
 phonenumbers
 # validacio de formularios
 flask-wtf
+
