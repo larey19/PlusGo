@@ -50,52 +50,55 @@
     </div>
 
     <!-- Tabla -->
-    <div class="card shadow-sm">
+    <div class="card shadow-sm border-0">
         <div class="card-body p-4">
-            <table class="table table-hover align-middle mb-0" id ="table">
-                <thead>
-                    <tr>
-                        <th>Correo</th>
-                        <th>IMAP</th>
-                        <th>Remitente</th>
-                        <th>Estado</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for data in data %}
-                    <tr>
-                        <td>{{data['mng_email']}}</td>
-                        <td>{{data['mng_imap']}}</td>
-                        <td>{{data['mng_from']}}</td>
-                        <td>
-                            {% if data['mng_state'] == 'active' %}
-                            <span class="badge bg-success">Activo</span>
-                            {% else %}
-                            <span class="badge bg-secondary">Inactivo</span>
-                            {% endif %}
-                        </td>
-                        <td class="text-center">
+            <div class="table-responsive">
 
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
-                                data-bs-target="#putManage{{data['mng_id']}}">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-
-                            <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal"
-                                data-bs-target="#putPassword{{data['mng_id']}}">
-                                <i class="bi bi-shield-lock"></i>
-                            </button>
-
-                            <button class="btn btn-sm btn-outline-danger" onclick='confirmState(`{{data["mng_state"]}}`,`{{data["mng_id"]}}`)'>
-                                <i class="bi bi-power"></i>
-                            </button>
-
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                <table class="table table-hover align-middle mb-0" id ="table">
+                    <thead>
+                        <tr>
+                            <th>Correo</th>
+                            <th>IMAP</th>
+                            <th>Remitente</th>
+                            <th>Estado</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in data %}
+                        <tr>
+                            <td>{{data['mng_email']}}</td>
+                            <td>{{data['mng_imap']}}</td>
+                            <td>{{data['mng_from']}}</td>
+                            <td>
+                                {% if data['mng_state'] == 'active' %}
+                                <span class="badge bg-success">Activo</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Inactivo</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+    
+                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#putManage{{data['mng_id']}}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+    
+                                <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal"
+                                    data-bs-target="#putPassword{{data['mng_id']}}">
+                                    <i class="bi bi-shield-lock"></i>
+                                </button>
+    
+                                <button class="btn btn-sm btn-outline-danger" onclick='confirmState(`{{data["mng_state"]}}`,`{{data["mng_id"]}}`)'>
+                                    <i class="bi bi-power"></i>
+                                </button>
+    
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
