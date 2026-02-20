@@ -1,11 +1,9 @@
 from flask import Blueprint, flash, render_template, current_app
-from flask_cors import CORS
 import json
 from .auth import token
 from MySQLdb import OperationalError
 from datetime import datetime
 dashboard_bp = Blueprint("dashboard", __name__, template_folder= "../layouts")
-CORS(dashboard_bp)
 
 @dashboard_bp.route("/")
 @token
@@ -86,4 +84,5 @@ def dashboard():
         print(e)
         flash("Ocurrio un error, Intenta más tarde.", "error")
         return render_template("500.html") 
+
 
