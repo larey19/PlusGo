@@ -15,7 +15,7 @@ class saleForm(FlaskForm):
 
     salprice = IntegerField(
         "Precio",
-        validators=[NumberRange(min=1000), DataRequired()]
+        validators=[DataRequired()]
     )
 
     saldescription = TextAreaField(
@@ -115,4 +115,5 @@ class mngForm(FlaskForm):
         "Remitente",
         validators=[DataRequired(), length(min=3)]
     )
+
     submit = SubmitField("Guardar")
