@@ -46,43 +46,43 @@
 
 <body>
     <div class="container-fluid ">
-        <button class="btn d-md-none position-fixed bottom-0 end-0 m-3 z-1" data-bs-toggle="offcanvas"
+        <button class="btn d-xl-none position-fixed bottom-0 end-0 m-3 z-1" data-bs-toggle="offcanvas"
             data-bs-target="#mobileSidebar" style="background-color: rgba(4,17,43,0.92); color: white;">
             <i class="bi bi-list"></i>
         </button>
         <div class="row">
             <!-- Sidebar -->
-            <div class="d-none d-md-flex flex-column align-items-center py-4 "
-                style="width:120px;background: linear-gradient(135deg, rgba(0,0,0,1), rgba(4,17,43,0.92)), url('{{ url_for('static', filename='pattern.png') }}');background-size: cover; box-shadow: 3px 0 20px rgba(0,0,0,.45);">
+            <div class="d-none d-xl-flex flex-column align-items-center py-4 sticky-top vh-100"
+                style="width:120px;background: linear-gradient(135deg, rgba(0,0,0,1), rgba(4,17,43,0.92)),url('{{ url_for('static', filename='pattern.png') }}') ;background-size: cover; box-shadow: 3px 0 20px rgba(0,0,0,.45);">
+
 
                 <a href="{{url_for('dashboard.dashboard')}}">
                     <img src="{{ url_for('static', filename='plusgo.png') }}" class="mb-4" style="width:100px;">
                 </a>
-
-                <a href="{{url_for('platform.getPlatform')}}" class="text-white fs-4 mb-4">
+                <a href="{{url_for('dashboard.dashboard')}}" class="text-white fs-4 mb-3">
+                    <i class="bi bi-house-fill"></i>
+                </a>
+                <a href="{{url_for('platform.getPlatform')}}" class="text-white fs-4 mb-3">
                     <i class="bi bi-stack"></i>
                 </a>
 
-                <a href="{{url_for('customer.getCustomer')}}" class="text-white fs-4 mb-4">
-                    <i class="bi bi-people"></i>
+                <a href="{{url_for('customer.getCustomer')}}" class="text-white fs-4 mb-3">
+                    <i class="bi bi-people-fill"></i>
                 </a>
 
-                <a href="{{url_for('sale.sale')}}" class="text-white fs-4 mb-4">
-                    <i class="bi bi-cart3"></i>
+                <a href="{{url_for('sale.sale')}}" class="text-white fs-4 mb-3">
+                    <i class="bi bi-cart-fill"></i>
                 </a>
 
-                <a href="{{url_for('trigger.getTriggerSale')}}" class="text-white fs-4 mb-4">
-                    <i class="bi bi-archive"></i>
+                <a href="{{url_for('trigger.getTriggerSale')}}" class="text-white fs-4 mb-3">
+                    <i class="bi bi-archive-fill"></i>
                 </a>
-                <a href="{{url_for('manage.getManage')}}" class="text-white fs-4 mb-4">
-                    <i class="bi bi-gear"></i>
+                <a href="{{url_for('manage.getManage')}}" class="text-white fs-4 mb-3">
+                    <i class="bi bi-gear-fill"></i>
                 </a>
 
-                <a href="{{url_for('manage.consult')}}" class="text-white fs-4 mb-4">
+                <a href="{{url_for('manage.consult')}}" class="text-white fs-4 mb-3">
                     <i class="bi bi-search"></i>
-                </a>
-                <a href="{{url_for('login.logout')}}" class="text-white fs-4 mt-auto">
-                    <i class="bi bi-box-arrow-right"></i>
                 </a>
 
             </div>
@@ -94,32 +94,35 @@
                     <a href="{{url_for('dashboard.dashboard')}}">
                         <img src="{{ url_for('static', filename='plusgo.png') }}" class="m-3" style="width:100px;">
                     </a>
-                   <button type="button" class="btn-close btn-close-white m-3" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white m-3" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
                 </div>
 
                 <div class="offcanvas-body d-flex flex-column">
-
+                    <a href="{{url_for('dashboard.dashboard')}}" class="text-white text-decoration-none fs-5 mb-3">
+                        <i class="bi bi-house-fill me-2"></i> Dashboard
+                    </a>
                     <a href="{{url_for('platform.getPlatform')}}" class="text-white text-decoration-none fs-5 mb-3">
                         <i class="bi bi-stack me-2"></i> Plataformas
                     </a>
 
                     <a href="{{url_for('customer.getCustomer')}}" class="text-white text-decoration-none fs-5 mb-3">
-                        <i class="bi bi-people me-2"></i> Clientes
+                        <i class="bi bi-people-fill me-2"></i> Clientes
                     </a>
 
                     <a href="{{url_for('sale.sale')}}" class="text-white text-decoration-none fs-5 mb-3">
-                        <i class="bi bi-cart3 me-2"></i> Ventas
+                        <i class="bi bi-cart-fill me-2"></i> Ventas
                     </a>
 
                     <a href="{{url_for('trigger.getTriggerSale')}}" class="text-white text-decoration-none fs-5 mb-3 ">
-                        <i class="bi bi-archive me-2"></i> Historial
+                        <i class="bi bi-archive-fill me-2"></i> Historial
                     </a>
                     <a href="{{url_for('manage.getManage')}}" class="text-white text-decoration-none fs-5 mb-4">
-                        <i class="bi bi-gear"></i> Administar Codigos
+                        <i class="bi bi-gear-fill me-2"></i> Administar Codigos
                     </a>
 
                     <a href="{{url_for('manage.consult')}}" class="text-white text-decoration-none fs-5 mb-4">
-                        <i class="bi bi-search"></i> Consultar Codigo
+                        <i class="bi bi-search me-2"></i> Consultar Codigo
                     </a>
                 </div>
             </div>
