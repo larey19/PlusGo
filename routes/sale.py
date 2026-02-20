@@ -10,8 +10,13 @@ sale_bp = Blueprint("sale", __name__, template_folder= "../layouts")
 
 def backup(form):
     backup = form.data.copy()
+    print(backup)
     for k in ("saldatestart", "saldateend"):
-        backup[k] = backup[k].strftime("%Y-%m-%d")
+        try:
+            backup[k] = backup[k].strftime("%Y-%m-%d")
+        except Exception:
+            session["saleBackup"] = backup
+            return session["saleBackup"]
     session["saleBackup"] = backup
 
 
@@ -30,8 +35,6 @@ def lcl_Cst_Pla():
     except Exception as e:
         print(e)
         return dict(platform=[])
-
-
 
 @sale_bp.route("/sale")
 @token
@@ -74,6 +77,7 @@ def getSale(pla_id):
                         LEFT JOIN t_customer ON t_sale.cst_id = t_customer.cst_id
                         WHERE t_platform.pla_id = %s AND t_account.acc_state = %s 
                         ORDER BY t_account.acc_email ASC, t_profile.pro_profile ASC, t_sale.sal_date_end ASC""", (pla_id, 'enable'))
+        
         data = [{
                 "acc_id": x[0],
                 "acc_email": x[1],
@@ -91,14 +95,15 @@ def getSale(pla_id):
                 "cst_phone_number":x[13],
                 "acc_number_phone":x[14]
             } for x in cursor.fetchall()]
-        return render_template("sale.html", data = data, form = form)
+        cursor.execute("SELECT pla_name FROM t_platform WHERE pla_id = %s",(pla_id,))
+        plaName = cursor.fetchone()
+        return render_template("sale.html", 
+                                data = data, 
+                                form = form,
+                                plaName = plaName[0])
     except OperationalError as e:
         print(e)
         flash("Conexion fallida, Intenta más tarde.", "error")
-        return render_template("500.html")
-    except Exception as e:
-        print(e)
-        flash("Ocurrio un error, Intenta más tarde.", "error")
         return render_template("500.html")
 
 
@@ -117,10 +122,15 @@ def crtSale():
             salid = uuid.uuid4()
             saldatestart = form.saldatestart.data
             saldateend = form.saldateend.data
-            salprice = request.form.get('salprice').replace('.','')
-            saldescription = form.saldescription.data
-            cstid = form.cstid.data
-            proid = form.proid.data
+            form.salprice.data = (request.form['salprice']).strip().replace('.','')
+            salprice = form.salprice.data
+            saldescription = (form.saldescription.data).strip()
+            cstid = (form.cstid.data).strip()
+            proid = (form.proid.data).strip()
+            if not saldatestart or not saldateend or not salprice or not cstid or not proid:
+                backup(form)
+                flash("Falta informacion requerida", "error")
+                return redirect(session.get('url_back_post'))
             if saldateend <= saldatestart:
                 backup(form)
                 flash("Fecha Fin Invalida", "error")
@@ -163,7 +173,7 @@ def putSale(sal_id):
     try:
         saldatestart = (request.form["sal_date_start"]).strip()
         saldateend = (request.form["sal_date_end"]).strip()
-        salprice = (request.form["sal_price"]).strip()
+        salprice = (request.form["sal_price"]).strip().replace('.', '')
         saldescription = (request.form["sal_description"]).strip()
         cstid = (request.form["cst_id"]).strip()
         if not saldatestart or not saldateend or not salprice or not cstid:
@@ -188,7 +198,8 @@ def putSale(sal_id):
     except IntegrityError:
         flash("Plataforma Duplicada", "error")  
         return redirect(session.get('url_back_post'))
-    except OperationalError:
+    except OperationalError as e:
+        print(e)
         flash("Conexion fallida, Intenta más tarde.", "error")
         return render_template("500.html")
     except Exception as e:
