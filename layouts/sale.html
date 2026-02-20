@@ -17,9 +17,8 @@
 
     <!-- Header -->
     <div class="mb-4">
-
-        <h4 class="fw-bold mb-0">Ventas</h4>
-        <small class="text-muted">Gestión de ventas</small>
+        <h4 class="fw-bold mb-0">Ventas {{plaName}}</h4>
+        <small class="text-muted">Gestión de ventas {{plaName if plaName else ', seleccione una plataforma'}}</small>
     </div>
 
 
@@ -120,12 +119,14 @@
 </div>
 
 
+<!-- ================= MODAL DETALLES ================= -->
+
 {% for data in data %}
 <div class="modal fade" id="getSale{{data['sal_id']}}" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Detalles de Venta</h5>
+                <h5 class="modal-title">Detalles de Venta {{plaName}}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
@@ -208,34 +209,39 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">Registrar Venta</h5>
+                <h5 class="modal-title">Registrar Venta {{plaName}}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body">
 
-                <form action="{{url_for('sale.crtSale')}}" method="post" id="form_crt">
+                <form action="{{url_for('sale.crtSale')}}" method="post" id="form_crt" class="row g-3">
 
                     {{ form.hidden_tag() }}
 
-                    <div class="mb-2">
-                        {{ form.cstid(class="js-example-responsive form-select", style = "width:100%")}}
+                    <div class="col-md-12">
+                        <label for="cstid" class="form-label">Cliente</label>
+                        {{ form.cstid(class="js-example-responsive form-select", id ="cstid")}}
                     </div>
 
-                    <div class="mb-2">
-                        {{ form.saldatestart(class="form-control") }}
+                    <div class="col-md-6">
+                        <label for="datestart" class="form-label">Fecha</label>
+                        {{ form.saldatestart(class="form-control", id="datestart" ) }}
                     </div>
 
-                    <div class="mb-2">
-                        {{ form.saldateend(class="form-control") }}
+                    <div class="col-md-6">
+                        <label for="dateend" class="form-label">Fecha Fin</label>
+                        {{ form.saldateend(class="form-control", id ="dateend") }}
                     </div>
 
-                    <div class="mb-2">
-                        {{ form.salprice(class="form-control inputPrice", placeholder="Precio") }}
+                    <div class="col-md-12">
+                        <label for="price" class="form-label">Precio</label>
+                        {{ form.salprice(class="form-control inputPrice", placeholder="Precio", id="price") }}
                     </div>
 
-                    <div class="mb-2">
-                        {{ form.saldescription(class="form-control", placeholder="Descripción") }}
+                    <div class="col-md-12">
+                        <label for="description" class="form-label">Descripcion</label>
+                        {{ form.saldescription(class="form-control", placeholder="Descripción", id ="description") }}
                     </div>
 
                     <div class="d-grid">
@@ -262,32 +268,45 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">Actualizar Venta</h5>
+                <h5 class="modal-title">Actualizar Venta {{plaName}}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body">
 
                 <form action="{{url_for('sale.putSale', sal_id=data['sal_id'] or 0)}}" method="post"
-                    id="form_upd{{data['sal_id']}}">
+                    id="form_upd{{data['sal_id']}}" class="row g-3">
+                    <div class="col-md-12">
+                        <label for="cstid" class="form-label">Cliente</label>
+                        <select name="cst_id" id="cstid" class="form-control js-example-responsive" required>
+                            {% for customer in customer %}
+                            <option value="{{customer['cst_id']}}" {{'selected' if data['cst_id']==customer['cst_id']}}>
+                                {{customer['cst_name']}} {{customer['cst_lastname']}}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
 
-                    <select name="cst_id" class="form-control mb-2" required>
-                        {% for customer in customer %}
-                        <option value="{{customer['cst_id']}}" {{'selected' if data['cst_id']==customer['cst_id']}}>
-                            {{customer['cst_name']}}
-                        </option>
-                        {% endfor %}
-                    </select>
-
-                    <input type="date" class="form-control mb-2" name="sal_date_start"
-                        value="{{data['sal_date_start']}}">
-
-                    <input type="date" class="form-control mb-2" name="sal_date_end" value="{{data['sal_date_end']}}">
-
-                    <input type="number" class="form-control mb-2" name="sal_price"
-                        value="{{data['sal_price']}}" maxlength="6" min="1000" placeholder="Precio">
-
-                    <textarea name="sal_description" class="form-control mb-2">{{data['sal_description']}}</textarea>
+                        <label for="datestart" class="form-label">Fecha</label>
+                        <input type="date" class="form-control" name="sal_date_start" value="{{data['sal_date_start']}}"
+                            id="datestart">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="dateend" class="form-label">Fecha Fin</label>
+                        <input type="date" class="form-control" name="sal_date_end" value="{{data['sal_date_end']}}"
+                            id="dateend">
+                    </div>
+                    <div class="col-md-12">
+                        <label for="price" class="form-label">Precio</label>
+                        <input type="number" class="form-control inputPrice" name="sal_price"
+                            value="{{data['sal_price']}}" maxlength="6" min="1000" placeholder="Precio" id="price">
+                    </div>
+                    <div class="col-md-12">
+                        <label for="description" class="form-label">Descripcion</label>
+                        <textarea name="sal_description" class="form-control" id="description"
+                            placeholder="Descripcion">{{data['sal_description']}}</textarea>
+                    </div>
 
                     <div class="d-grid">
                         <button type="button" class="btn" style="background-color: rgba(4,17,43,0.92); color:white;"
@@ -315,7 +334,6 @@
     function proid(proid) {
         document.getElementById("proid").value = proid;
     }
-
 
     function confirmCreate() {
         Swal.fire({
@@ -424,8 +442,8 @@
         });
     });
 
-    $('#crtSaleNone').on('shown.bs.modal', function () {
 
+    $(document).on('shown.bs.modal', '.modal', function () {
         $(this).find('.js-example-responsive').select2({
             theme: 'bootstrap-5',
             width: '100%',
@@ -436,11 +454,8 @@
                 noResults: function () { return "No se encontró el cliente"; }
             }
         });
+    });
 
-    });
-    $(document).on('hidden.bs.modal', '.modal', function () {
-        $(this).find('.select2-edit').select2('destroy');
-    });
     document.querySelectorAll('.inputPrice').forEach(function (el) {
         new Cleave(el, {
             numeral: true,
