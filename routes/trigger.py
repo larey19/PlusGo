@@ -19,9 +19,13 @@ def getTriggerSale():
             "sal_price": trg[4],
             "sal_date_start": trg[5],
             "sal_date_end": trg[6],
-            "cst_id":trg[7],
-            "cst_name":trg[8],
-            "cst_lastname":trg[9]
+            "cst_name":trg[7],
+            "cst_lastname":trg[8],
+            "sal_description": trg[9],
+            "acc_email": trg[10],
+            "acc_number_phone": trg[11],
+            "pro_profile": trg[12],
+            "pla_name": trg[13]
         } for trg in trg]
         return render_template("trigger.html", sale = data)
     except OperationalError as e:
@@ -50,7 +54,8 @@ def getTriggerAccount():
             "acc_provider": trg[5],
             "acc_date_pay": trg[6],
             "acc_email": trg[7],
-            "pla_name":trg[8],
+            "acc_number_phone":trg[8],
+            "pla_name":trg[9],
 
         } for trg in trg]
         return render_template("trigger.html", account = data)
@@ -62,6 +67,7 @@ def getTriggerAccount():
         print(e)
         flash("Ocurrio un error, Intenta más tarde.", "error")
         return render_template("500.html")
+
 
 @trigger_bp.route("/platform")
 @token
@@ -115,4 +121,5 @@ def getTriggerProfile():
     except Exception as e:
         print(e)
         flash("Ocurrio un error, Intenta más tarde.", "error")
+
         return render_template("500.html")
