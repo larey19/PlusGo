@@ -192,14 +192,13 @@ def getConsult():
                 return redirect(url_for("manage.consult"))
             result = []
             for mng in data:
-                rst = code(mng[1],mng[2], mng[3], mng[4])
+                rst = code((mng[1]).strip(),(mng[2]).strip(), (mng[3]).strip(), (mng[4]).strip())
                 for r in rst:
                     result.append(r)
             if result:
                 flash("Consulta Exitosa", "succes")
                 return render_template("consult.html", result = result, form = form)
-            else:
-                print(result)
+
             session["mngBackup"] = form.data
             flash("Ningun correo encontrado", "info")
             return redirect(url_for("manage.consult"))
@@ -214,3 +213,5 @@ def getConsult():
         print(e)
         flash("Ocurrio un error, Intenta más tarde.", "error")
         return render_template("500.html")
+
+
