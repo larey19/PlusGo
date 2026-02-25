@@ -195,6 +195,10 @@ def putSale(sal_id):
         cursor.connection.commit()
         flash ("Venta Actualizada", "success")
         return redirect(session.get('url_back_post'))
+    except IntegrityError as e:
+        print(e)
+        flash("Error al registrar Venta", "error")  
+        return redirect(session.get('url_back_post'))
     except OperationalError as e:
         print(e)
         flash("Conexion fallida, Intenta más tarde.", "error")
@@ -225,10 +229,16 @@ def putState(sal_id):
         cursor.connection.commit()
         flash("Venta Desactiva y Eliminada", "Info")
         return redirect(session.get('url_back_post'))
-    except OperationalError:
+    except IntegrityError as e:
+        print(e)
+        flash("Error al registrar Venta", "error")  
+        return redirect(session.get('url_back_post'))
+    except OperationalError as e:
+        print(e)
         flash("Conexion fallida, Intenta más tarde.", "error")
         return render_template("500.html")
-    except Exception:
+    except Exception as e:
+        print(e)
         flash("Ocurrio un error, Intenta más tarde.", "error")
         return render_template("500.html") 
 
