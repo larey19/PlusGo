@@ -170,42 +170,31 @@ def crtSale():
 def putSale(sal_id):
     if request.referrer and '/sale' in request.referrer:
         session["url_back_post"] = request.referrer 
-    try:
-        saldatestart = (request.form["sal_date_start"]).strip()
-        saldateend = (request.form["sal_date_end"]).strip()
-        salprice = (request.form["sal_price"]).strip().replace('.', '')
-        saldescription = (request.form["sal_description"]).strip()
-        cstid = (request.form["cst_id"]).strip()
-        if not saldatestart or not saldateend or not salprice or not cstid:
-            flash("Ingresa toda la informacion requerida", "error")
-            return redirect(session.get('url_back_post'))
-        if saldateend < saldatestart:
-            flash("Fecha Fin Invalida", "error")
-            return redirect(session.get('url_back_post'))
-        if len(salprice) <= 3:
-            flash("Precio Invalido", "error")
-            return redirect(session.get('url_back_post'))
-        cursor = current_app.mysql.connection.cursor()
-        cursor.execute("SELECT t_sale.sal_id, t_sale.sal_state, t_profile.pro_state FROM t_sale JOIN t_profile ON t_sale.pro_id = t_profile.pro_id WHERE sal_id = %s", (sal_id,))
-        state = cursor.fetchone()
-        if state and (state[1] == "expired") or ((state[2] == "disable" or  state[2] == "pending") and sal_id != state[0]):
-            flash("Esta venta no se puede Actualizar", "error")
-            return redirect(session.get('url_back_post'))
-        cursor.execute("UPDATE t_sale SET sal_date_start = %s, sal_date_end = %s, sal_price = %s, sal_description = %s, cst_id = %s WHERE sal_id = %s", (saldatestart, saldateend, salprice, saldescription, cstid, sal_id,))
-        cursor.connection.commit()
-        flash ("Venta Actualizada", "success")
+
+    saldatestart = (request.form["sal_date_start"]).strip()
+    saldateend = (request.form["sal_date_end"]).strip()
+    salprice = (request.form["sal_price"]).strip().replace('.', '')
+    saldescription = (request.form["sal_description"]).strip()
+    cstid = (request.form["cst_id"]).strip()
+    if not saldatestart or not saldateend or not salprice or not cstid:
+        flash("Ingresa toda la informacion requerida", "error")
         return redirect(session.get('url_back_post'))
-    except IntegrityError:
-        flash("Plataforma Duplicada", "error")  
+    if saldateend < saldatestart:
+        flash("Fecha Fin Invalida", "error")
         return redirect(session.get('url_back_post'))
-    except OperationalError as e:
-        print(e)
-        flash("Conexion fallida, Intenta más tarde.", "error")
-        return render_template("500.html")
-    except Exception as e:
-        print(e)
-        flash("Ocurrio un error, Intenta más tarde.", "error")
-        return render_template("500.html")
+    if len(salprice) <= 3:
+        flash("Precio Invalido", "error")
+        return redirect(session.get('url_back_post'))
+    cursor = current_app.mysql.connection.cursor()
+    cursor.execute("SELECT t_sale.sal_id, t_sale.sal_state, t_profile.pro_state FROM t_sale JOIN t_profile ON t_sale.pro_id = t_profile.pro_id WHERE sal_id = %s", (sal_id,))
+    state = cursor.fetchone()
+    if state and (state[1] == "expired") or ((state[2] == "disable" or  state[2] == "pending") and sal_id != state[0]):
+        flash("Esta venta no se puede Actualizar", "error")
+        return redirect(session.get('url_back_post'))
+    cursor.execute("UPDATE t_sale SET sal_date_start = %s, sal_date_end = %s, sal_price = %s, sal_description = %s, cst_id = %s WHERE sal_id = %s", (saldatestart, saldateend, salprice, saldescription, cstid, sal_id,))
+    cursor.connection.commit()
+    flash ("Venta Actualizada", "success")
+    return redirect(session.get('url_back_post'))
 
 @sale_bp.route("/sale/state/<sal_id>")
 @token
@@ -233,3 +222,4 @@ def putState(sal_id):
     except Exception:
         flash("Ocurrio un error, Intenta más tarde.", "error")
         return render_template("500.html") 
+
