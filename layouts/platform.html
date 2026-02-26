@@ -15,7 +15,11 @@
 
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold">Plataformas</h3>
+        <div>
+
+            <h3 class="fw-bold m-0">Plataformas</h3>
+            <small class="text-muted">Gestion de plataformas</small>
+        </div>
         <div>
             <button class="btn" data-bs-toggle="modal" data-bs-target="#createModal"
                 style="background-color: rgba(4,17,43,0.92); color: white;">
@@ -25,7 +29,7 @@
     </div>
 
     <!-- Tabla -->
-    <div class="card shadow border-0">
+    <div class="card shadow border-0"  data-aos="zoom-in-up">
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover align-middle" id="table">
@@ -85,10 +89,14 @@
             <form action="platform/{{p[0]}}" method="post" id="form_upd{{p[0]}}">
                 <div class="modal-body">
 
-                    <input type="text" class="form-control mb-3" name="pla_name" value="{{p[1]}}" required>
-
-                    <input type="number" class="form-control" name="pla_profiles" value="{{p[2]}}" required>
-
+                    <div>
+                        <label for="planame" class="form-label">Plataforma</label>
+                        <input type="text" class="form-control mb-3" name="pla_name" id ="planame" value="{{p[1]}}" required>
+                    </div>
+                    <div>
+                        <label for="plaprofiles" class="form-label">Max Perfiles</label>
+                        <input type="number" class="form-control" name="pla_profiles" id="plaprofiles" value="{{p[2]}}" required>
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -115,12 +123,14 @@
             <form action="{{url_for('platform.crtPlatform')}}" method="post" id="form_crt">
                 <div class="modal-body">
                     {{ form.hidden_tag() }}
-
-                    {{ form.planame(class="form-control mb-3",
-                    placeholder="Nombre Plataforma") }}
-
-                    {{ form.plaprofiles(class="form-control",
-                    placeholder="Perfiles máximos") }}
+                    <div>
+                        <label for="planame" class="form-label">Plataforma</label>
+                        {{ form.planame(class="form-control mb-3", id="planame", placeholder="Netflix") }}
+                    </div>
+                    <div>
+                        <label for="plaprofiles" class="form-label">Max Perfiles</label>
+                        {{ form.plaprofiles(class="form-control", id="plaprofiles", placeholder="5") }}
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -137,8 +147,9 @@
 {% endblock %}
 
 {% block script %}
-
 <script>
+    AOS.init();
+
     function confirmUpdate(pla_id) {
         Swal.fire({
             title: "¿Actualizar Plataforma?",
