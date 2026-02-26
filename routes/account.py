@@ -27,7 +27,6 @@ def lcl_Cst_Pla():
     except Exception as e:
         print(e)
         return dict(customer=[])
-
 @account_bp.route("/account", methods = ["POST"])
 @token
 def crtAccount():
@@ -229,13 +228,15 @@ def getAccount(pla_id):
         form = accForm(data = accBackup)
         form.plaid.data = pla_id
         cursor = current_app.mysql.connection.cursor()
-        cursor.execute("SELECT * FROM t_account JOIN t_platform ON t_account.pla_id = t_platform.pla_id WHERE t_platform.pla_id = %s ORDER BY t_account.acc_nickname ASC", (pla_id,))
+        cursor.execute("SELECT pla_name FROM t_platform WHERE pla_id = %s",(pla_id,))
+        pla_name = cursor.fetchone()
+        cursor.execute("SELECT * FROM t_account JOIN t_platform ON t_account.pla_id = t_platform.pla_id WHERE t_platform.pla_id = %s ORDER BY t_account.acc_state DESC,  t_account.acc_nickname ASC", (pla_id,))
         account = cursor.fetchall()
-        return render_template("account.html", account = account, form = form)
+        return render_template("account.html", account = account, form = form, pla_name = pla_name[0])
     except OperationalError:
         flash("Conexion fallida, Intenta más tarde.", "error")
         return render_template("500.html")
     except Exception as e:
         print(e)
         flash("Ocurrio un error, Intenta más tarde.", "error")
-        return render_template("500.html")
+        return render_template("500.html") 
