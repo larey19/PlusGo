@@ -17,7 +17,7 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h3 class="fw-bold mb-0">Cuentas</h3>
+            <h3 class="fw-bold mb-0">Cuentas de {{pla_name}}</h3>
             <small class="text-muted">Gestión de cuentas de la plataforma</small>
         </div>
 
@@ -34,7 +34,7 @@
     </div>
 
     <!-- Tabla -->
-    <div class="card shadow border-0">
+    <div class="card shadow border-0"  data-aos="zoom-in-up">
         <div class="card-body">
 
             <div class="table-responsive">
@@ -110,21 +110,40 @@
 
             <form action="{{url_for('account.putAccount', acc_id = acc[0])}}" method="post" id="form_upd{{acc[0]}}">
 
-                <div class="modal-body">
+                <div class="modal-body row g-2">
+                    <div class="col-md-4">
+                        <label for="accnickname" class="form-label">Apodo*</label>
+                        <input type="text" class="form-control" name="acc_nickname" id="accnickname" value="{{acc[1]}}"
+                            required placeholder="La normal">
 
-                    <input type="text" class="form-control mb-2" name="acc_nickname" value="{{acc[1]}}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="accprovider" class="form-label">Proveedor*</label>
+                        <input type="text" class="form-control" name="acc_provider" id="accprovider" value="{{acc[2]}}"
+                            required placeholder="Yo mismo">
 
-                    <input type="text" class="form-control mb-2" name="acc_provider" value="{{acc[2]}}" required>
-
-                    <input type="date" class="form-control mb-2" name="acc_date_pay" value="{{acc[3]}}" required>
-
-                    <input type="email" class="form-control mb-2" name="acc_email" value="{{acc[4]}}">
-
-                    <input type="tel" class="form-control mb-2" name="acc_number_phone" value="{{acc[5]}}">
-
-                    <input type="password" class="form-control" name="acc_password" value="{{acc[6]}}">
-
-                    <input type="hidden" name="pla_id" value="{{ request.view_args['pla_id'] }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="accdatepay" class="form-label">Fecha de pago*</label>
+                        <input type="date" class="form-control" name="acc_date_pay" id="accdatepay" value="{{acc[3]}}"
+                            required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="accemail" class="form-label">Correo*</label>
+                        <input type="email" class="form-control" name="acc_email" id="accemail" value="{{acc[4]}}"
+                            placeholder="plusgo.estreaming@gmail.com">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="accnumberphone" class="form-label">Numero de celular*</label>
+                        <input type="tel" class="form-control" name="acc_number_phone" id="accnumberphone"
+                            value="{{acc[5]}}" placeholder="3008000333">
+                    </div>
+                    <div class="col-12">
+                        <label for="accpassword" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" name="acc_password" id="accpassword"
+                            value="{{acc[6]}}" placeholder="******">
+                    </div>
+                    <input type="hidden" name="pla_id" id="" value="{{ request.view_args['pla_id'] }}">
                 </div>
 
                 <div class="modal-footer">
@@ -152,17 +171,36 @@
             </div>
 
             <form action="{{url_for('account.crtAccount')}}" method="post" id="form_crt">
+                <div class="modal-body row g-2">
+                    <div class="col-md-4">
+                        {{form.hidden_tag()}}
+                        <label for="accnickname" class="form-label">Apodo*</label>
+                        {{form.accnickname(class="form-control mb-2", placeholder="La normal", id="accnickname")}}
+                    </div>
+                    <div class="col-md-4">
+                        <label for="accprovider" class="form-label">Proveedor*</label>
+                        {{form.accprovider(class="form-control mb-2", placeholder="Yo mismo", id="accprovider")}}
+                    </div>
+                    <div class="col-md-4">
+                        <label for="accdatepay" class="form-label">Fecha de pago*</label>
+                        {{form.accdatepay(class="form-control mb-2", id="accdatepay")}}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="accemail" class="form-label">Correo*</label>
+                        {{form.accemail(class="form-control mb-2", placeholder="plusgo.estreaming@gmail.com",
+                        id="accemail")}}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="accnumberphone" class="form-label">Numero de celular*</label>
+                        {{form.accnumberphone(class="form-control mb-2", placeholder="3008000333",
+                        id="accnumberphone")}}
 
-                <div class="modal-body">
-                    {{form.hidden_tag()}}
-                    {{form.accnickname(class="form-control mb-2", placeholder="Apodo")}}
-                    {{form.accprovider(class="form-control mb-2", placeholder="Proveedor")}}
-                    {{form.accdatepay(class="form-control mb-2")}}
-                    {{form.accemail(class="form-control mb-2", placeholder="Correo")}}
-                    {{form.accnumberphone(class="form-control mb-2", placeholder="Telefono")}}
-                    {{form.accpassword(class="form-control", placeholder="Contraseña")}}
+                    </div>
+                    <div class="col-12">
+                        <label for="accpassword" class="form-label">Contraseña</label>
+                        {{form.accpassword(class="form-control", placeholder="******", id="accpassword")}}
+                    </div>
                 </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn w-100" style="background-color: rgba(4,17,43,0.92); color: white;"
                         onclick="confirmCreate()">
@@ -170,7 +208,6 @@
                     </button>
                 </div>
             </form>
-
         </div>
     </div>
 </div>
@@ -180,7 +217,7 @@
 {% block script %}
 
 <script>
-
+  AOS.init();
     function confirmUpdate(id) {
         Swal.fire({
             title: "¿Actualizar cuenta?",
@@ -230,6 +267,8 @@
     $(document).ready(function () {
         $('#table').DataTable({
             pageLength: 10,
+            stateSave: true,
+            order : [],
             language: {
                 url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
             },
