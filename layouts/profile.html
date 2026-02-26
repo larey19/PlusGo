@@ -18,7 +18,7 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h3 class="fw-bold mb-0">Perfiles</h3>
+            <h3 class="fw-bold mb-0">Perfiles de {{acc_name}}</h3>
             <small class="text-muted">Gestión de perfiles de cuentas estreaming</small>
         </div>
 
@@ -27,7 +27,7 @@
                 <i class="bi bi-arrow-left"></i>
             </a>
 
-            <button class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#createModal">
+            <button class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#createModal"  >
                 + Nuevo Perfil
             </button>
         </div>
@@ -35,9 +35,12 @@
 
     <!-- Lista de perfiles -->
     <div class="row g-4">
-
+        {%if not profile %}
+        <small class="text-muted position-fixed top-50 start-50">Ningun Perfil Creado</small>
+        {% endif %}
         {% for p in profile %}
-        <div class="col-md-4">
+
+        <div class="col-md-4" data-aos="zoom-in-up">
 
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
@@ -143,16 +146,17 @@
             </div>
 
             <form action="{{url_for('profile.crtProfile')}}" method="post" id="form_crt">
-                <div class="modal-body">
+                <div class="modal-body  g-2">
                     {{form.hidden_tag()}}
 
-                    <div class="mb-3">
-                        {{form.proprofile(class="form-control",placeholder="Nombre del Perfil")}}
+                    <div>
+                        <label for="proprofile" class="form-label">Perfil</label>
+                        {{form.proprofile(class="form-control", id="proprofile",placeholder="Extra")}}
                     </div>
 
-                    <div class="mb-3">
-                        {{form.propin(class="form-control",
-                        placeholder="PIN (opcional)")}}
+                    <div>
+                        <label for="propin" class="form-label">Pin</label>
+                        {{form.propin(class="form-control", id="propin", placeholder="0033 (opcional)")}}
                     </div>
                 </div>
 
@@ -171,7 +175,7 @@
 {% block script %}
 
 <script>
-
+      AOS.init();
     function confirmUpdate(id) {
         Swal.fire({
             title: "¿Actualizar Perfil?",
@@ -204,11 +208,11 @@
     function confirmDelete(id) {
         Swal.fire({
             title: "¿Eliminar perfil?",
-            text: "Esta acción no se puede deshacer",
+            text: "Recuerda, no debe haber ninguna venta activa con este perfil",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#d33",
-            confirmButtonText: "Sí, eliminar",
+            confirmButtonText: "Sí, continuar",
             cancelButtonText: "Cancelar"
         }).then((result) => {
             if (result.isConfirmed) {
