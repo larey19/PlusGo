@@ -18,9 +18,11 @@ def getProfile(acc_id):
         form = proForm(data = proBackup)
         form.accid.data = acc_id
         cursor = current_app.mysql.connection.cursor()
+        cursor.execute("SELECT acc_nickname FROM t_account WHERE acc_id = %s", (acc_id,))
+        acc_name = cursor.fetchone()
         cursor.execute("SELECT t_profile.* FROM t_profile JOIN t_account ON t_profile.acc_id = t_account.acc_id  WHERE t_account.acc_id = %s ORDER BY t_profile.pro_profile ASC", (acc_id,))
         profile = cursor.fetchall()
-        return render_template("profile.html", profile = profile, form = form)
+        return render_template("profile.html", profile = profile, form = form, acc_name = acc_name[0])
     except OperationalError:
         flash("Conexion fallida, Intenta más tarde.", "error")
         return render_template("500.html")
@@ -134,6 +136,31 @@ def putProfile(pro_id):
         cursor.connection.commit()
         flash("Perfil Actualizado", "success")
         return redirect(session.get('url_back_post'))
+    except OperationalError:
+        flash("Conexion fallida, Intenta más tarde.", "error")
+        return render_template("500.html")
+    except Exception:
+        flash("Ocurrio un error, Intenta más tarde.", "error")
+        return render_template("500.html")
+
+@profile_bp.route("/profile/delete/<pro_id>")
+def dltProfile(pro_id):
+    if request.referrer and '/profile' in request.referrer:
+        session["url_back_delete"] = request.referrer 
+    try:
+        cursor = current_app.mysql.connection.cursor()
+        cursor.execute("SELECT * FROM t_profile WHERE pro_id = %s", (pro_id,))
+        if not cursor.fetchone():
+            flash("Perfil no encontrado", "error")
+            return render_template("404.html")
+        cursor.execute("SELECT * FROM t_sale WHERE pro_id = %s AND sal_state = %s", (pro_id, 'active',))
+        if cursor.fetchone():
+            flash("Venta activa con este perfil","error")
+            return redirect(session.get('url_back_delete'))
+        cursor.execute("DELETE FROM t_profile WHERE pro_id = %s", (pro_id,))
+        cursor.connection.commit()
+        flash("Perfil Eliminado", "info")
+        return redirect(session.get('url_back_delete'))
     except OperationalError:
         flash("Conexion fallida, Intenta más tarde.", "error")
         return render_template("500.html")
