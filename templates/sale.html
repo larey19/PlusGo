@@ -322,19 +322,23 @@
 {% block script %}
 
 <script>
-    AOS.init()
+    AOS.init();    
     document.querySelectorAll(".dataSale").forEach(cstid => {
         cstid.addEventListener("click", function (c) {
-            cst_id = this.getAttribute("data-cst_id");
-            pro_id = this.getAttribute("data-pro_id");
+            const cst_id = this.getAttribute("data-cst_id");
+            const pro_id = this.getAttribute("data-pro_id");
+            const sal_description = this.getAttribute("data-sal_description");
             document.querySelectorAll(".cstid").forEach(cst => {
                 cst.value = this.dataset.cst_id;
             });
             document.getElementsByName("proid").forEach(pro => {
                 pro.value = this.dataset.pro_id;
             });
+            document.querySelectorAll(".description").forEach(dsc => {
+                dsc.textContent = this.dataset.sal_description;
+            });
         })
-    })
+    });
     document.getElementById("validateFormCrt").addEventListener("click", function (vld) {
         vld.preventDefault();
         form = this.closest("#form_crt")
@@ -486,5 +490,6 @@
     });
 
 </script>
+
 
 {% endblock %}
