@@ -114,7 +114,7 @@ def crtSale():
             salid = uuid.uuid4()
             saldatestart = form.saldatestart.data
             saldateend = form.saldateend.data
-            form.salprice.data = int((request.form['salprice']).strip().replace('.',''))
+            form.salprice.data = int((request.form['salprice']).strip().replace(',',''))
             salprice = form.salprice.data
             saldescription = (form.saldescription.data).strip()
             cstid = (form.cstid.data).strip()
@@ -168,7 +168,7 @@ def putSale(sal_id):
             print(request.form["salprice"], form.data)
             saldatestart = form.saldatestart.data
             saldateend = form.saldateend.data
-            form.salprice.data = int((request.form['salprice']).strip().replace('.',''))
+            form.salprice.data = int((request.form['salprice']).strip().replace(',',''))
             salprice = form.salprice.data
             saldescription = (form.saldescription.data).strip()
             cstid = (form.cstid.data).strip()
@@ -234,4 +234,5 @@ def putState(sal_id):
     except Exception as e:
         print(e)
         flash("Ocurrio un error, Intenta más tarde.", "error")
+
         return render_template("500.html") 
