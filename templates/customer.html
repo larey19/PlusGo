@@ -1,0 +1,223 @@
+{% extends 'layouts/layout_2.html'%}
+{% block body %}
+<!-- VALIDA QUE SI HAY UN FLASH DEL BACKEND LO MUESTRE -->
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<script>
+    Swal.fire({
+        title: '{{ message }}',
+        icon: '{{ "error" if category=="error" else "success" if category=="success" else "info" }}',
+        timer: 3000,
+        showConfirmButton: false
+    });
+</script>
+{% endfor %}
+
+
+<div class="col p-4">
+    <!-- ENCABEZADO -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold m-0">Clientes</h3>
+            <small class="text-muted">Gestion de Clientes</small>
+        </div>
+
+        <div>
+            <button class="btn" data-bs-toggle="modal" data-bs-target="#createModal"
+                style="background-color: rgba(4,17,43,0.92); color: white;">
+                <i class="bi bi-plus-lg"></i> Nuevo Cliente
+            </button>
+        </div>
+    </div>
+
+    <!-- TABLA DE CLIENTES -->
+    <div class="card shadow border-0" data-aos="zoom-in-up">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Teléfono</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in customer %}
+                        <tr>
+                            <td>{{ c[1] if c[1] else 'Sin Nombre'}}</td>
+                            <td>{{ c[2] if c[2] else 'Sin Apellido' }}</td>
+                            <td>{{ c[3] if c[3] else 'Sin Numero'}}</td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#editModal{{c[0]}}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for c in customer %}
+<!-- MODAL PARA EDITAR -->
+<div class="modal fade" id="editModal{{c[0]}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="customer/{{c[0]}}" method="post" id="form_upd{{c[0]}}">
+                <div class="modal-body row g-3">
+                    {{ form.hidden_tag() }}
+                    <div>
+                        <label for="cstname">{{form.cstname.label()}}*</label>
+                        {{ form.cstname(class="form-control",
+                        placeholder="Juanchito", id = "cstname" , value = c[1]) }}
+                    </div>
+                    <div class="">
+                        <label for="cstlastname">{{form.cstlastname.label()}}</label>
+                        {{ form.cstlastname(class="form-control",
+                        placeholder="Perez", id="cstlastname", value = c[2]) }}
+                    </div>
+                    <div>
+                        <label for="cstphonenumber">{{form.cstphonenumber.label()}}</label>
+                        {{ form.cstphonenumber(class="form-control cstphonenumber",
+                        placeholder="3008000333", id="cstphonenumber", value = c[3]) }}
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    {{form.btnSubmit(class="btn w-100 validationFormUpd",
+                    style="background-color: rgba(4,17,43,0.92); color: white;",
+                    **{"cst_id":c[0]})}}
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- MODAL PARA CREAR -->
+<div class="modal fade" id="createModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Nuevo Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="{{url_for('customer.crtCustomer')}}" method="post" id="form_crt">
+                <div class="modal-body row g-3">
+                    {{ form.hidden_tag() }}
+                    <div>
+                        <label for="cstname">{{form.cstname.label()}}*</label>
+                        {{ form.cstname(class="form-control",
+                        placeholder="Juanchito", id = "cstname")}}
+                    </div>
+                    <div class="">
+                        <label for="cstlastname">{{form.cstlastname.label()}}</label>
+                        {{ form.cstlastname(class="form-control",
+                        placeholder="Perez", id="cstlastname") }}
+                    </div>
+                    <div>
+                        <label for="cstphonenumber">{{form.cstphonenumber.label()}}</label>
+                        {{ form.cstphonenumber(class="form-control cstphonenumber",
+                        placeholder="3008000333", id="cstphonenumber") }}
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    {{form.btnSubmit(class="btn w-100",
+                    style="background-color: rgba(4,17,43,0.92); color: white;",
+                    id = "validationFormCrt")}}
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block script %}
+
+<script>
+    AOS.init();
+    document.getElementById("validationFormCrt").addEventListener("click", function (vld) {
+        vld.defaultPrevented();
+        const form = this.closest("#form_crt");
+        if (form && form.checkValidity()) {
+            confirmCreate();
+        } else {
+            form.reportValidation();
+        }
+    })
+    document.querySelectorAll(".validationFormUpd").forEach(button => {
+        button.addEventListener("click", function (vld) {
+            vld.preventDefault();
+            const cst_id = this.getAttribute("cst_id");
+            const form = this.closest("#form_upd" + cst_id);
+            if (form && form.checkValidity()) {
+                confirmUpdate(cst_id);
+            } else {
+                form.reportValidation();
+            }
+        })
+    })
+
+    function confirmUpdate(id) {
+        Swal.fire({
+            title: "¿Actualizar Cliente?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "rgba(4,17,43,0.92)",
+            confirmButtonText: "Sí, guardar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("form_upd" + id).submit();
+            }
+        });
+    }
+
+    function confirmCreate() {
+        Swal.fire({
+            title: "¿Registrar Cliente?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "rgba(4,17,43,0.92)",
+            confirmButtonText: "Sí, guardar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("form_crt").submit();
+            }
+        });
+    }
+    $(document).ready(function () {
+        $('#table').DataTable({
+            order: [],
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            }
+        });
+    });
+
+    document.querySelectorAll('.cstphonenumber').forEach(function (tel) {
+        new Cleave(tel, {
+            phone: true,
+            phoneRegionCode: "CO"
+        });
+    });
+</script>
+
+{% endblock %}
