@@ -25,7 +25,7 @@ def login():
         return render_template("500.html")
     except Exception as e:
         print(e)
-        flash("Ocurrio un error, Intenta más tarde.", "error")
+        flash(f"Ocurrio un error, Intenta más tarde. {e}", "error")
         return render_template("500.html")
 
 @login_bp.route("/login", methods=["POST"])
@@ -85,4 +85,5 @@ def logout():
         return render_template("500.html")
     except Exception:
         flash("Ocurrio un error, Intenta más tarde.", "error")
+
         return render_template("500.html")
