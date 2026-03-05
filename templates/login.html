@@ -1,4 +1,4 @@
-{% extends 'layouts/layout_1.html '%}
+{% extends 'layouts/layout_1.html' %}
 {% block body %}
 
 {% for category, message in get_flashed_messages(with_categories=true) %}
@@ -155,5 +155,6 @@
 <script>
     AOS.init();
 </script>
+
 
 {% endblock %}
