@@ -95,7 +95,7 @@
                             <!-- Editar -->
                             <button class="btn btn-sm btn-outline-primary dataSale" data-bs-toggle="modal"
                                 data-bs-target="#putSale{{data['sal_id']}}" data-cst_id="{{data['cst_id']}}"
-                                data-pro_id="{{data['pro_id']}}">
+                                data-pro_id="{{data['pro_id']}}" data-sal_description="{{data['sal_description']}}">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
 
@@ -296,11 +296,9 @@
                         {{ form.salprice(class="form-control inputPrice", placeholder="Precio", value=data['sal_price'])
                         }}
                     </div>
-
                     <div class="col-md-12">
                         {{ form.saldescription.label(class="form-label") }}
-                        {{ form.saldescription(class="form-control", placeholder="Descripción",
-                        value=data['sal_description']) }}
+                        {{ form.saldescription(class="form-control description", placeholder="Descripción") }}
                     </div>
 
                     <div class="d-grid">
@@ -322,7 +320,7 @@
 {% block script %}
 
 <script>
-    AOS.init();    
+    AOS.init();
     document.querySelectorAll(".dataSale").forEach(cstid => {
         cstid.addEventListener("click", function (c) {
             const cst_id = this.getAttribute("data-cst_id");
@@ -338,7 +336,7 @@
                 dsc.textContent = this.dataset.sal_description;
             });
         })
-    });
+    })
     document.getElementById("validateFormCrt").addEventListener("click", function (vld) {
         vld.preventDefault();
         form = this.closest("#form_crt")
@@ -485,11 +483,12 @@
     document.querySelectorAll('.inputPrice').forEach(el => {
         new Cleave(el, {
             numeral: true,
-            numeralThousandsGroupStyle: 'thousand'
+            numeralThousandsGroupStyle: 'thousand',
+            numeralDecimalScale: 0
+
         });
     });
 
 </script>
-
 
 {% endblock %}
