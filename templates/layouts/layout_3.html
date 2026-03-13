@@ -20,11 +20,12 @@
         rel="stylesheet">
     <!-- cargar la pagina nProgress -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
-    
+
 
     <!-- Custom stlylesheet -->
     <style>
         * {
+            font-family: Montserrat, -apple-system, system-ui;
             -webkit-box-sizing: border-box;
             box-sizing: border-box;
         }
@@ -43,7 +44,7 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background-image: url('{{ url_for("static", filename="images/pattern2.png") }}');
+            background-image: url('{{ url_for("static", filename="images/pattern.png") }}');
             background-size: cover;
         }
 
@@ -73,13 +74,14 @@
             text-align: center;
         }
 
-        .notfound .notfound-404, .notfound .notfound-505 {
+        .notfound .notfound-404,
+        .notfound .notfound-500 {
             position: relative;
             height: 200px;
         }
 
-        .notfound .notfound-404 h1, .notfound .notfound-505 h1 {
-            font-family: 'Montserrat', sans-serif;
+        .notfound .notfound-404 h1,
+        .notfound .notfound-500 h1 {
             position: absolute;
             left: 50%;
             top: 50%;
@@ -95,7 +97,6 @@
         }
 
         .notfound h2 {
-            font-family: 'Montserrat', sans-serif;
             font-size: 22px;
             font-weight: 700;
             text-transform: uppercase;
@@ -106,7 +107,6 @@
 
         .notfound .home-btn,
         .notfound .contact-btn {
-            font-family: 'Montserrat', sans-serif;
             display: inline-block;
             font-weight: 700;
             text-decoration: none;
@@ -159,27 +159,27 @@
         }
 
         @media only screen and (max-width: 767px) {
-            .notfound .notfound-404 h1, .notfound .notfound-505 h1 {
+
+            .notfound .notfound-404 h1,
+            .notfound .notfound-500 h1 {
                 font-size: 182px;
             }
         }
 
         @media only screen and (max-width: 480px) {
-            .notfound .notfound-404, .notfound .notfound-505 {
+
+            .notfound .notfound-404,
+            .notfound .notfound-500 {
                 height: 146px;
             }
 
-            .notfound .notfound-404 h1, .notfound .notfound-505 h1 {
+            .notfound .notfound-404 h1,
+            .notfound .notfound-500 h1 {
                 font-size: 146px;
             }
 
             .notfound h2 {
                 font-size: 16px;
-            }
-
-            .notfound .home-btn,
-            .notfound .contact-btn {
-                font-size: 14px;
             }
         }
     </style>
