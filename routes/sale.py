@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, request, flash, render_template, current_app, session, jsonify
+from flask import Blueprint, redirect, request, flash, render_template, current_app, session
 from .utils.auth import token
 from MySQLdb import OperationalError, IntegrityError
 from MySQLdb.cursors import DictCursor 
@@ -23,7 +23,14 @@ def backup(form):
 def lcl_Cst_Pla():
     try:
         cursor = current_app.mysql.connection.cursor(DictCursor)
-        cursor.execute("SELECT pla_id, pla_name FROM t_platform ORDER BY pla_name ASC")
+        cursor.execute("""
+                        SELECT t_platform.pla_id, t_platform.pla_name 
+                            FROM t_platform 
+                        JOIN t_account ON t_account.pla_id = t_platform.pla_id
+                        WHERE t_account.acc_state = 'enable'
+                        GROUP BY t_platform.pla_id
+                        ORDER BY t_platform.pla_name ASC
+                    """)
         platforms = cursor.fetchall()
         return dict(
             platform=platforms
@@ -53,11 +60,10 @@ def getSale(pla_id):
             saleBackup['saldateend'] = datetime.strptime(saleBackup['saldateend'], '%Y-%m-%d').date()
         
         form = saleForm(data=saleBackup)
-
         cursor = current_app.mysql.connection.cursor()
         cursor.execute("SELECT * FROM t_customer ORDER BY cst_name ASC")
         customers = cursor.fetchall()
-        form.cstid.choices = [(cst[0], (f"{cst[1]}  {cst[2]} - {cst[3]}")) for cst in customers]
+        form.cstid.choices = [(cst[0], (f"{cst[1]}  {cst[2]} - {cst[3] if cst[3] else 'Sin Numero'}")) for cst in customers]
         cursor.execute("""SELECT t_account.acc_id, t_account.acc_email, 
                         t_profile.pro_id , t_profile.pro_profile, t_profile.pro_pin_profile, 
                         t_sale.sal_id, t_sale.sal_date_start, t_sale.sal_date_end, t_sale.sal_price, t_sale.sal_description, 
@@ -96,6 +102,10 @@ def getSale(pla_id):
     except OperationalError as e:
         print(e)
         flash("Conexion fallida, Intenta más tarde.", "error")
+        return render_template("500.html")
+    except Exception as e:
+        print(e)
+        flash("Ocurrio un error, Intenta más tarde.", "error")
         return render_template("500.html")
 
 
@@ -165,7 +175,6 @@ def putSale(sal_id):
         form = saleForm() 
         form.cstid.choices = [(cst[0], (f"{cst[1]}  {cst[2]}")) for cst in customers]
         if form.validate_on_submit():
-            print(request.form["salprice"], form.data)
             saldatestart = form.saldatestart.data
             saldateend = form.saldateend.data
             form.salprice.data = int((request.form['salprice']).strip().replace(',',''))
@@ -234,5 +243,4 @@ def putState(sal_id):
     except Exception as e:
         print(e)
         flash("Ocurrio un error, Intenta más tarde.", "error")
-
         return render_template("500.html") 
