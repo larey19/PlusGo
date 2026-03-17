@@ -30,7 +30,8 @@ class saleForm(FlaskForm):
     )
 
     saldescription = TextAreaField(
-        "Descripción"
+        "Descripción",
+        validators=[length(max=200)]
     )
 
     cstid = SelectField(
