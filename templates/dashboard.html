@@ -1,0 +1,193 @@
+{% extends 'layouts/layout_2.html'%}
+{% block body %}
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<script>
+    Swal.fire({
+        title: '{{ message }}',
+        icon: '{{ "error" if category=="error" else "success" if category=="success" else "info" }}',
+        timer: 3000,
+        showConfirmButton: false
+    });
+</script>
+{% endfor %}
+<!-- sera un div data -->
+<input type="hidden" id="data" data-meses = '{{ meses | safe }}' data-totalsale = '{{ totalsale | safe }}' data-planame = '{{ plaName | safe }}' data-plasale = '{{ plaSale | safe }}'>
+
+
+<!-- Main Content -->
+<div class="col p-3">
+
+    <!-- Topbar -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold m-0">Panel Principal</h3>
+            <small class="text-muted">Informacion general PlusGo</small>
+        </div>
+
+        <button class="btn btn-sm text-white text-decoration-none shadow"
+            style="background-color: rgba(4,17,43,0.92); color: white" onclick="confirmLogout()">
+            <i class="bi bi-box-arrow-in-left me-2"></i>
+            Cerrar Sesion
+        </button>
+    </div>
+
+    <div data-aos="zoom-in-up">
+        <!-- fila -->
+        <div class="row g-4 mb-2">
+            <div class="col-md-6">
+                <div class="card border-0 shadow">
+                    <div class="card-body ">
+                        <div class="table-responsive">
+                            <h5 class="mb-3">Cuentas por vencer</h5>
+
+                            <table class="table table-hover align-middle mb-0" id="tableAcc">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">
+                                            Plataforma
+                                        </th>
+                                        <th class="text-center">
+                                            Apodo
+                                        </th>
+                                        <th class="text-center">
+                                            Vencimiento
+                                        </th>
+                                        <th class="text-center">
+                                            Abrir
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for acc in account %}
+                                    <tr>
+                                        <td class="text-nowrap">
+                                            <a
+                                                href="{{url_for('account.getAccount', pla_id = acc[0], acc_nickname = acc[2])}}" class="text-decoration-none fw-medium text-black">
+                                                {{ acc[1] }}
+                                            </a>
+                                        </td>
+                                        <td class="text-nowrap">{{ acc[2] }}</td>
+                                        <td class="text-center text-nowrap">{{ acc[3] }}</td>
+                                        <td class="text-center">
+                                            <!-- abrir plataforma -->
+                                            <a href="{{url_for('account.getAccount', pla_id = acc[0], acc_nickname = acc[2])}}"
+                                                class="btn btn-sm btn-outline-secondary">
+                                                <i class="bi bi-collection"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow border-0">
+                    <div class="card-body">
+                        <div class="table-responsive">
+
+                            <h5 class="mb-3">Ultimos Movimientos</h5>
+                            <table class="table table-hover align-middle mb-0" id="tableUltTrgSale">
+                                <thead>
+                                    <tr>
+                                        <th>Accion</th>
+                                        <th class="text-center">Fecha</th>
+                                        <th class="text-center">Cliente</th>
+                                        <th class="text-center">Precio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for data in UltSale %}
+                                    <tr>
+                                        <td class="text-nowrap">{{data['trg_action']}}</td>
+                                        <td class="text-center text-nowrap">{{data['trg_date']}}</td>
+                                        <td class="text-nowrap">{{data['cst_name']}} {{data['cst_lastname']}}</td>
+                                        <td class="text-nowrap">{{data['sal_price']}} </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- fila -->
+        <div class="row g-4 mb-2">
+            <div class="col-md-12">
+                <div class="card border-0 shadow">
+                    <div class="card-body">
+                        <div class="table-responsive">
+
+                            <h5 class="mb-3">Ventas por vencer</h5>
+                            <table class="table table-hover align-middle mb-0" id="tableSale">
+                                <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th class="text-center">Vencimineto</th>
+                                        <th>Plataforma</th>
+                                        <th>Cuenta</th>
+                                        <th class="text-center">Perfil</th>
+                                        <th>Abrir</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for sale in sale %}
+                                    <tr>
+                                        <td class="text-nowrap">
+                                            {{sale[0]}} {{sale[1]}}
+                                        </td>
+
+                                        <td class="text-center text-nowrap">{{sale[2]}}</td>
+
+                                        <td class="text-nowrap">
+                                            {{sale[5]}}
+                                        </td>
+
+                                        <td class="text-nowrap">
+                                            {{sale[3] if sale[3] else (sale[4])}}
+                                        </td>
+
+                                        <td class="text-center text-nowrap">Perfil {{sale[6]}}</td>
+
+                                        <td class="text-center">
+                                            <!-- abir venta -->
+                                            <a href="{{url_for('sale.getSale', pla_id = sale[7], cst_name = sale[0], cst_lastname = sale[1] , pro_profile = sale[6])}}"
+                                                class="btn btn-sm btn-outline-secondary"><i class="bi bi-cart"></i></a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- fila -->
+        <div class="row g-4 mb-2">
+            <div class="col-md-8">
+                <div class="card shadow border-0 h-100">
+                    <div class="card-body">
+                        <canvas id="myChartSale" class="w-100 h-100" style="margin: auto;"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow border-0">
+                    <div class="card-body">
+                        <canvas id="myChartPlatform" class="w-100 h-100" style="margin: auto;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{%block script%}
+<script src="{{ url_for('static', filename = 'javascript/dashboard.js') }}"></script>
+
+{%endblock%}

@@ -1,0 +1,214 @@
+{% extends 'layouts/layout_2.html'%}
+{% block body %}
+<!-- VALIDAR MENSAJES FLASH DEL BACKEND -->
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<script>
+    Swal.fire({
+        title: '{{ message }}',
+        icon: '{{ "error" if category=="error" else "success" if category=="success" else "info" }}',
+        timer: 3000,
+        showConfirmButton: false
+    });
+</script>
+{% endfor %}
+
+<div class="col p-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+
+            <h3 class="fw-bold m-0">Plataformas</h3>
+            <small class="text-muted">Gestion de plataformas</small>
+        </div>
+        <div>
+            <button class="btn" data-bs-toggle="modal" data-bs-target="#createModal"
+                style="background-color: rgba(4,17,43,0.92); color: white;">
+                <i class="bi bi-plus-lg"></i> Nueva Plataforma
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card shadow border-0" data-aos="zoom-in-up">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Perfiles</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in platform %}
+                        <tr>
+                            <td>
+                                <a href="{{url_for('account.getAccount', pla_id = p[0])}}" class="text-nowrap fw-medium text-decoration-none text-dark">
+                                    {{ p[1] }}
+                                </a>
+                            </td>
+                            <td>
+                                <span class="badge bg-primary">
+                                    {{ p[2] }} perfiles
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+
+                                <!-- Ver cuentas -->
+                                <a href="{{url_for('account.getAccount', pla_id = p[0])}}"
+                                    class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-collection"></i>
+                                </a>
+
+                                <!-- Editar -->
+                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#editModal{{p[0]}}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+
+                            </td>
+                        </tr>
+
+
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% for p in platform %}
+<!-- Modal Editar -->
+<div class="modal fade" id="editModal{{p[0]}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Plataforma</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="platform/{{p[0]}}" method="post" id="form_upd{{p[0]}}">
+                <div class="modal-body">
+                    {{form.hidden_tag()}}
+                    <div>
+                        {{form.planame.label(class="form-label")}}
+                        {{form.planame(class="form-control mb-3", value=p[1])}}
+                    </div>
+                    <div>
+                        {{form.plaprofiles.label(class="form-label")}}
+                        {{form.plaprofiles(class="form-control mb-3", value=p[2])}}
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    {{form.btnSubmit(class="btn w-100 validateFormUpd",
+                    style="background-color: rgba(4,17,43,0.92); color: white;",
+                    **{"pla_id":p[0]})}}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<!-- Modal Crear -->
+<div class="modal fade" id="createModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Nueva Plataforma</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="{{url_for('platform.crtPlatform')}}" method="post" id="form_crt">
+                <div class="modal-body">
+                    {{ form.hidden_tag() }}
+                    <div>
+                        {{ form.planame.label(class="form-label") }}
+                        {{ form.planame(class="form-control mb-3", id="planame", placeholder="Netflix") }}
+                    </div>
+                    <div>
+                        {{ form.plaprofiles.label(class="form-label") }}
+                        {{ form.plaprofiles(class="form-control", id="plaprofiles", placeholder="5") }}
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    {{form.btnSubmit(class="btn w-100",
+                    style="background-color: rgba(4,17,43,0.92); color: white;",
+                    id="validateFormCrt")}}
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    AOS.init();
+    document.getElementById("validateFormCrt").addEventListener("click", function (clv) {
+        clv.preventDefault();
+        form = this.closest("#form_crt");
+        if (form && form.checkValidity()) {
+            confirmCreate();
+        } else {
+            form.reportValidity();
+        }
+    })
+    document.querySelectorAll(".validateFormUpd").forEach(button => {
+        button.addEventListener("click", function (clv) {
+            clv.preventDefault();
+            pla_id = this.getAttribute("pla_id");
+            form = this.closest("#form_upd" + pla_id);
+            if (form && form.checkValidity()) {
+                confirmUpdate(pla_id);
+            } else {
+                form.reportValidity();
+            }
+        })
+    })
+    function confirmUpdate(pla_id) {
+        Swal.fire({
+            title: "¿Actualizar Plataforma?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "rgba(4,17,43,0.92)",
+            confirmButtonText: "Sí, guardar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                document.getElementById("form_upd" + pla_id).submit();
+            }
+        });
+    }
+    function confirmCreate() {
+        Swal.fire({
+            title: "¿Registar Plataforma?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "rgba(4,17,43,0.92)",
+            confirmButtonText: "Sí, guardar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("form_crt").submit();
+            }
+        });
+    }
+    $(document).ready(function () {
+        $('#table').DataTable({
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            }
+        });
+    });
+</script>
+
+{% endblock %}

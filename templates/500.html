@@ -1,0 +1,27 @@
+{% extends 'layouts/layout_3.html' %}
+{% block body %}
+
+<!-- Alerts -->
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<script>
+    Swal.fire({
+        title: '{{ message }}',
+        icon: '{{ "warning" if category=="error" else "success" if category=="success" else "info" }}',
+        showConfirmButton: true
+    });
+</script>
+{% endfor %}
+
+<div id="notfound">
+    <div class="notfound-bg"></div>
+    
+    <div class="notfound">
+        <div class="notfound-500">
+            <h1>500</h1>
+        </div>
+        <h2>Ups, Error en el servidor</h2>
+        <a href="/" class="home-btn">Inicio</a>
+    </div>
+</div>
+
+{% endblock %}

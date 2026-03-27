@@ -1,0 +1,341 @@
+{% extends 'layouts/layout_2.html'%}
+{% block body %}
+
+<!-- Alerts -->
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<script>
+    Swal.fire({
+        title: '{{ message }}',
+        icon: '{{ "warning" if category=="error" else "success" if category=="success" else "info" }}',
+        timer: 3000,
+        showConfirmButton: false
+    });
+</script>
+{% endfor %}
+
+<div class="col p-4">
+
+    <!-- Header -->
+    <div class="mb-4">
+        <h4 class="fw-bold mb-0">Ventas {{plaName}}</h4>
+        <small class="text-muted">Gestión de ventas {{plaName if plaName else ', seleccione una plataforma'}}</small>
+    </div>
+
+
+    <!-- Plataformas -->
+    <div class="mb-3 overflow-auto list-group list-group-horizontal">
+        {% for platform in platform %}
+        <a href="{{url_for('sale.getSale', pla_id=platform['pla_id'])}}" class="btn btn-sm mb-2">
+            {{platform['pla_name']}}
+        </a>
+        {% endfor %}
+    </div>
+
+
+
+    <!-- Tabla -->
+    <div class="card shadow card border-0 mb-4" data-aos="zoom-in-up">
+
+        <div class="card-body table-responsive">
+
+            <table class="table table-hover align-middle mb-0" id="table">
+
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th class="text-center text-nowrap">Fecha Inicio</th>
+                        <th class="text-center text-nowrap">Fecha Fin</th>
+                        <th class="text-center">Precio</th>
+                        <th class="text-center">Cuenta</th>
+                        <th class="text-center">Perfil</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for data in data %}
+                    <tr>
+                        <td class="text-nowrap text-truncate" style="max-width: 150px">
+                            {{data['cst_name'] | default('', True)}}
+                            {{data['cst_lastname'] | default('', True)}}
+                        </td>
+
+                        <td class="text-nowrap">{{data['sal_date_start'] | default('', True)}}</td>
+                        <td class="text-nowrap">{{data['sal_date_end'] | default('', True)}}</td>
+
+                        <td class="text-nowrap">
+
+                            {{data['sal_price'] if data['sal_price'] else (data['sal_price'] if data['sal_price']
+                            == 0.00 else '')}}
+
+                        </td>
+
+                        <td class="text-nowrap text-center">
+                            {{data['acc_email'] if data['acc_email'] else (data['acc_number_phone'] if
+                            data['acc_number_phone'] else '' )}}
+                        </td>
+
+                        <td class="text-nowrap text-center">Perfil {{data['pro_profile']}}</td>
+
+                        <td class="text-center text-nowrap">
+                            <!-- Vender -->
+                            <button class="btn btn-sm dataSale" data-bs-toggle="modal"
+                                data-bs-target="#crtSale{{'' if data['sal_id'] == None else 'mamahuevo'}}"
+                                data-pro_id="{{data['pro_id']}}" style="--bs-btn-color: rgba(4,17,43,0.92);
+    --bs-btn-border-color: rgba(4,17,43,0.92);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: rgba(4,17,43,0.92);
+    --bs-btn-hover-border-color: rgba(4,17,43,0.92);
+    --bs-btn-focus-shadow-rgb: 25, 135, 84;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: rgba(4,17,43,0.92);
+    --bs-btn-active-border-color: rgba(4,17,43,0.92);
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: rgba(4,17,43,0.92);
+    --bs-btn-disabled-bg: transparent;
+    --bs-btn-disabled-border-color: rgba(4,17,43,0.92);
+    --bs-gradient: none;">
+                                <i class="bi bi-cash-coin"></i>
+                            </button>
+
+                            <!-- Ver -->
+                            <button class="btn btn-sm btn-outline-secondary dataSale" data-bs-toggle="modal"
+                                data-bs-target="#getSale{{'' if data['sal_id'] != None else None}}" data-sal_date_start="{{data['sal_date_start'].strftime('%d-%m-%Y')
+                                if
+                                data['sal_date_start'] else '--'}}" data-sal_date_end="{{data['sal_date_end'].strftime('%d-%m-%Y')
+                                if
+                                data['sal_date_end'] else '--'}}" data-sal_price={{ "{:,}" .format(data['sal_price'])
+                                if data['sal_price'] else '0' }} data-sal_description="{{data['sal_description'] if
+                                data['sal_description'] else 'Ninguna observación registrada.'}}"
+                                data-cst_name="{{data['cst_name'] if data['cst_name'] else ''}}"
+                                data-cst_lastname="{{data['cst_lastname'] if data['cst_lastname'] else ''}}"
+                                data-acc_email="{{data['acc_email'] if data['acc_email'] else (data['acc_number_phone'] if
+                                    data['acc_number_phone'] else 'Sin contacto')}}"
+                                data-pro_profile="{{data['pro_profile'] if data['pro_profile']}}"
+                                data-cst_phone_number="({{data['cst_phone_number'][0:3] if data['cst_phone_number']}})-{{data['cst_phone_number'][3:6] if data['cst_phone_number']}}-{{data['cst_phone_number'][6:] if data['cst_phone_number']}}">
+                                <i class="bi bi-view-list"></i>
+                            </button>
+
+
+                            <!-- Editar -->
+                            <button class="btn btn-sm btn-outline-primary dataSale" data-bs-toggle="modal"
+                                data-bs-target="#putSale{{'' if data['sal_id'] != None else None}}"
+                                data-sal_id="{{data['sal_id']}}" data-sal_date_start="{{data['sal_date_start']}}"
+                                data-sal_date_end="{{data['sal_date_end']}}" data-sal_price="{{data['sal_price']}}"
+                                data-cst_id="{{data['cst_id']}}" data-pro_id="{{data['pro_id']}}"
+                                data-sal_description="{{data['sal_description']}}">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+
+                            <!-- Eliminar -->
+                            <button class="btn btn-sm btn-outline-danger"
+                                onclick="confirmDelete(`{{data['sal_id'] if data['sal_id'] != None}}`)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ================= MODAL DETALLES ================= -->
+
+<div class="modal fade" id="getSale" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalles de Venta {{plaName}}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="ms-3">
+                        <h5 class="mb-0 fw-bold text-dark" id="cst_fullname">
+                        </h5>
+                        <small class="text-muted me-2" id="cst_phone_number">
+                        </small>
+                        <small class="text-muted" id="pro_profile">
+                        </small>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-3 border rounded bg-light">
+                            <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Fecha
+                                Inicio</small>
+                            <span class="text-dark" id="sal_date_start">
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 border rounded bg-light">
+                            <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Fecha
+                                Fin</small>
+                            <span class="text-dark" id="sal_date_end"></span>
+                        </div>
+                    </div>
+
+                    <!-- Precio Destacado -->
+                    <div class="col-12">
+                        <div class="p-3 border rounded bg-opacity-10 d-flex justify-content-between align-items-center">
+                            <span class="fw-bold"><i class="bi bi-cash-stack me-2"></i>PRECIO TOTAL</span>
+                            <h5 class="mb-0 fw-bold" id="sal_price">
+                            </h5>
+                        </div>
+                    </div>
+
+                    <!-- Cuenta/Contacto -->
+                    <div class="col-12">
+                        <div class="p-3 border rounded">
+                            <small class="text-muted d-block text-uppercase fw-bold mb-1"
+                                style="font-size: 0.7rem;">Información de Cuenta</small>
+                            <div class="d-flex align-items-center acc_email">
+                                <span id="acc_email"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="col-12">
+                        <div class="p-3 border rounded">
+                            <small class="text-muted d-block text-uppercase fw-bold mb-1"
+                                style="font-size: 0.7rem;">Descripción</small>
+                            <p class="mb-0 small italic" id="sal_description">
+
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- ================= MODAL CREAR ================= -->
+
+<div class="modal fade" id="crtSale" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Registrar Venta {{plaName}}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form action="{{url_for('sale.crtSale')}}" method="post" id="form_crt" class="row g-3">
+                    {{ form.csrf_token() }}
+                    {{ form.proid(class="proid") }}
+
+                    <div class="col-md-12">
+                        {{ form.cstid.label(class="form-label") }}*
+                        {{ form.cstid(class="js-example-responsive form-select", id ="cstid")}}
+                    </div>
+
+                    <div class="col-md-6">
+                        {{ form.saldatestart.label(class="form-label") }}*
+                        {{ form.saldatestart(class="form-control" ) }}
+                    </div>
+
+                    <div class="col-md-6">
+                        {{ form.saldateend.label(class="form-label") }}*
+                        {{ form.saldateend(class="form-control") }}
+                    </div>
+
+                    <div class="col-md-12">
+                        {{ form.salprice.label(class="form-label") }}*
+                        {{ form.salprice(class="form-control inputPrice", placeholder="Precio") }}
+                    </div>
+
+                    <div class="col-md-12">
+                        {{ form.saldescription.label(class="form-label") }}
+                        {{ form.saldescription(class="form-control", placeholder="Descripción") }}
+                    </div>
+
+                    <div class="d-grid">
+                        {{ form.btnSubmit(class="btn",
+                        style="background-color: rgba(4,17,43,0.92); color:white;",
+                        id="validateFormCrt") }}
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- ================= MODAL EDITAR ================= -->
+
+<div class="modal fade" id="putSale" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizar Venta {{plaName}}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form method="post" id="form_upd" class="row g-3">
+                    {{ form.csrf_token() }}
+                    {{ form.proid(class="proid") }}
+
+                    <div class="col-md-12">
+                        {{ form.cstid.label(class="form-label") }}*
+                        {{ form.cstid(class="js-example-responsive form-select cstid")}}
+                    </div>
+
+                    <div class="col-md-6">
+                        {{ form.saldatestart.label(class="form-label") }}*
+                        {{ form.saldatestart(class="form-control saldatestart") }}
+                    </div>
+
+                    <div class="col-md-6">
+                        {{ form.saldateend.label(class="form-label") }}*
+                        {{ form.saldateend(class="form-control saldateend") }}
+                    </div>
+
+                    <div class="col-md-12">
+                        {{ form.salprice.label(class="form-label") }}*
+                        {{ form.salprice(class="form-control inputPrice salprice", placeholder="Precio")
+                        }}
+                    </div>
+                    <div class="col-md-12">
+                        {{ form.saldescription.label(class="form-label") }}
+                        {{ form.saldescription(class="form-control saldescription", placeholder="Descripción") }}
+                    </div>
+
+                    <div class="d-grid">
+                        {{ form.btnSubmit(class="btn", id="validateFormUpd",
+                        style="background-color: rgba(4,17,43,0.92); color:white;") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block script %}
+<script src="{{url_for('static', filename='javascript/sale.js')}}"></script>
+{% endblock %}

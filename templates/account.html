@@ -1,0 +1,230 @@
+{% extends 'layouts/layout_2.html'%}
+{% block body %}
+<!-- OBTIENE LOS MENSAJES FLASH DEL BACKEND -->
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<script>
+    Swal.fire({
+        title: '{{ message }}',
+        icon: '{{ "error" if category=="error" else "success" if category=="success" else "info" }}',
+        timer: 3000,
+        showConfirmButton: false
+    });
+</script>
+{% endfor %}
+
+<div class="col p-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-0">Cuentas de {{pla_name}}</h3>
+            <small class="text-muted">Gestión de cuentas de la plataforma</small>
+        </div>
+        <div class="d-flex">
+            <a href="{{url_for('platform.getPlatform')}}" class="btn btn-outline-secondary me-2">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+
+            <button class="btn d-none d-lg-flex" style="background-color: rgba(4,17,43,0.92); color:white;"
+                data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="bi bi-plus-lg me-1"></i> Nueva Cuenta
+            </button>
+            <button class="btn d-lg-none" style="background-color: rgba(4,17,43,0.92); color:white;"
+                data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="bi bi-plus-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card shadow-sm border-0" data-aos="zoom-in-up">
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="table">
+                    <thead>
+                        <tr>
+                            <th>Apodo</th>
+                            <th>Proveedor</th>
+                            <th class="text-nowrap text-center">Fecha Pago</th>
+                            <th class="text-center">Email</th>
+                            <th class="text-center">Estado</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for acc in account %}
+                        <tr>
+                            <td>
+                                <a href="{{url_for('profile.getProfile', acc_id = acc[0])}}"
+                                    class="text-nowrap fw-medium text-decoration-none text-dark">
+                                    {{ acc[1] }}
+                                </a>
+                            </td>
+                            <td>{{ acc[2] }}</td>
+                            <td class="text-center">{{ acc[3] }}</td>
+                            <td class="text-center">{{ acc[4] if acc[4] else (acc[5] if acc[5] else '') }}</td>
+
+                            <td class="text-center">
+                                {% if acc[7] == "enable" %}
+                                <span class="badge bg-primary">Activa</span>
+                                {% else %}
+                                <span class="badge bg-danger">Desactivada</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center text-nowrap ">
+
+                                <!-- Perfiles -->
+                                <a href="{{url_for('profile.getProfile', acc_id = acc[0])}}"
+                                    class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-person-lines-fill"></i>
+                                </a>
+
+                                <!-- Editar -->
+                                <button class="btn btn-sm btn-outline-primary dataAccount" data-bs-toggle="modal"
+                                    data-bs-target="#editModal" data-acc_id="{{acc[0]}}" data-acc_nickname="{{acc[1]}}"
+                                    data-acc_provider="{{acc[2]}}" data-acc_date_pay="{{acc[3]}}"
+                                    data-acc_email="{{acc[4]}}" data-acc_number_phone="{{acc[5]}}"
+                                    data-acc_password="{{acc[6]}}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+
+                                <!-- Estado -->
+                                <button class="btn btn-sm btn-outline-danger" onclick="confirmState('{{acc[0]}}')">
+                                    <i class="bi bi-power"></i>
+                                </button>
+
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal Editar -->
+<div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Cuenta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" id="form_upd">
+                <div class="modal-body row g-2">
+                    <div class="col-md-4">
+                        {{form.hidden_tag()}}
+                        {{form.accnickname.label(class="form-label")}}*
+                        {{form.accnickname(class="form-control mb-2 accnickname", placeholder="La normal")}}
+                    </div>
+                    <div class="col-md-4">
+                        {{form.accprovider.label(class="form-label")}}*
+                        {{form.accprovider(class="form-control mb-2 accprovider", placeholder="Yo mismo")}}
+                    </div>
+                    <div class="col-md-4">
+                        {{form.accdatepay.label(class="form-label")}}*
+                        {{form.accdatepay(class="form-control mb-2 accdatepay")}}
+                    </div>
+                    <div class="col-md-6">
+                        {{form.accemail.label(class="form-label")}}*
+                        {{form.accemail(class="form-control mb-2 accemail", placeholder="plusgo@gmail.com")
+                        }}
+                    </div>
+                    <div class="col-md-6">
+                        {{form.accnumberphone.label(class="form-label")}}*
+                        {{form.accnumberphone(class="form-control mb-2 accphonenumber", placeholder="3008000333")
+                        }}
+
+                    </div>
+                    <div class="col-12 ">
+                        {{form.accpassword.label(class="form-label")}}
+                        <div class="position-relative">
+                            {{form.accpassword(class="form-control", placeholder="******")}}
+
+                            <i id="eyeIcon"
+                                class=" fs-4 bi bi-eye position-absolute top-50 button-50 end-0 translate-middle"
+                                onclick="password()">
+                            </i>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    {{form.btnSubmit( class="btn w-100 validateFormUpd",
+                    style="background-color: rgba(4,17,43,0.92); color: white;")}}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal Crear -->
+<div class="modal fade" id="createModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Nueva Cuenta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="{{url_for('account.crtAccount')}}" method="post" id="form_crt">
+                <div class="modal-body row g-2">
+                    <div class="col-md-4">
+                        {{form.hidden_tag()}}
+                        {{form.accnickname.label(class="form-label")}}*
+                        {{form.accnickname(class="form-control mb-2", placeholder="La normal")}}
+                    </div>
+                    <div class="col-md-4">
+                        {{form.accprovider.label(class="form-label")}}*
+                        {{form.accprovider(class="form-control mb-2", placeholder="Yo mismo")}}
+                    </div>
+                    <div class="col-md-4">
+                        {{form.accdatepay.label(class="form-label")}}*
+                        {{form.accdatepay(class="form-control mb-2")}}
+                    </div>
+                    <div class="col-md-6">
+                        {{form.accemail.label(class="form-label")}}*
+                        {{form.accemail(class="form-control mb-2", placeholder="plusgo@gmail.com")}}
+                    </div>
+                    <div class="col-md-6">
+                        {{form.accnumberphone.label(class="form-label")}}*
+                        {{form.accnumberphone(class="form-control mb-2 accphonenumber", placeholder="3008000333")}}
+
+                    </div>
+                    <div class="col-12">
+                        {{form.accpassword.label(class="form-label")}}
+                        <div class="position-relative">
+                            {{form.accpassword(class="form-control", placeholder="******")}}
+
+                            <i id="eyeIcon"
+                                class=" fs-4 bi bi-eye position-absolute top-50 button-50 end-0 translate-middle"
+                                onclick="password()">
+                            </i>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    {{form.btnSubmit( class="btn w-100",
+                    style="background-color: rgba(4,17,43,0.92); color: white;",
+                    id="validateFormCrt")}}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script src="{{url_for('static', filename='javascript/account.js')}}">
+</script>
+{% endblock %}
