@@ -67,7 +67,7 @@ def getSale(pla_id):
         cursor.execute("""SELECT t_account.acc_id, t_account.acc_email, 
                         t_profile.pro_id , t_profile.pro_profile, t_profile.pro_pin_profile, 
                         t_sale.sal_id, t_sale.sal_date_start, t_sale.sal_date_end, t_sale.sal_price, t_sale.sal_description, 
-                        t_customer.cst_id, t_customer.cst_name, t_customer.cst_lastname, t_customer.cst_phone_number, t_account.acc_number_phone
+                        t_customer.cst_id, t_customer.cst_name, t_customer.cst_lastname, t_customer.cst_phone_number, t_account.acc_number_phone,  t_account.acc_password
                         FROM t_account 
                         INNER JOIN t_platform ON t_account.pla_id = t_platform.pla_id 
                         INNER JOIN t_profile ON t_account.acc_id = t_profile.acc_id
@@ -91,7 +91,8 @@ def getSale(pla_id):
                 "cst_name":x[11],
                 "cst_lastname":x[12],
                 "cst_phone_number":x[13],
-                "acc_number_phone":x[14]
+                "acc_number_phone":x[14],
+                "acc_password":x[15]
             } for x in cursor.fetchall()]
         cursor.execute("SELECT pla_name FROM t_platform WHERE pla_id = %s",(pla_id,))
         plaName = cursor.fetchone()
