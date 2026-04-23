@@ -1,5 +1,63 @@
 AOS.init();
+// SCRIPT COPIA DE DATOS DE VENTA
+document.querySelectorAll(".dataSaleClip").forEach((sl) => {
+  sl.addEventListener("click", function (clk) {
+    sl.classList.replace("dataSaleClip", "dataSaleClip2");
+    document.querySelectorAll("#clipboard").forEach((clip) => {
+      clip.classList.replace("bi-clipboard", "bi-clipboard-x");
+    });
 
+    document.querySelectorAll(".dataSaleClip").forEach((sale) => {
+      sale.classList.add("d-none");
+    });
+
+    document
+      .querySelector(".dataSaleClip2")
+      .addEventListener("click", function (click) {
+        this.classList.replace("dataSaleClip2", "dataSaleClip");
+
+        document.querySelectorAll("#clipboard").forEach((clip) => {
+          clip.classList.replace("bi-clipboard-x", "bi-clipboard");
+        });
+        delete this.dataset.cst_id;
+        delete this.dataset.sal_date_start;
+        delete  this.dataset.sal_date_end;
+        delete this.dataset.sal_price;
+        delete this.dataset.sal_description;
+        
+        document.querySelectorAll(".dataSaleClip").forEach((sale) => {
+          sale.classList.remove("d-none");
+        });
+      });
+
+    // ============== CARGAR DATOS PARA PEGAR EN REGISTRAR
+    document.querySelectorAll(".cst_id").forEach((cstid) => {
+      cstid.value = this.dataset.cst_id;
+    });
+    document.querySelectorAll(".sal_date_start").forEach((datestart) => {
+      datestart.value = this.dataset.sal_date_start;
+    });
+    document.querySelectorAll(".sal_date_end").forEach((dateend) => {
+      dateend.value = this.dataset.sal_date_end;
+    });
+    document.querySelectorAll(".sal_price").forEach((salprice) => {
+      salprice.value = this.dataset.sal_price;
+      new Cleave(salprice, {
+        numeral: true,
+        numeralThousandsGroupStyle: "thousand",
+        numeralDecimalScale: 0,
+      });
+    });
+    document.querySelectorAll(".sal_description").forEach((saldescription) => {
+      saldescription.textContent = this.dataset.sal_description;
+    });
+  });
+});
+new Cleave(document.querySelector(".sal_price"), {
+  numeral: true,
+  numeralThousandsGroupStyle: "thousand",
+  numeralDecimalScale: 0,
+});
 // SCRIPTS CARGA DE DATOS A MODALES Y VALIDACION DE EDICION
 document.querySelectorAll(".dataSale").forEach((sale) => {
   sale.addEventListener("click", function (c) {
@@ -9,6 +67,7 @@ document.querySelectorAll(".dataSale").forEach((sale) => {
     const sal_date_end = this.getAttribute("data-sal_date_end");
     const sal_description = this.getAttribute("data-sal_description");
     const acc_email = this.getAttribute("data-acc_email");
+    const acc_password = this.getAttribute("data-acc_password");
     const cst_name = this.getAttribute("data-cst_name");
     const cst_lastname = this.getAttribute("data-cst_lastname");
     const cst_phone_number = this.getAttribute("data-cst_phone_number");
@@ -18,15 +77,17 @@ document.querySelectorAll(".dataSale").forEach((sale) => {
       `${cst_name} ${cst_lastname}`;
     document.getElementById("cst_phone_number").innerHTML =
       `<i class="bi bi-phone-fill me-1"></i>Tel: ${cst_phone_number}`;
-    document.getElementById("pro_profile").innerHTML =
-      `<i class="bi bi-tag-fill me-1"></i>Perfil: ${pro_profile}`;
     document.getElementById("sal_date_start").innerHTML =
       `<i class="bi bi-calendar-event me-2"></i> ${sal_date_start}`;
     document.getElementById("sal_date_end").innerHTML =
       `<i class="bi bi-calendar-check me-2"></i> ${sal_date_end}`;
     document.getElementById("sal_price").innerHTML = `$ ${sal_price}`;
     document.getElementById("acc_email").innerHTML =
-      `<i class="bi bi-envelope-at me-2 text-secondary"></i> ${acc_email}`;
+      `<i class="bi bi-envelope-at text-secondary"></i> ${acc_email}`;
+    document.getElementById("acc_password").innerHTML =
+      `<i class="bi bi-lock text-secondary"></i>Clave: ${acc_password}`;
+    document.getElementById("pro_profile").innerHTML =
+      `<i class="bi bi-tag-fill text-secondary"></i>Perfil ${pro_profile}`;
     document.getElementById("sal_description").innerHTML =
       `<i class="bi bi-info-circle me-1"></i> ${sal_description}`;
     // ============== CARGAR DATOS PARA EDITAR Y PARA REGISTRAR
@@ -39,7 +100,7 @@ document.querySelectorAll(".dataSale").forEach((sale) => {
     document.querySelectorAll(".saldateend").forEach((dateend) => {
       dateend.value = this.dataset.sal_date_end;
     });
-    document.getElementsByName("salprice").forEach((salprice) => {
+    document.querySelectorAll(".salprice").forEach((salprice) => {
       salprice.value = this.dataset.sal_price;
       new Cleave(salprice, {
         numeral: true,
