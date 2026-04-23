@@ -12,6 +12,9 @@ document.querySelectorAll(".dataManage").forEach((button) => {
     document.querySelectorAll(".mngfrom").forEach((mngfrom) => {
       mngfrom.value = this.dataset.mng_from;
     });
+    document.querySelectorAll(".mngpassword").forEach((mngpassword) => {
+      mngpassword.value = this.dataset.mng_password;
+    });
     // validacion de formulario de edicion
     document.querySelectorAll(".validateFormUpd").forEach((button) => {
       button.addEventListener("click", function (vld) {
