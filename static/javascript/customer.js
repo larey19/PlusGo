@@ -35,7 +35,7 @@ document.querySelectorAll(".dataCustomer").forEach((button) => {
 document
   .getElementById("validationFormCrt")
   .addEventListener("click", function (vld) {
-    vld.defaultPrevented();
+    vld.preventDefault();
     const form = this.closest("#form_crt");
     if (form && form.checkValidity()) {
       confirmCreate();
