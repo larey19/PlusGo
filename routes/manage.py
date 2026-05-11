@@ -1,216 +1,199 @@
-from flask import Blueprint, current_app, redirect, request, flash, url_for, render_template, session
-from MySQLdb import OperationalError
-from .utils.consult import code
-from .utils.auth import token
-from .utils.wtf import mngForm
-import uuid
-from email_validator import validate_email,  EmailNotValidError
+AOS.init();
+// CARGA DE DATOS PARA MODAL DINAMICA EDICION
+document.querySelectorAll(".dataManage").forEach((button) => {
+  button.addEventListener("click", function (e) {
+    const mng_id = this.getAttribute("data-mng_id");
+    document.querySelectorAll(".mngemail").forEach((mngemail) => {
+      mngemail.value = this.dataset.mng_email;
+    });
+    document.querySelectorAll(".mngimap").forEach((mngimap) => {
+      mngimap.value = this.dataset.mng_imap;
+    });
+    document.querySelectorAll(".mngpassword").forEach((mngpassword) => {
+      mngpassword.value = this.dataset.mng_password;
+    });
+    document.querySelectorAll(".validateFormPass").forEach((button) => {
+      button.addEventListener("click", function (vld) {
+        vld.preventDefault();
+        const form = this.closest("#form_pass");
+        form.action = `/manage/password/${mng_id}`;
+        if (form && form.checkValidity()) {
+          confirmPassword();
+        } else {
+          form.reportValidity();
+        }
+      });
+    });
+    document.querySelectorAll(".mngfrom").forEach((mngfrom) => {
+      from = this.dataset.mng_from.split(", ");
+      $(mngfrom).val(from).trigger("change");
+    });
+    // validacion de formulario de edicion
+    document.querySelectorAll(".validateFormUpd").forEach((button) => {
+      button.addEventListener("click", function (vld) {
+        vld.preventDefault();
+        const form = this.closest("#form_upd");
+        form.action = `/manage/${mng_id}`;
+        if (form.checkValidity()) {
+          confirmUpdate();
+        } else {
+          form.reportValidity();
+        }
+      });
+    });
+  });
+});
 
-manage_bp = Blueprint("manage", __name__, template_folder="../templates")
+// validacion del formulario de crear
+document
+  .getElementById("validateFormCrt")
+  .addEventListener("click", function (vld) {
+    vld.preventDefault();
+    const form = this.closest(`#form_crt`);
+    if (form.checkValidity()) {
+      confirmCreate();
+    } else {
+      form.reportValidity();
+    }
+  });
+// confirmaciones
+function confirmUpdate() {
+  Swal.fire({
+    title: "¿Actualizar Cuenta?",
+    icon: "info",
+    showCancelButton: true,
+    confirmButtonColor: "rgba(4,17,43,0.92)",
+    confirmButtonText: "Sí, guardar",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      document.getElementById("form_upd").submit();
+    }
+  });
+}
+function confirmPassword() {
+  Swal.fire({
+    title: "¿Actualizar Contraseña de App?",
+    icon: "info",
+    showCancelButton: true,
+    confirmButtonColor: "rgba(4,17,43,0.92)",
+    confirmButtonText: "Sí, guardar",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      document.getElementById("form_pass").submit();
+    }
+  });
+}
+function confirmCreate() {
+  Swal.fire({
+    title: "¿Registar Cuenta?",
+    icon: "info",
+    showCancelButton: true,
+    confirmButtonColor: "rgba(4,17,43,0.92)",
+    confirmButtonText: "Sí, guardar",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      document.getElementById("form_crt").submit();
+    }
+  });
+}
+function confirmState(state, id) {
+  Swal.fire({
+    title: "¿Cambiar estado de la cuenta?",
+    text: "Recuerda, no podras realizar consultas de codigo a este correo",
 
-@manage_bp.route("/manage")
-@token
-def getManage():
-    try:
-        mngBackup = session.pop("mngBackup", {})
-        form = mngForm(data=mngBackup)
-        cursor = current_app.mysql.connection.cursor()
-        cursor.execute("""
-                SELECT * FROM t_manage ORDER BY mng_email
-            """)
-        data =[{
-            "mng_id" : mng[0],
-            "mng_email" : mng[1],
-            "mng_imap" : mng[2],
-            "mng_password" : mng[3],
-            "mng_from" : mng[4],
-            "mng_state" : mng[5]
-            }for mng in cursor.fetchall()]
-        return render_template("manage.html", data = data, form = form)
-    except OperationalError as e:
-        print(e)
-        flash("Conexion fallida, Intenta más tarde.", "error")
-        return render_template("500.html")
-    except Exception as e:
-        print(e)
-        flash("Ocurrio un error, Intenta más tarde.", "error")
-        return render_template("500.html")
-
-@manage_bp.route("/manage", methods= ["POST"])
-def crtManage():                  
-    try:
-        form = mngForm()
-        if form.validate_on_submit():
-            mngid = uuid.uuid4()
-            mngemail = (form.mngemail.data).strip()
-            mngimap = (form.mngimap.data).strip()
-            mngpassword = ((form.mngpassword.data).strip().replace(" ", ""))
-            mngfrom = (form.mngfrom.data).strip()
-            validate_email(mngemail)
-            if len(mngpassword) > 16:
-                session["mngBackup"] = form.data
-                flash("Clave de App invalida", "error")
-                return redirect(url_for("manage.getManage"))
-            cursor = current_app.mysql.connection.cursor()
-            cursor.execute("SELECT * FROM t_manage WHERE mng_email = %s AND mng_from = %s", (mngemail, mngfrom,))
-            if cursor.fetchone():
-                session["mngBackup"] = form.data
-                flash("Correo Duplicado", "error")
-                return redirect(url_for("manage.getManage"))
-            cursor.execute("""
-                            INSERT INTO t_manage (mng_id, mng_email, mng_imap, mng_password, mng_from) VALUES
-                            (%s,%s,%s,%s,%s)
-                            """,(mngid, mngemail, mngimap, mngpassword, mngfrom,))
-            cursor.connection.commit()
-            flash ("Registro Exitoso", "success")
-            return redirect(url_for("manage.getManage"))
-        session["mngBackup"] = form.data
-        flash("Ingresa toda la información requerida", "error")
-        return redirect(url_for("manage.getManage"))
-    except EmailNotValidError:
-        session["mngBackup"] = form.data
-        flash("Correo invalido", "error")
-        return redirect(url_for("manage.getManage"))
-    except OperationalError as e:
-        print(e)
-        flash("Conexion fallida, Intenta más tarde.", "error")
-        return render_template("500.html")
-    except Exception as e:
-        print(e)
-        flash("Ocurrio un error, Intenta más tarde.", "error")
-        return render_template("500.html")
-
-@manage_bp.route("/manage/<mng_id>", methods= ["POST"])
-def putManage(mng_id):
-    try:
-        form = mngForm()
-        if request.method == "POST":
-            mngemail = (form.mngemail.data).strip()
-            mngimap = (form.mngimap.data).strip()
-            mngfrom = (form.mngfrom.data).strip()
-            if not mngemail or not mngimap or not mngfrom:
-                flash("Ingresa toda la información requerida", "error")
-                return redirect(url_for("manage.getManage"))
-            validate_email(mngemail)
-            cursor = current_app.mysql.connection.cursor()
-            cursor.execute("SELECT * FROM t_manage WHERE mng_id = %s", (mng_id,))
-            if not cursor.fetchone():
-                flash("Correo no encontrado", "error")
-                return redirect(url_for("manage.getManage"))
-            cursor.execute("SELECT * FROM t_manage WHERE mng_email = %s AND mng_from = %s AND mng_id != %s", (mngemail, mngfrom, mng_id,))
-            if cursor.fetchone():
-                flash("Correo Duplicado", "error")
-                return redirect(url_for("manage.getManage"))
-            cursor.execute("""
-                            UPDATE t_manage SET mng_email = %s, mng_imap = %s, mng_from = %s WHERE mng_id = %s
-                            """,(mngemail, mngimap, mngfrom,mng_id,))
-            cursor.connection.commit()
-            flash ("Actualizacion Exitosa", "success")
-            return redirect(url_for("manage.getManage"))
-    except EmailNotValidError:
-        flash("Correo invalido", "error")
-        return redirect(url_for("manage.getManage"))
-    except OperationalError as e:
-        print(e)
-        flash("Conexion fallida, Intenta más tarde.", "error")
-        return render_template("500.html")
-    except Exception as e:
-        print(e)
-        flash("Ocurrio un error, Intenta más tarde.", "error")
-        return render_template("500.html")
-
-@manage_bp.route("/manage/password/<mng_id>", methods= ["POST"])
-def putPassword(mng_id):
-    try:
-        if request.method=="POST":
-            mngpassword = ((request["mngpassword"]).strip().replace(" ", ""))
-            if len(mngpassword) < 16:
-                flash("Clave de App invalida", "error")
-                return redirect(url_for("manage.getManage"))
-            cursor = current_app.mysql.connection.cursor()
-            cursor.execute("""
-                            UPDATE t_manage SET mng_password = %s WHERE mng_id = %s
-                            """,(mngpassword, mng_id,))
-            cursor.connection.commit()
-            flash ("Clave Actualizada", "success")
-            return redirect(url_for("manage.getManage"))
-    except OperationalError as e:
-        print(e)
-        flash("Conexion fallida, Intenta más tarde.", "error")
-        return render_template("500.html")
-    except Exception as e:
-        print(e)
-        flash("Ocurrio un error, Intenta más tarde.", "error")
-        return render_template("500.html")
-
-@manage_bp.route("/manage/state/<mng_state>/<mng_id>")
-def putState(mng_state, mng_id):
-    try:
-        mng_state = 'active' if mng_state == 'inactive' else 'inactive'
-        cursor = current_app.mysql.connection.cursor()
-        cursor.execute("""
-                        UPDATE t_manage SET mng_state = %s WHERE mng_id = %s
-                        """,(mng_state, mng_id,))
-        cursor.connection.commit()
-        flash ("Estado Actualizado Correctamente", "success")
-        return redirect(url_for("manage.getManage"))
-    except OperationalError as e:
-        print(e)
-        flash("Conexion fallida, Intenta más tarde.", "error")
-        return render_template("500.html")
-    except Exception as e:
-        print(e)
-        flash("Ocurrio un error, Intenta más tarde.", "error")
-        return render_template("500.html")
-
-# ______________________________ consulta
-@manage_bp.route("/consult")
-def consult():
-    try:
-        mngBackup = session.pop("mngBackup", {})
-        form = mngForm(data = mngBackup)
-        return render_template("consult.html", form = form)
-    except Exception as e:
-        print(e)
-        flash("Ocurrio un error, Intenta más tarde.", "error")
-        return render_template("500.html")
-
-@manage_bp.route("/consult", methods=["POST"])
-@token
-def getConsult():
-    try:
-        form = mngForm()
-        if request.method == "POST":
-            mngemail = form.mngemail.data
-            cursor = current_app.mysql.connection.cursor()
-            cursor.execute("""
-                SELECT * FROM t_manage WHERE mng_email = %s AND mng_state = 'active'
-            """, (mngemail,))
-            data = cursor.fetchall()
-            if not data:
-                session["mngBackup"] = form.data
-                flash("Correo no Registrado o Inactivo", "info")
-                return redirect(url_for("manage.consult"))
-            result = []
-            for mng in data:
-                rst = code((mng[1]).strip(),(mng[2]).strip(), (mng[3]).strip(), (mng[4]).strip())
-                for r in rst:
-                    result.append(r)
-            if result:
-                flash("Consulta Exitosa", "succes")
-                return render_template("consult.html", result = result, form = form)
-
-            session["mngBackup"] = form.data
-            flash("Ningun correo encontrado", "info")
-            return redirect(url_for("manage.consult"))
-        flash("Ingrese el correo", "error")
-        session["mngBackup"] = form.data
-        return redirect(url_for("manage.consult"))
-    except OperationalError as e:
-        print(e)
-        flash("Conexion fallida, Intenta más tarde.", "error")
-        return render_template("500.html")
-    except Exception as e:
-        print(e)
-        flash("Ocurrio un error, Intenta más tarde.", "error")
-        return render_template("500.html")
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    confirmButtonText: "Sí, cambiar",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = "/manage/state/" + state + "/" + id;
+    }
+  });
+}
+// tabla
+$(document).ready(function () {
+  $("#table").DataTable({
+    language: {
+      url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
+    },
+  });
+});
+// Boton de la contraseña
+function password() {
+  const input = document.querySelectorAll("#mngpassword");
+  const icon = document.querySelectorAll("#eyeIcon");
+  input.forEach((psw) => {
+    if (psw.type === "password") {
+      psw.type = "text";
+      icon.forEach((icn) => {
+        icn.classList.remove("bi-eye");
+        icn.classList.add("bi-eye-slash");
+      });
+    } else {
+      psw.type = "password";
+      icon.forEach((icn) => {
+        icn.classList.remove("bi-eye-slash");
+        icn.classList.add("bi-eye");
+      });
+    }
+  });
+}
+// select de las plataformas
+$(document).on("shown.bs.modal", ".modal", function () {
+  $(this)
+    .find(".select-multiple")
+    .val(null)
+    .trigger("change")
+    .select2({
+      theme: "bootstrap-5",
+      width: "100%",
+      placeholder: "Netflix",
+      allowClear: true,
+      closeOnSelect: false,
+      multiple: true,
+      dropdownParent: $(this),
+      language: {
+        noResults: function () {
+          return "No se encontró la cuenta";
+        },
+      },
+    });
+});
+$(document).on("shown.bs.modal", ".modal", function () {
+  $(this)
+    .find(".select-multiple-upd")
+    .select2({
+      theme: "bootstrap-5",
+      width: "100%",
+      placeholder: "Netflix",
+      allowClear: true,
+      closeOnSelect: false,
+      multiple: true,
+      dropdownParent: $(this),
+      language: {
+        noResults: function () {
+          return "No se encontró la cuenta";
+        },
+      },
+    });
+});
+// select comun
+$(document).on("shown.bs.modal", ".modal", function () {
+  $(this)
+    .find(".select")
+    .select2({
+      theme: "bootstrap-5",
+      width: "100%",
+      dropdownParent: $(this),
+      language: {
+        noResults: function () {
+          return "No se encontró la cuenta";
+        },
+      },
+    });
+});
