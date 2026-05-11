@@ -65,12 +65,15 @@
                             <td class="text-center text-nowrap">
 
                                 <button class="btn btn-sm btn-outline-primary dataManage" data-bs-toggle="modal"
-                                    data-bs-target="#putManage" data-mng_id = "{{data['mng_id']}}" data-mng_email = "{{data['mng_email']}}" data-mng_imap = "{{data['mng_imap']}}" data-mng_from = "{{data['mng_from']}}">
+                                    data-bs-target="#putManage" data-mng_id="{{data['mng_id']}}"
+                                    data-mng_email="{{data['mng_email']}}" data-mng_imap="{{data['mng_imap']}}"
+                                    data-mng_from="{{data['mng_from'].lower()}}">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
 
                                 <button class="btn btn-sm btn-outline-secondary dataManage" data-bs-toggle="modal"
-                                    data-bs-target="#putPassword" data-mng_id = "{{data['mng_id']}}" data-mng_password = "{{data['mng_password']}}">
+                                    data-bs-target="#putPassword" data-mng_id="{{data['mng_id']}}"
+                                    data-mng_password="{{data['mng_password']}}">
                                     <i class="bi bi-lock"></i>
                                 </button>
 
@@ -105,14 +108,14 @@
                     <div class="row g-4">
                         {{ form.hidden_tag() }}
 
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             {{form.mngemail.label(class="form-label")}}*
-                            {{ form.mngemail(class="form-control", placeholder="plusgo.estreaming@gmail.com") }}
+                            {{ form.mngemail(class="form-control select", placeholder="plusgo.estreaming@gmail.com") }}
                         </div>
 
                         <div class="col-md-6">
                             {{form.mngimap.label(class="form-label")}}*
-                            {{ form.mngimap(class="form-control", placeholder="imap.gmail.com") }}
+                            {{ form.mngimap(class="form-control select", placeholder="imap.gmail.com") }}
                         </div>
 
                         <div class="col-md-6">
@@ -127,10 +130,11 @@
                                 </i>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             {{form.mngfrom.label(class="form-label")}}*
-                            {{ form.mngfrom(class="form-control", placeholder="Disney") }}
+                            {{ form.mngfrom(class="form-control select-multiple d-none", placeholder="Disney") }}
                         </div>
+                        
                         <div class="col-md-12">
                             {{ form.btnSubmit(class="btn w-100", style="background-color: rgba(4,17,43,0.92);
                             color:white;",
@@ -154,21 +158,20 @@
             </div>
 
             <div class="modal-body">
-                <form method="post"
-                    id="form_upd{{data['mng_id']}}" class="row g-3">
+                <form method="post" id="form_upd{{data['mng_id']}}" class="row g-3">
                     {{ form.hidden_tag() }}
                     <div>
                         {{form.mngemail.label(class="form-label")}}*
-                        {{ form.mngemail(class="form-control mngemail", placeholder="plusgo.estreaming@gmail.com") }}
+                        {{ form.mngemail(class="form-control select mngemail") }}
                     </div>
 
                     <div>
                         {{form.mngimap.label(class="form-label")}}*
-                        {{ form.mngimap(class="form-control mngimap", placeholder="imap.gmail.com") }}
+                        {{ form.mngimap(class="form-control select mngimap") }}
                     </div>
                     <div>
                         {{form.mngfrom.label(class="form-label")}}*
-                        {{ form.mngfrom(class="form-control mngfrom", placeholder="Disney") }}
+                        {{ form.mngfrom(class="form-control select-multiple-upd mngfrom d-none") }}
                     </div>
                     <div>
                         {{ form.btnSubmit(class="btn w-100 validateFormUpd",style="background-color: rgba(4,17,43,0.92);
