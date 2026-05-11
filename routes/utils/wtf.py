@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, DateField, IntegerField, TextAreaField, SelectField, HiddenField, PasswordField, SubmitField, EmailField, TelField
+from wtforms import StringField, DateField, IntegerField, TextAreaField, SelectField, HiddenField, PasswordField, SubmitField, EmailField, TelField, SelectMultipleField
 from wtforms.validators import DataRequired, NumberRange,length
 
 class loginForm(FlaskForm):
@@ -110,20 +110,28 @@ class proForm(FlaskForm):
     btnSubmit = SubmitField("Guardar")
 
 class mngForm(FlaskForm):
-    mngemail = EmailField(
+    mngemail = SelectField(
         "Correo",
         validators=[DataRequired()]
     )
-    mngimap = StringField(
+    mngimap = SelectField(
         "Imap",
-        validators=[DataRequired(), length(min=10)]
+        validators=[DataRequired(), length(min=10)],
+        choices = [('imap.gmail.com', 'Gmail'),('outlook.office365.com', 'Outlook'), ('outlook.office365.com', 'Hotmail'), ('imap.mail.me.com', 'Icloud')]
     )
     mngpassword = PasswordField(
         "Clave de App",
-        validators=[DataRequired(), length(min=16)]
+        validators=[DataRequired(), length(min=10)]
     )
-    mngfrom = StringField(
+    mngfrom = SelectMultipleField(
         "Remitente",
         validators=[DataRequired(), length(min=3)]
+    )
+    btnSubmit = SubmitField("Guardar")
+
+class csltForm(FlaskForm):
+    csltemail = SelectField(
+        "Correo",
+        validators=[DataRequired()]
     )
     btnSubmit = SubmitField("Guardar")
