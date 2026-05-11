@@ -9,11 +9,24 @@ document.querySelectorAll(".dataManage").forEach((button) => {
     document.querySelectorAll(".mngimap").forEach((mngimap) => {
       mngimap.value = this.dataset.mng_imap;
     });
-    document.querySelectorAll(".mngfrom").forEach((mngfrom) => {
-      mngfrom.value = this.dataset.mng_from;
-    });
     document.querySelectorAll(".mngpassword").forEach((mngpassword) => {
       mngpassword.value = this.dataset.mng_password;
+    });
+    document.querySelectorAll(".validateFormPass").forEach((button) => {
+      button.addEventListener("click", function (vld) {
+        vld.preventDefault();
+        const form = this.closest("#form_pass");
+        form.action = `/manage/password/${mng_id}`;
+        if (form && form.checkValidity()) {
+          confirmPassword();
+        } else {
+          form.reportValidity();
+        }
+      });
+    });
+    document.querySelectorAll(".mngfrom").forEach((mngfrom) => {
+      from = this.dataset.mng_from.split(", ");
+      $(mngfrom).val(from).trigger("change");
     });
     // validacion de formulario de edicion
     document.querySelectorAll(".validateFormUpd").forEach((button) => {
@@ -28,22 +41,13 @@ document.querySelectorAll(".dataManage").forEach((button) => {
         }
       });
     });
-    document.querySelectorAll(".validateFormPass").forEach((button) => {
-      button.addEventListener("click", function (vld) {
-        vld.preventDefault();
-        const form = this.closest("#form_pass");
-        form.action = `/manage/password/${mng_id}`;
-        if (form && form.checkValidity()) {
-          confirmPassword();
-        } else {
-          form.reportValidity();
-        }
-      });
-    });
   });
 });
+
 // validacion del formulario de crear
-document.getElementById("validateFormCrt").addEventListener("click", function (vld) {
+document
+  .getElementById("validateFormCrt")
+  .addEventListener("click", function (vld) {
     vld.preventDefault();
     const form = this.closest(`#form_crt`);
     if (form.checkValidity()) {
@@ -139,3 +143,57 @@ function password() {
     }
   });
 }
+// select de las plataformas
+$(document).on("shown.bs.modal", ".modal", function () {
+  $(this)
+    .find(".select-multiple")
+    .val(null)
+    .trigger("change")
+    .select2({
+      theme: "bootstrap-5",
+      width: "100%",
+      placeholder: "Netflix",
+      allowClear: true,
+      closeOnSelect: false,
+      multiple: true,
+      dropdownParent: $(this),
+      language: {
+        noResults: function () {
+          return "No se encontró la cuenta";
+        },
+      },
+    });
+});
+$(document).on("shown.bs.modal", ".modal", function () {
+  $(this)
+    .find(".select-multiple-upd")
+    .select2({
+      theme: "bootstrap-5",
+      width: "100%",
+      placeholder: "Netflix",
+      allowClear: true,
+      closeOnSelect: false,
+      multiple: true,
+      dropdownParent: $(this),
+      language: {
+        noResults: function () {
+          return "No se encontró la cuenta";
+        },
+      },
+    });
+});
+// select comun
+$(document).on("shown.bs.modal", ".modal", function () {
+  $(this)
+    .find(".select")
+    .select2({
+      theme: "bootstrap-5",
+      width: "100%",
+      dropdownParent: $(this),
+      language: {
+        noResults: function () {
+          return "No se encontró la cuenta";
+        },
+      },
+    });
+});
