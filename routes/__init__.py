@@ -7,7 +7,9 @@ from .sale import sale_bp
 from .customer import customer_bp
 from .trigger import trigger_bp
 from .manage import manage_bp
+from .consult import consult_bp
 from .utils.error import error_bp
+
 
 def routes (app):
     app.register_blueprint(login_bp)
@@ -19,4 +21,5 @@ def routes (app):
     app.register_blueprint(customer_bp)
     app.register_blueprint(trigger_bp)
     app.register_blueprint(manage_bp) 
+    app.register_blueprint(consult_bp) 
     app.register_blueprint(error_bp) 
