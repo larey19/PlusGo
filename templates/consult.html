@@ -27,11 +27,11 @@
     <div class="card shadow-sm mb-4">
         <div class="card-body">
 
-            <form action="{{url_for('manage.getConsult')}}" method="post" class="row g-2">
+            <form action="{{url_for('consult.getConsult')}}" method="post" class="row g-2">
                 {{ form.hidden_tag() }}
 
                 <div>
-                    {{ form.mngemail(class="form-control", placeholder="Correo a consultar") }}
+                    {{ form.csltemail(class="form-control select", placeholder="Correo a consultar") }}
                 </div>
 
                 <div>
@@ -116,54 +116,9 @@
 
 
 {% endblock %}
+
 {% block script %}
 
-<script>
-    $(document).ready(function () {
-        $('#table').DataTable({
-            pageLength: 10,
-            order: [[1,"desc"]],
-            language: {
-                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-            },
-            "columnDefs": [
-                {
-                    targets: [0], // Ajusta al índice de tu columna de fecha
-                    render: function (data, type, row) {
-                        if (type === 'display' && data) {
-                            // Para formato ISO: "netflix <info-net@blbalbla>"
-                            let partes = data.split(' ');
-                            if (partes.length === 2) {
-                                return `${partes[0]}`; // netflix
-                            }
-                        }
-                        return data;
-                    }
-                },
-                {
-                    targets: [1], // Ajusta al índice de tu columna de fecha
-                    render: function (data, type, row) {
-                        if (type === 'display' && data) {
-                            // Para formato ISO con hora: "2024-01-15 14:30:00"
-                            let partes = data.split(' ');
-                            if (partes.length === 2) {
-                                let fechaPartes = partes[0].split('-');
-                                if (fechaPartes.length === 3) {
-                                    return `${fechaPartes[2]}/${fechaPartes[1]}/${fechaPartes[0]} ${partes[1]}`; // DD/MM/YYYY HH:MM:SS
-                                }
-                            }
-                        }
-                        return data;
-                    }
-                },
-            ],
-            layout: {
-                bottomEnd: null,
-                topEnd: null,
-                topStart : null
-            }
-        });
-    });
-</script>
+<script src="{{ url_for('static', filename = 'javascript/consult.js') }}"></script>
 
 {% endblock %}
