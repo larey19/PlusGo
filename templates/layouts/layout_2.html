@@ -40,9 +40,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
     <!-- animaciones en la carga -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
     <style>
         * {
             font-family: Montserrat, -apple-system, system-ui;
+        }
+
+        body {
+            background-color: rgb(250, 250, 255);
+        }
+
+        #nprogress .bar {
+            height: 3px;
+        }
+
+        #nprogress .spinner-icon {
+            width: 25px;
+            height: 25px;
         }
     </style>
 </head>
@@ -140,18 +154,18 @@
     <!-- carga de pagina -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
     <script>
-        window.addEventListener('submit', () => {
-            NProgress.start()
-            setInterval(() => {
-                NProgress.inc();
-            }, 600)
+        window.addEventListener('load', () => {
+            NProgress.start();
+            NProgress.done();
         });
 
-        window.addEventListener('callback', () => NProgress.done());
-        NProgress.start()
-        window.addEventListener('load', () => {
-            NProgress.done()
+        document.addEventListener('submit', () => {
+            NProgress.start();
+            const interval = setInterval(() => {
+                NProgress.inc();
+            }, 600);
         });
+
     </script>
     <!-- animaciones en la carga -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
