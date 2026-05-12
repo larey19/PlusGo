@@ -11,7 +11,8 @@
 </script>
 {% endfor %}
 <!-- sera un div data -->
-<input type="hidden" id="data" data-meses = '{{ meses | safe }}' data-totalsale = '{{ totalsale | safe }}' data-planame = '{{ plaName | safe }}' data-plasale = '{{ plaSale | safe }}'>
+<input type="hidden" id="data" data-meses='{{ meses | safe }}' data-totalsale='{{ totalsale | safe }}'
+    data-planame='{{ plaName | safe }}' data-plasale='{{ plaSale | safe }}'>
 
 
 <!-- Main Content -->
@@ -23,12 +24,20 @@
             <h3 class="fw-bold m-0">Panel Principal</h3>
             <small class="text-muted">Informacion general PlusGo</small>
         </div>
+        <div class="dropdown">
+            <button class="btn" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item" href="#" onclick="confirmLogout()">
+                        <i class="bi bi-box-arrow-in-left me-2"></i>
+                        Cerrar Sesion
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-        <button class="btn btn-sm text-white text-decoration-none shadow"
-            style="background-color: rgba(4,17,43,0.92); color: white" onclick="confirmLogout()">
-            <i class="bi bi-box-arrow-in-left me-2"></i>
-            Cerrar Sesion
-        </button>
     </div>
 
     <div data-aos="zoom-in-up">
@@ -61,8 +70,8 @@
                                     {% for acc in account %}
                                     <tr>
                                         <td class="text-nowrap">
-                                            <a
-                                                href="{{url_for('account.getAccount', pla_id = acc[0], acc_nickname = acc[2])}}" class="text-decoration-none fw-medium text-black">
+                                            <a href="{{url_for('account.getAccount', pla_id = acc[0], acc_nickname = acc[2])}}"
+                                                class="text-decoration-none fw-medium text-black">
                                                 {{ acc[1] }}
                                             </a>
                                         </td>
