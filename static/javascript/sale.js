@@ -1,58 +1,95 @@
 AOS.init();
 // SCRIPT COPIA DE DATOS DE VENTA
-document.querySelectorAll(".dataSaleClip").forEach((sl) => {
+
+const clipButton = document.querySelectorAll("#clipButton");
+
+clipButton.forEach((sl) => {
   sl.addEventListener("click", function (clk) {
-    sl.classList.replace("dataSaleClip", "dataSaleClip2");
-    document.querySelectorAll("#clipboard").forEach((clip) => {
-      clip.classList.replace("bi-clipboard", "bi-clipboard-x");
-    });
+    console.log(sl.classList.contains("dataSaleClip"));
+    if (sl.classList.contains("dataSaleClip")) {
+      sl.classList.replace("dataSaleClip", "dataSaleClip2");
 
-    document.querySelectorAll(".dataSaleClip").forEach((sale) => {
-      sale.classList.add("d-none");
-    });
-
-    document
-      .querySelector(".dataSaleClip2")
-      .addEventListener("click", function (click) {
-        this.classList.replace("dataSaleClip2", "dataSaleClip");
-
-        document.querySelectorAll("#clipboard").forEach((clip) => {
-          clip.classList.replace("bi-clipboard-x", "bi-clipboard");
-        });
-        delete this.dataset.cst_id;
-        delete this.dataset.sal_date_start;
-        delete  this.dataset.sal_date_end;
-        delete this.dataset.sal_price;
-        delete this.dataset.sal_description;
-        
-        document.querySelectorAll(".dataSaleClip").forEach((sale) => {
-          sale.classList.remove("d-none");
+      document.querySelectorAll("#clipboard").forEach((clip) => {
+        clip.classList.replace("bi-clipboard", "bi-clipboard-x");
+        Swal.fire({
+          title: "Venta Copiada",
+          icon: "success",
+          showConfirmButton: false,
+          timer: 800,
         });
       });
 
-    // ============== CARGAR DATOS PARA PEGAR EN REGISTRAR
-    document.querySelectorAll(".cst_id").forEach((cstid) => {
-      cstid.value = this.dataset.cst_id;
-    });
-    document.querySelectorAll(".sal_date_start").forEach((datestart) => {
-      datestart.value = this.dataset.sal_date_start;
-    });
-    document.querySelectorAll(".sal_date_end").forEach((dateend) => {
-      dateend.value = this.dataset.sal_date_end;
-    });
-    document.querySelectorAll(".sal_price").forEach((salprice) => {
-      salprice.value = this.dataset.sal_price;
-      new Cleave(salprice, {
-        numeral: true,
-        numeralThousandsGroupStyle: "thousand",
-        numeralDecimalScale: 0,
+      document.querySelectorAll(".dataSaleClip").forEach((sale) => {
+        sale.classList.add("d-none");
       });
-    });
-    document.querySelectorAll(".sal_description").forEach((saldescription) => {
-      saldescription.textContent = this.dataset.sal_description;
-    });
+
+      // ============== CARGAR DATOS PARA PEGAR EN REGISTRAR
+      document.querySelectorAll(".cst_id").forEach((cstid) => {
+        cstid.value = this.dataset.cst_id;
+      });
+      document.querySelectorAll(".sal_date_start").forEach((datestart) => {
+        datestart.value = this.dataset.sal_date_start;
+      });
+      document.querySelectorAll(".sal_date_end").forEach((dateend) => {
+        dateend.value = this.dataset.sal_date_end;
+      });
+      document.querySelectorAll(".sal_price").forEach((salprice) => {
+        salprice.value = this.dataset.sal_price;
+        new Cleave(salprice, {
+          numeral: true,
+          numeralThousandsGroupStyle: "thousand",
+          numeralDecimalScale: 0,
+        });
+      });
+      document
+        .querySelectorAll(".sal_description")
+        .forEach((saldescription) => {
+          saldescription.textContent = this.dataset.sal_description;
+        });
+    } else {
+      console.log("encontrado");
+      this.classList.replace("dataSaleClip2", "dataSaleClip");
+      document.querySelectorAll("#clipboard").forEach((clip) => {
+        clip.classList.replace("bi-clipboard-x", "bi-clipboard");
+        Swal.fire({
+          title: "Venta eliminada",
+          icon: "info",
+          showConfirmButton: false,
+          timer: 800,
+        });
+      });
+
+      // ============== CARGAR DATOS PARA PEGAR EN REGISTRAR
+      document.querySelectorAll(".cst_id").forEach((cstid) => {
+        cstid.value = "";
+      });
+      document.querySelectorAll(".sal_date_start").forEach((datestart) => {
+        datestart.value = "";
+      });
+      document.querySelectorAll(".sal_date_end").forEach((dateend) => {
+        dateend.value = "";
+      });
+      document.querySelectorAll(".sal_price").forEach((salprice) => {
+        salprice.value = "";
+        new Cleave(salprice, {
+          numeral: true,
+          numeralThousandsGroupStyle: "thousand",
+          numeralDecimalScale: 0,
+        });
+      });
+      document
+        .querySelectorAll(".sal_description")
+        .forEach((saldescription) => {
+          saldescription.textContent = "";
+        });
+
+      document.querySelectorAll(".dataSaleClip").forEach((sale) => {
+        sale.classList.remove("d-none");
+      });
+    }
   });
 });
+
 new Cleave(document.querySelector(".sal_price"), {
   numeral: true,
   numeralThousandsGroupStyle: "thousand",
@@ -288,3 +325,18 @@ $(document).on("shown.bs.modal", ".modal", function () {
       },
     });
 });
+
+document.getElementById("dataAcc").addEventListener("click", function (clk) {
+  if (!document.getElementById("dataAcc").classList.contains("flex-column")) {
+      document.getElementById("dataAcc").classList.add("flex-column");
+      document.getElementById("acc_email").style.maxWidth = "100%";
+      document.getElementById("acc_password").style.maxWidth = "100%";
+      document.getElementById("pro_profile").style.maxWidth = "100%";
+  } else {
+      document.getElementById("dataAcc").classList.remove("flex-column");
+       console.log("ya borrado")
+      document.getElementById("acc_email").style.maxWidth = "150px";
+      document.getElementById("acc_password").style.maxWidth = "150px";
+      document.getElementById("pro_profile").style.maxWidth = "150px";
+  }
+  });
