@@ -114,7 +114,7 @@
                                     data['acc_number_phone'] else 'Sin contacto')}}"
                                 data-pro_profile="{{data['pro_profile'] if data['pro_profile']}}"
                                 data-acc_password="{{data['acc_password'] if data['acc_password'] else 'No registra'}}"
-                                data-cst_phone_number="({{data['cst_phone_number'][0:3] if data['cst_phone_number']}}) {{data['cst_phone_number'][3:6] if data['cst_phone_number']}}-{{data['cst_phone_number'][6:] if data['cst_phone_number']}}">
+                                data-cst_phone_number="{% if data['cst_phone_number'] %} ({{data['cst_phone_number'][0:3] if data['cst_phone_number']}}) {{data['cst_phone_number'][3:6] if data['cst_phone_number']}}-{{data['cst_phone_number'][6:] if data['cst_phone_number']}} {% else %} Sin Numero {% endif %}">
                                 <i class="bi bi-view-list"></i>
                             </button>
 
@@ -129,12 +129,14 @@
                                 <i class="bi bi-pencil-square"></i>
                             </button>
 
-                            <!-- COPIAR -->
-                            <button
+                            <!-- COPIAR --> 
+                            <button id="clipButton"
                                 class="btn btn-sm btn-outline-secondary dataSaleClip{{'none' if data['sal_id'] == None}} {{'d-none' if data['sal_id'] == None}}"
                                 data-sal_date_start="{{data['sal_date_start']}}"
-                                data-sal_date_end="{{data['sal_date_end']}}" data-sal_price="{{data['sal_price']}}"
-                                data-cst_id="{{data['cst_id']}}" data-sal_description="{{data['sal_description']}}">
+                                data-sal_date_end="{{data['sal_date_end']}}" 
+                                data-sal_price="{{data['sal_price']}}"
+                                data-cst_id="{{data['cst_id']}}" 
+                                data-sal_description="{{data['sal_description']}}">
                                 <i class="bi bi-clipboard" id="clipboard"></i>
                             </button>
 
@@ -179,7 +181,7 @@
 
                 <div class="row g-3">
                     <div class="col-6">
-                        <div class="p-3 border rounded bg-light">
+                        <div class="p-3 rounded bg-light border-end-0 shadow-sm border-primary" style="border-left: 5px solid">
                             <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Fecha
                                 Inicio</small>
                             <span class="text-dark" id="sal_date_start">
@@ -187,7 +189,7 @@
                         </div>
                     </div>
                     <div class="col-6">
-                        <div class="p-3 border rounded bg-light">
+                        <div class="p-3 rounded bg-light shadow-sm border-primary" style="border-left: 5px solid">
                             <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Fecha
                                 Fin</small>
                             <span class="text-dark" id="sal_date_end"></span>
@@ -205,10 +207,10 @@
 
                     <!-- Cuenta/Contacto -->
                     <div class="col-12">
-                        <div class="p-3 border rounded">
+                        <div class="p-3  rounded shadow-sm bg-light border-primary" style="border-left: 5px solid;">
                             <small class="text-muted d-block text-uppercase fw-bold mb-1"
                                 style="font-size: 0.7rem;">Información de Cuenta</small>
-                            <div class="d-flex justify-content-between gap-2">
+                            <div id="dataAcc" class="d-flex justify-content-between gap-2" role="button">
                                 <span id="acc_email" class = "text-truncate" style = "max-width : 150px"></span>
                                 <span id="acc_password" class = "text-nowrap text-truncate" style = "max-width : 150px"></span>
                                 <span id="pro_profile" class = "text-nowrap text-truncate" style = "max-width : 150px"></span>
@@ -218,8 +220,8 @@
 
                     <!-- Descripción -->
                     <div class="col-12">
-                        <div class="p-3 border rounded">
-                            <small class="text-muted d-block text-uppercase fw-bold mb-1"
+                        <div class="p-3 rounded border" >
+                            <small class="text-muted d-block text-uppercase fw-bold mb-1" 
                                 style="font-size: 0.7rem;">Descripción</small>
                             <p class="mb-0 small italic" id="sal_description">
 
