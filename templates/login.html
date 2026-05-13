@@ -59,12 +59,12 @@
             <!-- FORM MOBILE FULL -->
             <div
                 class="bg-white text-dark flex-grow-1 p-4 rounded-top-4 shadow-lg d-flex flex-column justify-content-start">
-                <div class="w-100 d-flex justify-content-center mb-3">
+                <div class="w-100 d-flex justify-content-center mb-3" data-aos="zoom-in-up">
                     <img src="{{url_for('static', filename='images/plusgo_letter_blue.png')}}" alt="..."
                         style="width: 130px;">
                 </div>
 
-                <form action="login" method="POST" class="w-100">
+                <form action="login" method="POST" class="w-100" data-aos="zoom-in-up">
                     {{form.hidden_tag()}}
                     <div class="mb-4">
                         <div class="input-group input-group-lg">
