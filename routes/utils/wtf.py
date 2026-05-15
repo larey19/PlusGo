@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, DateField, IntegerField, TextAreaField, SelectField, HiddenField, PasswordField, SubmitField, EmailField, TelField, SelectMultipleField
-from wtforms.validators import DataRequired, NumberRange,length
+from wtforms.validators import DataRequired, NumberRange,length, Optional
 
 class loginForm(FlaskForm):
     user = StringField(
@@ -41,6 +41,11 @@ class saleForm(FlaskForm):
 
     proid = HiddenField(validators=[DataRequired()])
 
+    propin = IntegerField(
+        "Pin",
+        validators=[Optional()]
+    )
+    
     btnSubmit = SubmitField("Guardar")
 
 class cstForm(FlaskForm):
@@ -64,6 +69,10 @@ class plaForm(FlaskForm):
     plaprofiles = IntegerField(
         "Perfiles Max",
         validators=[DataRequired(), NumberRange(min=1, max=10)]
+    )
+    plamessage = TextAreaField(
+        "Mensaje",
+        validators=[Optional(), length(max=10000)]
     )
     btnSubmit = SubmitField("Guardar")
 
