@@ -46,8 +46,10 @@ clipButton.forEach((sl) => {
         .forEach((saldescription) => {
           saldescription.textContent = this.dataset.sal_description;
         });
+      document.querySelectorAll(".pro_pin").forEach((propin) => {
+        propin.value = this.dataset.pro_pin_profile;
+      });
     } else {
-      console.log("encontrado");
       this.classList.replace("dataSaleClip2", "dataSaleClip");
       document.querySelectorAll("#clipboard").forEach((clip) => {
         clip.classList.replace("bi-clipboard-x", "bi-clipboard");
@@ -82,19 +84,22 @@ clipButton.forEach((sl) => {
         .forEach((saldescription) => {
           saldescription.textContent = "";
         });
-
+      document.querySelectorAll(".pro_pin").forEach((propin) => {
+        propin.value = "";
+      });
       document.querySelectorAll(".dataSaleClip").forEach((sale) => {
         sale.classList.remove("d-none");
       });
     }
   });
 });
-
+// formatea el precio de la modal de registro
 new Cleave(document.querySelector(".sal_price"), {
   numeral: true,
   numeralThousandsGroupStyle: "thousand",
   numeralDecimalScale: 0,
 });
+
 // SCRIPTS CARGA DE DATOS A MODALES Y VALIDACION DE EDICION
 document.querySelectorAll(".dataSale").forEach((sale) => {
   sale.addEventListener("click", function (c) {
@@ -109,6 +114,8 @@ document.querySelectorAll(".dataSale").forEach((sale) => {
     const cst_lastname = this.getAttribute("data-cst_lastname");
     const cst_phone_number = this.getAttribute("data-cst_phone_number");
     const pro_profile = this.getAttribute("data-pro_profile");
+    const pro_pin_profile = this.getAttribute("data-pro_pin_profile");
+    const pla_message = this.getAttribute("data-pla_message");
     // ============= DETALLES
     document.getElementById("cst_fullname").innerHTML =
       `${cst_name} ${cst_lastname}`;
@@ -125,6 +132,8 @@ document.querySelectorAll(".dataSale").forEach((sale) => {
       `<i class="bi bi-lock text-secondary"></i>Clave: ${acc_password}`;
     document.getElementById("pro_profile").innerHTML =
       `<i class="bi bi-tag-fill text-secondary"></i>Perfil ${pro_profile}`;
+    document.getElementById("pro_pin_profile").innerHTML =
+      `<i class="bi bi-lock text-secondary"></i>Pin: ${pro_pin_profile}`;
     document.getElementById("sal_description").innerHTML =
       `<i class="bi bi-info-circle me-1"></i> ${sal_description}`;
     // ============== CARGAR DATOS PARA EDITAR Y PARA REGISTRAR
@@ -148,9 +157,13 @@ document.querySelectorAll(".dataSale").forEach((sale) => {
     document.querySelectorAll(".proid").forEach((proid) => {
       proid.value = this.dataset.pro_id;
     });
+    document.querySelectorAll(".propin").forEach((propin) => {
+      propin.value = this.dataset.pro_pin_profile;
+    });
     document.querySelectorAll(".saldescription").forEach((saldescription) => {
       saldescription.textContent = this.dataset.sal_description;
     });
+
     // VALIDACION EDITAR
     document
       .getElementById("validateFormUpd")
@@ -158,31 +171,62 @@ document.querySelectorAll(".dataSale").forEach((sale) => {
         vld.preventDefault();
         form = this.closest("#form_upd");
         form.action = `/sale/${sal_id}`;
+        account = acc_email;
+        console.log(account);
         if (form && form.checkValidity()) {
-          confirmUpdate();
+          confirmUpdate(account);
         } else {
           form.reportValidity();
         }
       });
+    // VALIDACION DE CREACION
+    document
+      .getElementById("validateFormCrt")
+      .addEventListener("click", function (vld) {
+        vld.preventDefault();
+        form = this.closest("#form_crt");
+        account = acc_email;
+        if (form && form.checkValidity()) {
+          confirmCreate(account);
+        } else {
+          form.reportValidity();
+        }
+      });
+
+    // ================ COPIAR EN PORTAPAPELES MENSAJE DE DATOS DE VENTA
+    document.getElementById("copyButton").addEventListener("click", () => {
+      if (pla_message) {
+        document
+          .getElementById("copyButton")
+          .classList.replace("bi-copy", "bi-check-circle");
+        navigator.clipboard.writeText(pla_message).then(() => {
+          setTimeout(
+            () =>
+              document
+                .getElementById("copyButton")
+                .classList.replace("bi-check-circle", "bi-copy"),
+            3000,
+          );
+        });
+      } else
+        document
+          .getElementById("copyButton")
+          .classList.replace("bi-copy", "bi-x-circle");
+      setTimeout(() => {
+        console.log("hola");
+        document
+          .getElementById("copyButton")
+          .classList.replace("bi-x-circle", "bi-copy");
+      }, 3000);
+    });
   });
 });
-// VALIDACION DE EDICION
-document
-  .getElementById("validateFormCrt")
-  .addEventListener("click", function (vld) {
-    vld.preventDefault();
-    form = this.closest("#form_crt");
 
-    if (form && form.checkValidity()) {
-      confirmCreate();
-    } else {
-      form.reportValidity();
-    }
-  });
 // CONFIRMACIONES DE ACCIONES
-function confirmCreate() {
+function confirmCreate(account) {
   Swal.fire({
     title: "¿Registrar venta?",
+    text: `En ${account}`,
     icon: "info",
     showCancelButton: true,
     confirmButtonColor: "rgba(4,17,43,0.92)",
@@ -194,9 +238,10 @@ function confirmCreate() {
     }
   });
 }
-function confirmUpdate() {
+function confirmUpdate(account) {
   Swal.fire({
     title: "¿Actualizar venta?",
+    text: `En ${account}`,
     icon: "info",
     showCancelButton: true,
     confirmButtonColor: "rgba(4,17,43,0.92)",
@@ -208,11 +253,11 @@ function confirmUpdate() {
     }
   });
 }
-function confirmDelete(id) {
+function confirmDelete(id, account) {
   if (id != null && id != "") {
     Swal.fire({
       title: "¿Eliminar venta?",
-      text: "Desactivar y eliminar una venta no se puede deshacer",
+      text: `En ${account}, Desactivar y eliminar una venta no se puede deshacer.`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -326,17 +371,42 @@ $(document).on("shown.bs.modal", ".modal", function () {
     });
 });
 
+document.querySelectorAll("#buttonPin").forEach((button) => {
+  button.closest(".modal").addEventListener("hide.bs.modal", () => {
+    button.classList.replace("bi-pencil-fill", "bi-pencil");
+    document.querySelectorAll("#propin").forEach((propin) => {
+      propin.setAttribute("disabled", true);
+    });
+  });
+  button.addEventListener("click", function (clk) {
+    if (button.classList.contains("bi-pencil")) {
+      button.classList.replace("bi-pencil", "bi-pencil-fill");
+      document.querySelectorAll("#propin").forEach((propin) => {
+        propin.removeAttribute("disabled");
+      });
+    } else {
+      button.classList.replace("bi-pencil-fill", "bi-pencil");
+      document.querySelectorAll("#propin").forEach((propin) => {
+        propin.setAttribute("disabled", true);
+      });
+    }
+  });
+});
+
 document.getElementById("dataAcc").addEventListener("click", function (clk) {
   if (!document.getElementById("dataAcc").classList.contains("flex-column")) {
-      document.getElementById("dataAcc").classList.add("flex-column");
-      document.getElementById("acc_email").style.maxWidth = "100%";
-      document.getElementById("acc_password").style.maxWidth = "100%";
-      document.getElementById("pro_profile").style.maxWidth = "100%";
+    document.getElementById("dataAcc").classList.add("flex-column");
+    document.getElementById("acc_email").style.maxWidth = "100%";
+    document.getElementById("acc_password").style.maxWidth = "100%";
+    document.getElementById("pro_profile").style.maxWidth = "100%";
+    document.getElementById("pro_pin_profile").classList.remove("d-none");
+    document.getElementById("copyData").classList.remove("d-none");
   } else {
-      document.getElementById("dataAcc").classList.remove("flex-column");
-       console.log("ya borrado")
-      document.getElementById("acc_email").style.maxWidth = "150px";
-      document.getElementById("acc_password").style.maxWidth = "150px";
-      document.getElementById("pro_profile").style.maxWidth = "150px";
+    document.getElementById("dataAcc").classList.remove("flex-column");
+    document.getElementById("acc_email").style.maxWidth = "150px";
+    document.getElementById("acc_password").style.maxWidth = "150px";
+    document.getElementById("pro_profile").style.maxWidth = "150px";
+    document.getElementById("pro_pin_profile").classList.add("d-none");
+    document.getElementById("copyData").classList.add("d-none");
   }
-  });
+});
