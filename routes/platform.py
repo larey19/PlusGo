@@ -15,9 +15,10 @@ def crtPlatform():
             plaid = uuid.uuid4()
             planame = (form.planame.data).strip()
             plaprofiles = form.plaprofiles.data
+            plamessage = (form.plamessage.data).strip()
             
             cursor = current_app.mysql.connection.cursor()
-            cursor.execute("INSERT INTO t_platform (pla_id, pla_name, pla_profiles) VALUES (%s, %s, %s)", (plaid, planame, plaprofiles))
+            cursor.execute("INSERT INTO t_platform (pla_id, pla_name, pla_profiles, pla_message) VALUES (%s, %s, %s, %s)", (plaid, planame, plaprofiles, plamessage))
             cursor.connection.commit()
             flash ("Registro Exitoso", "success")
             return redirect("/platform")
@@ -53,17 +54,18 @@ def getPlatform():
 @platform_bp.route("/platform/<pla_id>", methods = ["POST"])
 @token
 def putPlatform(pla_id):
-    try:
+    try: 
         form = plaForm()
         if form.validate_on_submit():
             planame = (form.planame.data).strip()
             plaprofiles = form.plaprofiles.data
+            plamessage = (form.plamessage.data).strip()
             cursor = current_app.mysql.connection.cursor()
             cursor.execute("SELECT * FROM t_platform WHERE pla_id = %s", (pla_id,))
             if not cursor.fetchone():
                 flash("Plataforma no Encontrada", "error")  
                 return redirect("/platform")
-            cursor.execute("UPDATE t_platform SET pla_name = %s, pla_profiles = %s WHERE pla_id = %s", (planame,plaprofiles, pla_id))
+            cursor.execute("UPDATE t_platform SET pla_name = %s, pla_profiles = %s, pla_message = %s WHERE pla_id = %s", (planame,plaprofiles,plamessage, pla_id))
             cursor.connection.commit()
             flash ("Actualizacion Exitosa", "success")
             return redirect("/platform")
