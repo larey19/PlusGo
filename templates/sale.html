@@ -80,9 +80,11 @@
 
                         <td class="text-center text-nowrap">
                             <!-- Vender -->
-                            <button class="btn btn-sm dataSale {{'d-none' if data['sal_id'] != None}}" data-bs-toggle="modal"
-                                data-bs-target="#crtSale"
-                                data-pro_id="{{data['pro_id']}}" style="--bs-btn-color: rgba(4,17,43,0.92);
+                            <button class="btn btn-sm dataSale {{'d-none' if data['sal_id'] != None}}"
+                                data-bs-toggle="modal" data-bs-target="#crtSale" data-pro_id="{{data['pro_id']}}"
+                                data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else 'Sin Pin'}}"
+                                data-acc_email="{% if data['acc_number_phone'] %}({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}}{% else %}{{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}}{% endif %}"
+                                style="--bs-btn-color: rgba(4,17,43,0.92);
     --bs-btn-border-color: rgba(4,17,43,0.92);
     --bs-btn-hover-color: #fff;
     --bs-btn-hover-bg: rgba(4,17,43,0.92);
@@ -100,7 +102,9 @@
                             </button>
 
                             <!-- Ver -->
-                            <button class="btn btn-sm btn-outline-secondary dataSale {{'d-none' if data['sal_id'] == None}}" data-bs-toggle="modal"
+                            <button
+                                class="btn btn-sm btn-outline-secondary dataSale {{'d-none' if data['sal_id'] == None}}"
+                                data-bs-toggle="modal"
                                 data-bs-target="#getSale{{'' if data['sal_id'] != None else None}}" data-sal_date_start="{{data['sal_date_start'].strftime('%d-%m-%Y')
                                 if
                                 data['sal_date_start'] else '--'}}" data-sal_date_end="{{data['sal_date_end'].strftime('%d-%m-%Y')
@@ -110,39 +114,44 @@
                                 data['sal_description'] else 'Ninguna observación registrada.'}}"
                                 data-cst_name="{{data['cst_name'] if data['cst_name'] else ''}}"
                                 data-cst_lastname="{{data['cst_lastname'] if data['cst_lastname'] else ''}}"
-                                data-acc_email="{{data['acc_email'] if data['acc_email'] else (data['acc_number_phone'] if
-                                    data['acc_number_phone'] else 'Sin contacto')}}"
+                                data-acc_email="{% if data['acc_number_phone'] %} ({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}} {% else %} {{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}} {% endif %}"
                                 data-pro_profile="{{data['pro_profile'] if data['pro_profile']}}"
                                 data-acc_password="{{data['acc_password'] if data['acc_password'] else 'No registra'}}"
-                                data-cst_phone_number="{% if data['cst_phone_number'] %} ({{data['cst_phone_number'][0:3] if data['cst_phone_number']}}) {{data['cst_phone_number'][3:6] if data['cst_phone_number']}}-{{data['cst_phone_number'][6:] if data['cst_phone_number']}} {% else %} Sin Numero {% endif %}">
+                                data-cst_phone_number="{% if data['cst_phone_number'] %} ({{data['cst_phone_number'][0:3] if data['cst_phone_number']}}) {{data['cst_phone_number'][3:6] if data['cst_phone_number']}}-{{data['cst_phone_number'][6:] if data['cst_phone_number']}} {% else %} Sin Numero {% endif %}"
+                                data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else 'Sin Pin'}}"
+                                data-pla_message="{{data['pla_message'] if data['pla_message'] else ''}}">
                                 <i class="bi bi-view-list"></i>
                             </button>
 
 
                             <!-- Editar -->
-                            <button class="btn btn-sm btn-outline-primary dataSale  {{'d-none' if data['sal_id'] == None}}" data-bs-toggle="modal"
+                            <button
+                                class="btn btn-sm btn-outline-primary dataSale  {{'d-none' if data['sal_id'] == None}}"
+                                data-bs-toggle="modal"
                                 data-bs-target="#putSale{{'' if data['sal_id'] != None else None}}"
                                 data-sal_id="{{data['sal_id']}}" data-sal_date_start="{{data['sal_date_start']}}"
                                 data-sal_date_end="{{data['sal_date_end']}}" data-sal_price="{{data['sal_price']}}"
                                 data-cst_id="{{data['cst_id']}}" data-pro_id="{{data['pro_id']}}"
-                                data-sal_description="{{data['sal_description']}}">
+                                data-sal_description="{{data['sal_description']}}"
+                                data-acc_email="{% if data['acc_number_phone'] %} ({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}} {% else %} {{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}} {% endif %}"
+                                data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else 'Sin Pin'}}">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
 
-                            <!-- COPIAR --> 
+                            <!-- COPIAR -->
                             <button id="clipButton"
                                 class="btn btn-sm btn-outline-secondary dataSaleClip{{'none' if data['sal_id'] == None}} {{'d-none' if data['sal_id'] == None}}"
                                 data-sal_date_start="{{data['sal_date_start']}}"
-                                data-sal_date_end="{{data['sal_date_end']}}" 
-                                data-sal_price="{{data['sal_price']}}"
-                                data-cst_id="{{data['cst_id']}}" 
-                                data-sal_description="{{data['sal_description']}}">
+                                data-sal_date_end="{{data['sal_date_end']}}" data-sal_price="{{data['sal_price']}}"
+                                data-cst_id="{{data['cst_id']}}" data-sal_description="{{data['sal_description']}}"
+                                data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else 'Sin Pin'}}">
                                 <i class="bi bi-clipboard" id="clipboard"></i>
                             </button>
 
                             <!-- Eliminar -->
                             <button class="btn btn-sm btn-outline-danger  {{'d-none' if data['sal_id'] == None}}"
-                                onclick="confirmDelete(`{{data['sal_id'] if data['sal_id'] != None}}`)">
+                                onclick="confirmDelete(`{{data['sal_id'] if data['sal_id'] != None}}`, `{% if data['acc_number_phone'] %}({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}}{% else %}{{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}}{% endif %}`)"
+                                data-acc_email="{% if data['acc_number_phone'] %}({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}}{% else %}{{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}}{% endif %}">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
@@ -181,10 +190,11 @@
 
                 <div class="row g-3">
                     <div class="col-6">
-                        <div class="p-3 rounded bg-light border-end-0 shadow-sm border-primary" style="border-left: 5px solid">
+                        <div class="p-3 rounded bg-light border-end-0 shadow-sm border-primary"
+                            style="border-left: 5px solid">
                             <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Fecha
                                 Inicio</small>
-                            <span class="text-dark" id="sal_date_start">
+                            <span class="text-dark text-nowrap" id="sal_date_start">
                             </span>
                         </div>
                     </div>
@@ -192,7 +202,7 @@
                         <div class="p-3 rounded bg-light shadow-sm border-primary" style="border-left: 5px solid">
                             <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Fecha
                                 Fin</small>
-                            <span class="text-dark" id="sal_date_end"></span>
+                            <span class="text-dark text-nowrap" id="sal_date_end"></span>
                         </div>
                     </div>
 
@@ -205,23 +215,32 @@
                         </div>
                     </div>
 
-                    <!-- Cuenta/Contacto -->
+                    <!-- Cuenta -->
                     <div class="col-12">
                         <div class="p-3  rounded shadow-sm bg-light border-primary" style="border-left: 5px solid;">
                             <small class="text-muted d-block text-uppercase fw-bold mb-1"
                                 style="font-size: 0.7rem;">Información de Cuenta</small>
                             <div id="dataAcc" class="d-flex justify-content-between gap-2" role="button">
-                                <span id="acc_email" class = "text-truncate" style = "max-width : 150px"></span>
-                                <span id="acc_password" class = "text-nowrap text-truncate" style = "max-width : 150px"></span>
-                                <span id="pro_profile" class = "text-nowrap text-truncate" style = "max-width : 150px"></span>
+                                <span id="acc_email" class="text-truncate" style="max-width : 150px"></span>
+                                <span id="acc_password" class="text-nowrap text-truncate"
+                                    style="max-width : 150px"></span>
+                                <span id="pro_profile" class="text-nowrap text-truncate"
+                                    style="max-width : 150px"></span>
+                                <span id="pro_pin_profile" class="text-nowrap text-truncate d-none"
+                                    style="max-width : 150px"></span>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <span id="copyData" class="d-none">
+                                    <i class="bi bi-copy" role="button" id="copyButton"></i>
+                                </span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Descripción -->
                     <div class="col-12">
-                        <div class="p-3 rounded border" >
-                            <small class="text-muted d-block text-uppercase fw-bold mb-1" 
+                        <div class="p-3 rounded border">
+                            <small class="text-muted d-block text-uppercase fw-bold mb-1"
                                 style="font-size: 0.7rem;">Descripción</small>
                             <p class="mb-0 small italic" id="sal_description">
 
@@ -269,9 +288,18 @@
                         {{ form.saldateend(class="form-control sal_date_end") }}
                     </div>
 
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         {{ form.salprice.label(class="form-label") }}*
                         {{ form.salprice(class="form-control sal_price", placeholder="Precio") }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.propin.label(class="form-label") }}
+                        <div class="input-group">
+                            {{ form.propin(class="form-control pro_pin", placeholder="Sin Pin", disabled = true) }}
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="bi bi-pencil" id="buttonPin"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="col-md-12">
@@ -326,10 +354,18 @@
                         {{ form.saldateend(class="form-control saldateend") }}
                     </div>
 
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         {{ form.salprice.label(class="form-label") }}*
                         {{ form.salprice(class="form-control salprice", placeholder="Precio")
                         }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.propin.label(class="form-label") }}
+                        <div class="input-group">
+                            {{ form.propin(class="form-control propin", placeholder="12345", disabled = true) }}
+                            <button class="btn btn-outline-secondary" type="button"><i class="bi bi-pencil"
+                                    id="buttonPin"></i></button>
+                        </div>
                     </div>
                     <div class="col-md-12">
                         {{ form.saldescription.label(class="form-label") }}
