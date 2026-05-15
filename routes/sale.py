@@ -67,7 +67,8 @@ def getSale(pla_id):
         cursor.execute("""SELECT t_account.acc_id, t_account.acc_email, 
                         t_profile.pro_id , t_profile.pro_profile, t_profile.pro_pin_profile, 
                         t_sale.sal_id, t_sale.sal_date_start, t_sale.sal_date_end, t_sale.sal_price, t_sale.sal_description, 
-                        t_customer.cst_id, t_customer.cst_name, t_customer.cst_lastname, t_customer.cst_phone_number, t_account.acc_number_phone,  t_account.acc_password
+                        t_customer.cst_id, t_customer.cst_name, t_customer.cst_lastname, t_customer.cst_phone_number, 
+                        t_account.acc_number_phone,  t_account.acc_password, t_profile.pro_pin_profile, t_platform.pla_message
                         FROM t_account 
                         INNER JOIN t_platform ON t_account.pla_id = t_platform.pla_id 
                         INNER JOIN t_profile ON t_account.acc_id = t_profile.acc_id
@@ -92,7 +93,19 @@ def getSale(pla_id):
                 "cst_lastname":x[12],
                 "cst_phone_number":x[13],
                 "acc_number_phone":x[14],
-                "acc_password":x[15]
+                "acc_password":x[15],
+                "pro_pin_profile":x[16],
+                "pla_message": x[17].replace(
+                    '{account}', x[1] if x[1] else x[2]
+                    ).replace(
+                        '{password}', x[15] if x[15] else 'Sin Contraseña'
+                        ).replace(
+                            '{profile}', x[3] if x[3] else 'Sin Perfil'
+                        ).replace(
+                            '{pin}', x[16] if x[16] else 'Sin Pin'
+                        ).replace(
+                            '{date}', str(x[7].strftime("%d/%m")) if x[7] else 'Sin Fecha'
+                        )
             } for x in cursor.fetchall()]
         cursor.execute("SELECT pla_name FROM t_platform WHERE pla_id = %s",(pla_id,))
         plaName = cursor.fetchone()
@@ -130,6 +143,9 @@ def crtSale():
             saldescription = (form.saldescription.data).strip()
             cstid = (form.cstid.data).strip()
             proid = (form.proid.data).strip()
+            
+            propin = form.propin.data
+
             if saldateend <= saldatestart:
                 backup(form)
                 flash("Fecha Fin Invalida", "error")
@@ -141,11 +157,17 @@ def crtSale():
                 backup(form)
                 flash("Perfil No Disponible", "error")
                 return redirect(session.get('url_back_post'))
+            sql = f"UPDATE t_profile SET pro_state = %s {',pro_pin_profile = %s' if propin else ''} WHERE pro_id = %s"
+            if propin:
+                cursor.execute(sql,('disabled', propin, proid,))
+            else:
+                cursor.execute(sql,('disabled', proid,))
             cursor.execute("INSERT INTO t_sale (sal_id, sal_date_start, sal_date_end, sal_price, sal_description, sal_state, cst_id, pro_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (salid, saldatestart, saldateend, salprice, saldescription, 'active', cstid, proid,))
-            cursor.execute("UPDATE t_profile SET pro_state = %s WHERE pro_id = %s", ('disable', proid,))
             cursor.connection.commit()
             flash ("Registro Exitoso", "success")
             return redirect(session.get('url_back_post'))
+        print(form.propin.data)
+        print(form.errors)
         backup(form)
         flash("Ingresa toda la información requerida", "error")
         return redirect(session.get("url_back_post"))
