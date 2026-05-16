@@ -105,7 +105,7 @@ def getSale(pla_id):
                             '{pin}', x[16] if x[16] else 'Sin Pin'
                         ).replace(
                             '{date}', str(x[7].strftime("%d/%m")) if x[7] else 'Sin Fecha'
-                        )
+                        ) if x[17] else ''
             } for x in cursor.fetchall()]
         cursor.execute("SELECT pla_name FROM t_platform WHERE pla_id = %s",(pla_id,))
         plaName = cursor.fetchone()
