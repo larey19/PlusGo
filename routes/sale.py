@@ -95,7 +95,7 @@ def getSale(pla_id):
                 "acc_number_phone":x[14],
                 "acc_password":x[15],
                 "pro_pin_profile":x[16],
-                "pla_message": x[17].replace(
+                "pla_message": x[17].replace(   
                     '{account}', x[1] if x[1] else x[2]
                     ).replace(
                         '{password}', x[15] if x[15] else 'Sin Contraseña'
@@ -205,6 +205,9 @@ def putSale(sal_id):
             saldescription = (form.saldescription.data).strip()
             cstid = (form.cstid.data).strip()
             
+            proid = (form.proid.data).strip()
+            propin = form.propin.data
+            
             if saldateend < saldatestart:
                 flash("Fecha Fin Invalida", "error")
                 return redirect(session.get('url_back_post'))
@@ -214,6 +217,8 @@ def putSale(sal_id):
             if state and (state[1] == "expired") or ((state[2] == "disable" or  state[2] == "pending") and sal_id != state[0]):
                 flash("Esta venta no se puede Actualizar", "error")
                 return redirect(session.get('url_back_post'))
+            if propin:
+                cursor.execute("UPDATE t_profile SET pro_pin_profile = %s WHERE pro_id = %s",(propin, proid,))
             cursor.execute("UPDATE t_sale SET sal_date_start = %s, sal_date_end = %s, sal_price = %s, sal_description = %s, cst_id = %s WHERE sal_id = %s", (saldatestart, saldateend, salprice, saldescription, cstid, sal_id,))
             cursor.connection.commit()
             flash ("Venta Actualizada", "success")
