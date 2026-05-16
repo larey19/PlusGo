@@ -86,7 +86,7 @@ def getSale(pla_id):
                 "sal_id":x[5],
                 "sal_date_start":x[6],
                 "sal_date_end":x[7],
-                "sal_price":int(x[8]) if x[8] else x[8],
+                "sal_price": x[8],
                 "sal_description":x[9],
                 "cst_id":x[10],
                 "cst_name":x[11],
@@ -143,9 +143,13 @@ def crtSale():
             saldescription = (form.saldescription.data).strip()
             cstid = (form.cstid.data).strip()
             proid = (form.proid.data).strip()
-            
-            propin = form.propin.data
+            propin = (form.propin.data).strip() if form.propin.data else form.propin.data
 
+
+            if propin and not propin.isdigit():
+                flash("Pin Invalido", "error")
+                return redirect(session.get('url_back_post'))
+            
             if saldateend <= saldatestart:
                 backup(form)
                 flash("Fecha Fin Invalida", "error")
@@ -166,7 +170,6 @@ def crtSale():
             cursor.connection.commit()
             flash ("Registro Exitoso", "success")
             return redirect(session.get('url_back_post'))
-        print(form.propin.data)
         print(form.errors)
         backup(form)
         flash("Ingresa toda la información requerida", "error")
@@ -206,23 +209,30 @@ def putSale(sal_id):
             cstid = (form.cstid.data).strip()
             
             proid = (form.proid.data).strip()
-            propin = form.propin.data
+            propin = (form.propin.data).strip() if form.propin.data else form.propin.data
+            
             
             if saldateend < saldatestart:
                 flash("Fecha Fin Invalida", "error")
                 return redirect(session.get('url_back_post'))
+            
+            if propin and propin and not propin.isdigit():
+                flash("Pin Invalido", "error")
+                return redirect(session.get('url_back_post'))
+            
             cursor = current_app.mysql.connection.cursor()
             cursor.execute("SELECT t_sale.sal_id, t_sale.sal_state, t_profile.pro_state FROM t_sale JOIN t_profile ON t_sale.pro_id = t_profile.pro_id WHERE sal_id = %s", (sal_id,))
             state = cursor.fetchone()
             if state and (state[1] == "expired") or ((state[2] == "disable" or  state[2] == "pending") and sal_id != state[0]):
                 flash("Esta venta no se puede Actualizar", "error")
                 return redirect(session.get('url_back_post'))
+            cursor.execute("UPDATE t_sale SET sal_date_start = %s, sal_date_end = %s, sal_price = %s, sal_description = %s, cst_id = %s WHERE sal_id = %s", (saldatestart, saldateend, salprice, saldescription, cstid, sal_id,))
             if propin:
                 cursor.execute("UPDATE t_profile SET pro_pin_profile = %s WHERE pro_id = %s",(propin, proid,))
-            cursor.execute("UPDATE t_sale SET sal_date_start = %s, sal_date_end = %s, sal_price = %s, sal_description = %s, cst_id = %s WHERE sal_id = %s", (saldatestart, saldateend, salprice, saldescription, cstid, sal_id,))
             cursor.connection.commit()
             flash ("Venta Actualizada", "success")
             return redirect(session.get('url_back_post'))
+        print(form.errors)
         backup(form)
         flash("Ingresa toda la información requerida", "error")
         return redirect(session.get("url_back_post"))
