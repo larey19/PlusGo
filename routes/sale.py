@@ -159,9 +159,9 @@ def crtSale():
                 return redirect(session.get('url_back_post'))
             sql = f"UPDATE t_profile SET pro_state = %s {',pro_pin_profile = %s' if propin else ''} WHERE pro_id = %s"
             if propin:
-                cursor.execute(sql,('disabled', propin, proid,))
+                cursor.execute(sql,('disable', propin, proid,))
             else:
-                cursor.execute(sql,('disabled', proid,))
+                cursor.execute(sql,('disable', proid,))
             cursor.execute("INSERT INTO t_sale (sal_id, sal_date_start, sal_date_end, sal_price, sal_description, sal_state, cst_id, pro_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (salid, saldatestart, saldateend, salprice, saldescription, 'active', cstid, proid,))
             cursor.connection.commit()
             flash ("Registro Exitoso", "success")
