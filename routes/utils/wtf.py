@@ -41,9 +41,9 @@ class saleForm(FlaskForm):
 
     proid = HiddenField(validators=[DataRequired()])
 
-    propin = IntegerField(
+    propin = StringField(
         "Pin",
-        validators=[Optional()]
+        validators=[length(max=6)]
     )
     
     btnSubmit = SubmitField("Guardar")
