@@ -1,14 +1,9 @@
 AOS.init();
 // SCRIPT COPIA DE DATOS DE VENTA
-
-const clipButton = document.querySelectorAll("#clipButton");
-
-clipButton.forEach((sl) => {
+document.querySelectorAll("#clipButton").forEach((sl) => {
   sl.addEventListener("click", function (clk) {
-    console.log(sl.classList.contains("dataSaleClip"));
     if (sl.classList.contains("dataSaleClip")) {
       sl.classList.replace("dataSaleClip", "dataSaleClip2");
-
       document.querySelectorAll("#clipboard").forEach((clip) => {
         clip.classList.replace("bi-clipboard", "bi-clipboard-x");
         Swal.fire({
@@ -23,85 +18,48 @@ clipButton.forEach((sl) => {
         sale.classList.add("d-none");
       });
 
-      // ============== CARGAR DATOS PARA PEGAR EN REGISTRAR
-      document.querySelectorAll(".cst_id").forEach((cstid) => {
-        cstid.value = this.dataset.cst_id;
+      // ============== CARGAR DATOS EN MODAL REGISTRAR
+      document.querySelector(".cst_id").value = this.dataset.cst_id;
+      document.querySelector(".sal_date_start").value =
+        this.dataset.sal_date_start;
+      document.querySelector(".sal_date_end").value = this.dataset.sal_date_end;
+      document.querySelector(".sal_price").value = this.dataset.sal_price;
+      new Cleave(document.querySelector(".sal_price"), {
+        numeral: true,
+        numeralThousandsGroupStyle: "thousand",
+        numeralDecimalScale: 0,
       });
-      document.querySelectorAll(".sal_date_start").forEach((datestart) => {
-        datestart.value = this.dataset.sal_date_start;
-      });
-      document.querySelectorAll(".sal_date_end").forEach((dateend) => {
-        dateend.value = this.dataset.sal_date_end;
-      });
-      document.querySelectorAll(".sal_price").forEach((salprice) => {
-        salprice.value = this.dataset.sal_price;
-        new Cleave(salprice, {
-          numeral: true,
-          numeralThousandsGroupStyle: "thousand",
-          numeralDecimalScale: 0,
-        });
-      });
-      document
-        .querySelectorAll(".sal_description")
-        .forEach((saldescription) => {
-          saldescription.textContent = this.dataset.sal_description;
-        });
-      document.querySelectorAll(".pro_pin").forEach((propin) => {
-        propin.value = this.dataset.pro_pin_profile;
-      });
+      document.querySelector(".sal_description").textContent =
+        this.dataset.sal_description;
+      document.querySelector(".pro_pin").value = this.dataset.pro_pin_profile;
     } else {
       this.classList.replace("dataSaleClip2", "dataSaleClip");
       document.querySelectorAll("#clipboard").forEach((clip) => {
         clip.classList.replace("bi-clipboard-x", "bi-clipboard");
         Swal.fire({
-          title: "Venta eliminada",
+          title: "Venta Eliminada",
           icon: "info",
           showConfirmButton: false,
           timer: 800,
         });
       });
 
-      // ============== CARGAR DATOS PARA PEGAR EN REGISTRAR
-      document.querySelectorAll(".cst_id").forEach((cstid) => {
-        cstid.value = "";
-      });
-      document.querySelectorAll(".sal_date_start").forEach((datestart) => {
-        datestart.value = "";
-      });
-      document.querySelectorAll(".sal_date_end").forEach((dateend) => {
-        dateend.value = "";
-      });
-      document.querySelectorAll(".sal_price").forEach((salprice) => {
-        salprice.value = "";
-        new Cleave(salprice, {
-          numeral: true,
-          numeralThousandsGroupStyle: "thousand",
-          numeralDecimalScale: 0,
-        });
-      });
-      document
-        .querySelectorAll(".sal_description")
-        .forEach((saldescription) => {
-          saldescription.textContent = "";
-        });
-      document.querySelectorAll(".pro_pin").forEach((propin) => {
-        propin.value = "";
-      });
+      // ============== ELIMINA DATOS DE REGISTRAR
+      document.querySelector(".cst_id").value = "";
+      document.querySelector(".sal_date_start").value = "";
+      document.querySelector(".sal_date_end").value = "";
+      document.querySelector(".sal_price").value = "";
+      document.querySelector(".sal_description").textContent = "";
+      document.querySelector(".pro_pin").value = "";
       document.querySelectorAll(".dataSaleClip").forEach((sale) => {
         sale.classList.remove("d-none");
       });
     }
   });
 });
-// formatea el precio de la modal de registro
-new Cleave(document.querySelector(".sal_price"), {
-  numeral: true,
-  numeralThousandsGroupStyle: "thousand",
-  numeralDecimalScale: 0,
-});
 
-// SCRIPTS CARGA DE DATOS A MODALES Y VALIDACION DE EDICION
-document.querySelectorAll(".dataSale").forEach((sale) => {
+// SCRIPTS MODAL DETALLES 
+document.querySelectorAll(".dataSaleDetails").forEach((sale) => {
   sale.addEventListener("click", function (c) {
     const sal_id = this.getAttribute("data-sal_id");
     const sal_price = this.getAttribute("data-sal_price");
@@ -116,7 +74,7 @@ document.querySelectorAll(".dataSale").forEach((sale) => {
     const pro_profile = this.getAttribute("data-pro_profile");
     const pro_pin_profile = this.getAttribute("data-pro_pin_profile");
     const pla_message = this.getAttribute("data-pla_message");
-    // ============= DETALLES
+    // ============= CARGA DATOS EN MODAL DETALLES
     document.getElementById("cst_fullname").innerHTML =
       `${cst_name} ${cst_lastname}`;
     document.getElementById("cst_phone_number").innerHTML =
@@ -136,62 +94,6 @@ document.querySelectorAll(".dataSale").forEach((sale) => {
       `<i class="bi bi-lock text-secondary"></i>Pin: ${pro_pin_profile}`;
     document.getElementById("sal_description").innerHTML =
       `<i class="bi bi-info-circle me-1"></i> ${sal_description}`;
-    // ============== CARGAR DATOS PARA EDITAR Y PARA REGISTRAR
-    document.querySelectorAll(".cstid").forEach((cstid) => {
-      cstid.value = this.dataset.cst_id;
-    });
-    document.querySelectorAll(".saldatestart").forEach((datestart) => {
-      datestart.value = this.dataset.sal_date_start;
-    });
-    document.querySelectorAll(".saldateend").forEach((dateend) => {
-      dateend.value = this.dataset.sal_date_end;
-    });
-    document.querySelectorAll(".salprice").forEach((salprice) => {
-      salprice.value = this.dataset.sal_price;
-      new Cleave(salprice, {
-        numeral: true,
-        numeralThousandsGroupStyle: "thousand",
-        numeralDecimalScale: 0,
-      });
-    });
-    document.querySelectorAll(".proid").forEach((proid) => {
-      proid.value = this.dataset.pro_id;
-    });
-    document.querySelectorAll(".propin").forEach((propin) => {
-      propin.value = this.dataset.pro_pin_profile;
-    });
-    document.querySelectorAll(".saldescription").forEach((saldescription) => {
-      saldescription.textContent = this.dataset.sal_description;
-    });
-
-    // VALIDACION EDITAR
-    document
-      .getElementById("validateFormUpd")
-      .addEventListener("click", function (vld) {
-        vld.preventDefault();
-        form = this.closest("#form_upd");
-        form.action = `/sale/${sal_id}`;
-        account = acc_email;
-        console.log(account);
-        if (form && form.checkValidity()) {
-          confirmUpdate(account);
-        } else {
-          form.reportValidity();
-        }
-      });
-    // VALIDACION DE CREACION
-    document
-      .getElementById("validateFormCrt")
-      .addEventListener("click", function (vld) {
-        vld.preventDefault();
-        form = this.closest("#form_crt");
-        account = acc_email;
-        if (form && form.checkValidity()) {
-          confirmCreate(account);
-        } else {
-          form.reportValidity();
-        }
-      });
 
     // ================ COPIAR EN PORTAPAPELES MENSAJE DE DATOS DE VENTA
     document.getElementById("copyButton").addEventListener("click", () => {
@@ -213,12 +115,76 @@ document.querySelectorAll(".dataSale").forEach((sale) => {
           .getElementById("copyButton")
           .classList.replace("bi-copy", "bi-x-circle");
       setTimeout(() => {
-        console.log("hola");
         document
           .getElementById("copyButton")
           .classList.replace("bi-x-circle", "bi-copy");
       }, 3000);
     });
+  });
+});
+// SCRIPTS MODAL CREATE
+document.querySelectorAll(".dataSaleCreate").forEach((sale) => {
+  sale.addEventListener("click", function (c) {
+    const acc_email = this.getAttribute("data-acc_email");
+
+    // ============== CARGAR DATOS PARA MODAL REGISTRO
+    document.querySelectorAll(".proid").forEach((proid) => {
+      proid.value = this.dataset.pro_id;
+    });
+    document.querySelector(".propin").value = this.dataset.pro_pin_profile;
+
+    // VALIDACION DE CREACION
+    document
+      .getElementById("validateFormCrt")
+      .addEventListener("click", function (vld) {
+        vld.preventDefault();
+        form = this.closest("#form_crt");
+        account = acc_email;
+        if (form && form.checkValidity()) {
+          confirmCreate(account);
+        } else {
+          form.reportValidity();
+        }
+      });
+  });
+});
+// SCRIPTS MODAL UPDATE 
+document.querySelectorAll(".dataSaleUpdate").forEach((sale) => {
+  sale.addEventListener("click", function (c) {
+    const sal_id = this.getAttribute("data-sal_id");
+    const acc_email = this.getAttribute("data-acc_email");
+
+    // ============== CARGAR DATOS PARA EDITAR
+    document.querySelector(".cstid").value = this.dataset.cst_id;
+    document.querySelector(".saldatestart").value = this.dataset.sal_date_start;
+    document.querySelector(".saldateend").value = this.dataset.sal_date_end;
+    document.querySelector(".salprice").value = this.dataset.sal_price;
+    new Cleave(document.querySelector(".salprice"), {
+      numeral: true,
+      numeralThousandsGroupStyle: "thousand",
+      numeralDecimalScale: 0,
+    });
+    document.querySelectorAll(".proid").forEach((proid) => {
+      proid.value = this.dataset.pro_id;
+    });
+    document.querySelector(".propin").value = this.dataset.pro_pin_profile;
+    document.querySelector(".saldescription").textContent =
+      this.dataset.sal_description;
+    // VALIDACION EDITAR
+    document
+      .getElementById("validateFormUpd")
+      .addEventListener("click", function (vld) {
+        vld.preventDefault();
+        form = this.closest("#form_upd");
+        form.action = `/sale/${sal_id}`;
+        account = acc_email;
+        console.log(account);
+        if (form && form.checkValidity()) {
+          confirmUpdate(account);
+        } else {
+          form.reportValidity();
+        }
+      });
   });
 });
 
@@ -270,6 +236,7 @@ function confirmDelete(id, account) {
     });
   }
 }
+
 // UTILIDADES DE PAGINA
 $(document).ready(function () {
   let params = new URLSearchParams(window.location.search);
@@ -354,6 +321,7 @@ $(document).ready(function () {
     },
   });
 });
+// select de clientes
 $(document).on("shown.bs.modal", ".modal", function () {
   $(this)
     .find(".js-example-responsive")
@@ -370,7 +338,13 @@ $(document).on("shown.bs.modal", ".modal", function () {
       },
     });
 });
-
+// formatea el precio de la modal de registro
+new Cleave(document.querySelector(".sal_price"), {
+  numeral: true,
+  numeralThousandsGroupStyle: "thousand",
+  numeralDecimalScale: 0,
+});
+// input de pin del perfil modales registro y edicion
 document.querySelectorAll("#buttonPin").forEach((button) => {
   button.closest(".modal").addEventListener("hide.bs.modal", () => {
     button.classList.replace("bi-pencil-fill", "bi-pencil");
@@ -392,7 +366,7 @@ document.querySelectorAll("#buttonPin").forEach((button) => {
     }
   });
 });
-
+// informacion de la cuenta modal detalles
 document.getElementById("dataAcc").addEventListener("click", function (clk) {
   if (!document.getElementById("dataAcc").classList.contains("flex-column")) {
     document.getElementById("dataAcc").classList.add("flex-column");
