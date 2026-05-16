@@ -80,9 +80,9 @@
 
                         <td class="text-center text-nowrap">
                             <!-- Vender -->
-                            <button class="btn btn-sm dataSale {{'d-none' if data['sal_id'] != None}}"
+                            <button class="btn btn-sm dataSaleCreate {{'d-none' if data['sal_id'] != None}}"
                                 data-bs-toggle="modal" data-bs-target="#crtSale" data-pro_id="{{data['pro_id']}}"
-                                data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else 'Sin Pin'}}"
+                                data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else ''}}"
                                 data-acc_email="{% if data['acc_number_phone'] %}({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}}{% else %}{{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}}{% endif %}"
                                 style="--bs-btn-color: rgba(4,17,43,0.92);
     --bs-btn-border-color: rgba(4,17,43,0.92);
@@ -103,7 +103,7 @@
 
                             <!-- Ver -->
                             <button
-                                class="btn btn-sm btn-outline-secondary dataSale {{'d-none' if data['sal_id'] == None}}"
+                                class="btn btn-sm btn-outline-secondary dataSaleDetails {{'d-none' if data['sal_id'] == None}}"
                                 data-bs-toggle="modal"
                                 data-bs-target="#getSale{{'' if data['sal_id'] != None else None}}" data-sal_date_start="{{data['sal_date_start'].strftime('%d-%m-%Y')
                                 if
@@ -126,7 +126,7 @@
 
                             <!-- Editar -->
                             <button
-                                class="btn btn-sm btn-outline-primary dataSale  {{'d-none' if data['sal_id'] == None}}"
+                                class="btn btn-sm btn-outline-primary dataSaleUpdate {{'d-none' if data['sal_id'] == None}}"
                                 data-bs-toggle="modal"
                                 data-bs-target="#putSale{{'' if data['sal_id'] != None else None}}"
                                 data-sal_id="{{data['sal_id']}}" data-sal_date_start="{{data['sal_date_start']}}"
@@ -134,7 +134,7 @@
                                 data-cst_id="{{data['cst_id']}}" data-pro_id="{{data['pro_id']}}"
                                 data-sal_description="{{data['sal_description']}}"
                                 data-acc_email="{% if data['acc_number_phone'] %} ({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}} {% else %} {{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}} {% endif %}"
-                                data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else 'Sin Pin'}}">
+                                data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else ''}}">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
 
@@ -144,7 +144,7 @@
                                 data-sal_date_start="{{data['sal_date_start']}}"
                                 data-sal_date_end="{{data['sal_date_end']}}" data-sal_price="{{data['sal_price']}}"
                                 data-cst_id="{{data['cst_id']}}" data-sal_description="{{data['sal_description']}}"
-                                data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else 'Sin Pin'}}">
+                                data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else ''}}">
                                 <i class="bi bi-clipboard" id="clipboard"></i>
                             </button>
 
@@ -254,8 +254,6 @@
 </div>
 
 
-
-
 <!-- ================= MODAL CREAR ================= -->
 
 <div class="modal fade" id="crtSale" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
@@ -295,7 +293,7 @@
                     <div class="col-md-6">
                         {{ form.propin.label(class="form-label") }}
                         <div class="input-group">
-                            {{ form.propin(class="form-control pro_pin", placeholder="Sin Pin", disabled = true) }}
+                            {{ form.propin(class="form-control pro_pin", placeholder="0323 (Opcional)", disabled = true) }}
                             <button class="btn btn-outline-secondary" type="button">
                                 <i class="bi bi-pencil" id="buttonPin"></i>
                             </button>
@@ -312,14 +310,11 @@
                         style="background-color: rgba(4,17,43,0.92); color:white;",
                         id="validateFormCrt") }}
                     </div>
-
                 </form>
-
             </div>
         </div>
     </div>
 </div>
-
 
 
 <!-- ================= MODAL EDITAR ================= -->
@@ -362,7 +357,7 @@
                     <div class="col-md-6">
                         {{ form.propin.label(class="form-label") }}
                         <div class="input-group">
-                            {{ form.propin(class="form-control propin", placeholder="12345", disabled = true) }}
+                            {{ form.propin(class="form-control propin", placeholder="0323 (Opcional)", disabled = true) }}
                             <button class="btn btn-outline-secondary" type="button"><i class="bi bi-pencil"
                                     id="buttonPin"></i></button>
                         </div>
