@@ -28,9 +28,13 @@ def consult():
 def getConsult():
     try:
         form = csltForm()
-        if request.method == "POST":
+        cursor = current_app.mysql.connection.cursor()
+        cursor.execute("SELECT mng_email FROM t_manage WHERE mng_state = 'active' GROUP BY mng_email ORDER BY mng_email ASC")
+        manage = cursor.fetchall()
+        form.csltemail.choices = [(mng[0], mng[0]) for mng in manage]
+
+        if form.validate_on_submit():
             csltemail = form.csltemail.data
-            cursor = current_app.mysql.connection.cursor()
             cursor.execute("""
                 SELECT * FROM t_manage WHERE mng_email = %s AND mng_state = 'active'
             """, (csltemail,))
@@ -47,14 +51,12 @@ def getConsult():
                         result.append(r)
             if result:
                 flash("Consulta Exitosa", "succes")
-                return render_template("consult.html", result = result, form = form)
+                return render_template("consult.html", form = form, result = result)
 
             session["csltBackup"] = form.data
             flash("Ningun correo encontrado", "info")
             return redirect(url_for("consult.consult"))
-        flash("Ingrese el correo", "error")
-        session["csltBackup"] = form.data
-        return redirect(url_for("consult.consult"))
+
     except OperationalError as e:
         print(e)
         flash("Conexion fallida, Intenta más tarde.", "error")
