@@ -5,6 +5,7 @@ from MySQLdb.cursors import DictCursor
 from .utils.wtf import saleForm
 import uuid
 from datetime import datetime
+import re
 
 sale_bp = Blueprint("sale", __name__, template_folder= "../templates")
 
@@ -95,17 +96,19 @@ def getSale(pla_id):
                 "acc_number_phone":x[14],
                 "acc_password":x[15],
                 "pro_pin_profile":x[16],
-                "pla_message": x[17].replace(   
-                    '{account}', x[1] if x[1] else x[2]
-                    ).replace(
-                        '{password}', x[15] if x[15] else 'Sin Contraseña'
+                "pla_message": x[17].replace(
+                    '{tittle_add}', 'GARANTIA ' if re.search(r'\b(gta|grta|garantia|garanti|garant)\b', x[9] if x[9] else '') else ''
+                    ).replace(   
+                        '{account}', x[1] if x[1] else x[2]
                         ).replace(
-                            '{profile}', x[3] if x[3] else 'Sin Perfil'
-                        ).replace(
-                            '{pin}', x[16] if x[16] else 'Sin Pin'
-                        ).replace(
-                            '{date}', str(x[7].strftime("%d/%m")) if x[7] else 'Sin Fecha'
-                        ) if x[17] else ''
+                            '{password}', x[15] if x[15] else 'Sin Contraseña'
+                            ).replace(
+                                '{profile}', x[3] if x[3] else 'Sin Perfil'
+                                ).replace(
+                                    '{pin}', x[16] if x[16] else 'Sin Pin'
+                                ).replace(
+                                    '{date}', str(x[7].strftime("%d/%m")) if x[7] else 'Sin Fecha'
+                                ) if x[17] else ''
             } for x in cursor.fetchall()]
         cursor.execute("SELECT pla_name FROM t_platform WHERE pla_id = %s",(pla_id,))
         plaName = cursor.fetchone()
