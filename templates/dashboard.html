@@ -25,174 +25,282 @@
             <small class="text-muted">Informacion general PlusGo</small>
         </div>
         <div class="dropdown">
-            <button class="btn" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-three-dots-vertical"></i>
+            <button class="btn border-0 d-flex align-items-center gap-2 rounded-pill px-3 py-2 shadow-sm"
+                type="button" data-bs-toggle="dropdown" aria-expanded="false" style="    --bs-btn-color: #fff;
+    --bs-btn-bg: rgba(4,17,43,0.92);
+    --bs-btn-border-color: rgba(4,17,43,0.92);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: rgba(4,17,43,0.92);
+    --bs-btn-hover-border-color: rgba(4,17,43,0.92);
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: rgba(4,17,43,0.92);
+    --bs-btn-active-border-color: rgba(4,17,43,0.92);
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: rgba(4,17,43,0.92);
+    --bs-btn-disabled-border-color: rgba(4,17,43,0.92)">
+                <i class="bi bi-person-circle fs-5 text-secondary text-white"></i>
+                <i class="bi bi-three-dots-vertical small text-white "></i>
             </button>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-3 mt-2">
                 <li>
-                    <a class="dropdown-item" href="#" onclick="confirmLogout()">
-                        <i class="bi bi-box-arrow-in-left me-2"></i>
-                        Cerrar Sesion
+                    <a class="dropdown-item d-flex align-items-center" href="#"
+                        onclick="confirmLogout()">
+                        <i class="bi bi-box-arrow-right fs-5 mx-2"></i>
+                        <span class="fw-semibold">Cerrar Sesión</span>
                     </a>
                 </li>
             </ul>
         </div>
 
     </div>
-
-    <div data-aos="zoom-in-up">
-        <!-- fila -->
-        <div class="row g-4 mb-2">
-            <div class="col-md-6">
-                <div class="card border-0 shadow">
-                    <div class="card-body ">
-                        <div class="table-responsive">
-                            <h5 class="mb-3">Cuentas por vencer</h5>
-
-                            <table class="table table-hover align-middle mb-0" id="tableAcc">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">
-                                            Plataforma
-                                        </th>
-                                        <th class="text-center">
-                                            Apodo
-                                        </th>
-                                        <th class="text-center">
-                                            Vencimiento
-                                        </th>
-                                        <th class="text-center">
-                                            Abrir
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for acc in account %}
-                                    <tr>
-                                        <td class="text-nowrap">
-                                            <a href="{{url_for('account.getAccount', pla_id = acc[0], acc_nickname = acc[2])}}"
-                                                class="text-decoration-none fw-medium text-black">
-                                                {{ acc[1] }}
-                                            </a>
-                                        </td>
-                                        <td class="text-nowrap">{{ acc[2] }}</td>
-                                        <td class="text-center text-nowrap">{{ acc[3] }}</td>
-                                        <td class="text-center">
-                                            <!-- abrir plataforma -->
-                                            <a href="{{url_for('account.getAccount', pla_id = acc[0], acc_nickname = acc[2])}}"
-                                                class="btn btn-sm btn-outline-secondary">
-                                                <i class="bi bi-collection"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+    <div class="d-flex justify-content-between row g-3 mb-2">
+        <div class="col-lg-3" data-aos="zoom-in-up">
+            <div class="card border-bottom-0 border-end-0 border-start-0 border-primary shadow"
+                style="border-top: 5px solid">
+                <div class="card-body d-flex justify-content-between">
+                    <div>
+                        <small class="text-muted fw-bolder">Ventas Activas <span class="text-seccondary" id="sale-time"></span></small>
+                        <h4 class="fw-bold m-0 sale" id="sale-total">{{total_sale[0]}}</h4>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card shadow border-0">
-                    <div class="card-body">
-                        <div class="table-responsive">
-
-                            <h5 class="mb-3">Ultimos Movimientos</h5>
-                            <table class="table table-hover align-middle mb-0" id="tableUltTrgSale">
-                                <thead>
-                                    <tr>
-                                        <th>Accion</th>
-                                        <th class="text-center">Fecha</th>
-                                        <th class="text-center">Cliente</th>
-                                        <th class="text-center">Precio</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for data in UltSale %}
-                                    <tr>
-                                        <td class="text-nowrap">{{data['trg_action']}}</td>
-                                        <td class="text-center text-nowrap">{{data['trg_date']}}</td>
-                                        <td class="text-nowrap">{{data['cst_name']}} {{data['cst_lastname']}}</td>
-                                        <td class="text-nowrap">{{data['sal_price']}} </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="alert alert-primary m-0 border-0 h-25" style="
+                    --bs-alert-padding-x: 0.65rem; --bs-alert-padding-y: 0.35rem;" data-sale_total="{{total_sale[0]}}" data-sale_total_today="{{total_sale_today[0]}}" data-sale_total_yesterday="{{total_sale_yesterday[0]}}" data-sale_total_weekly="{{total_sale_weekly[0]}}" role="button" id="sale_time_change">
+                        <i class="bi bi-graph-up-arrow"></i>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- fila -->
-        <div class="row g-4 mb-2">
-            <div class="col-md-12">
-                <div class="card border-0 shadow">
-                    <div class="card-body">
-                        <div class="table-responsive">
-
-                            <h5 class="mb-3">Ventas por vencer</h5>
-                            <table class="table table-hover align-middle mb-0" id="tableSale">
-                                <thead>
-                                    <tr>
-                                        <th>Cliente</th>
-                                        <th class="text-center">Vencimineto</th>
-                                        <th>Plataforma</th>
-                                        <th>Cuenta</th>
-                                        <th class="text-center">Perfil</th>
-                                        <th>Abrir</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for sale in sale %}
-                                    <tr>
-                                        <td class="text-nowrap">
-                                            {{sale[0]}} {{sale[1]}}
-                                        </td>
-
-                                        <td class="text-center text-nowrap">{{sale[2]}}</td>
-
-                                        <td class="text-nowrap">
-                                            {{sale[5]}}
-                                        </td>
-
-                                        <td class="text-nowrap">
-                                            {{sale[3] if sale[3] else (sale[4])}}
-                                        </td>
-
-                                        <td class="text-center text-nowrap">Perfil {{sale[6]}}</td>
-
-                                        <td class="text-center">
-                                            <!-- abir venta -->
-                                            <a href="{{url_for('sale.getSale', pla_id = sale[7], cst_name = sale[0], cst_lastname = sale[1] , pro_profile = sale[6])}}"
-                                                class="btn btn-sm btn-outline-secondary"><i class="bi bi-cart"></i></a>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+        <div class="col-lg-3" data-aos="zoom-in-up">
+            <div class="card border-bottom-0 border-end-0 border-start-0 border-warning shadow"
+                style="border-top: 5px solid">
+                <div class="card-body d-flex justify-content-between">
+                    <div>
+                        <small class="text-muted fw-bolder">Clientes Activos</small>
+                        <h4 class="fw-bold m-0">{{total_customer[0]}}</h4>
+                    </div>
+                    <div class="alert alert-warning m-0 border-0 h-25" style="
+                    --bs-alert-padding-x: 0.65rem; --bs-alert-padding-y: 0.35rem;">
+                        <i class="bi bi-people-fill"></i>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- fila -->
-        <div class="row g-4 mb-2">
-            <div class="col-md-8">
-                <div class="card shadow border-0 h-100">
-                    <div class="card-body">
-                        <canvas id="myChartSale" class="w-100 h-100" style="margin: auto;"></canvas>
+
+        <div class="col-lg-3" data-aos="zoom-in-up">
+            <div class="card border-bottom-0 border-end-0 border-start-0 border-success shadow"
+                style="border-top: 5px solid">
+                <div class="card-body d-flex justify-content-between">
+                    <div>
+                        <small class="text-muted fw-bolder">Cuentas Activas</small>
+                        <h4 class="fw-bold m-0">{{total_account_enable[0]}}</h4>
+                    </div>
+                    <div class="alert alert-success m-0 border-0 h-25" style="
+                    --bs-alert-padding-x: 0.65rem; --bs-alert-padding-y: 0.35rem;">
+                        <i class="bi bi-collection"></i>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card shadow border-0">
-                    <div class="card-body">
-                        <canvas id="myChartPlatform" class="w-100 h-100" style="margin: auto;"></canvas>
+        </div>
+        <div class="col-lg-3" data-aos="zoom-in-up">
+            <div class="card border-bottom-0 border-end-0 border-start-0 border-danger shadow"
+                style="border-top: 5px solid">
+                <div class="card-body d-flex justify-content-between">
+                    <div>
+                        <small class="text-muted fw-bolder">Perfiles Disponibles</small>
+                        <h4 class="fw-bold m-0">{{total_profiles_enable[0]}}</h4>
+                    </div>
+                    <div class="alert alert-danger m-0 border-0 h-25" style="
+                    --bs-alert-padding-x: 0.65rem; --bs-alert-padding-y: 0.35rem;">
+                        <i class="bi bi-person-lines-fill"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+
+    <!-- fila de ventas y cuentas -->
+    <div class="row g-4 mb-2">
+        <div class="col-md-8" data-aos="zoom-in-up">
+            <div class="card border-0 shadow">
+                <div class="card-body">
+                    <div class="table-responsive">
+
+                        <div class="d-flex aling-items-start">
+                            <div class="my-auto">
+                                <i class="bi bi-collection text-primary fw-bolder fs-4 mx-2"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold m-0">Prox. ventas por vencer</h5>
+                                <small class="text-muted">Listado de ventas con poca o sin vigencia</small>
+                            </div>
+                        </div>
+                        <hr>
+                        <table class="table table-hover align-middle mb-0" id="tableSale">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th class="text-center">Vencimineto</th>
+                                    <th>Plataforma</th>
+                                    <th>Cuenta</th>
+                                    <th class="text-center">Perfil</th>
+                                    <th>Abrir</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sale in sale %}
+                                <tr>
+                                    <td class="text-nowrap">
+                                        {{sale[0]}} {{sale[1]}}
+                                    </td>
+
+                                    <td class="text-center text-nowrap">{{sale[2]}}</td>
+
+                                    <td class="text-nowrap">
+                                        {{sale[5]}}
+                                    </td>
+
+                                    <td class="text-nowrap">
+                                        {{sale[3] if sale[3] else (sale[4])}}
+                                    </td>
+
+                                    <td class="text-center text-nowrap">Perfil {{sale[6]}}</td>
+
+                                    <td class="text-center">
+                                        <!-- abir venta -->
+                                        <a href="{{url_for('sale.getSale', pla_id = sale[7], cst_name = sale[0], cst_lastname = sale[1] , pro_profile = sale[6])}}"
+                                            class="btn btn-sm btn-outline-secondary"><i class="bi bi-cart"></i></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="zoom-in-up">
+            <div class="card border-0 shadow">
+                <div class="card-body ">
+                    <div class="table-responsive">
+                        <div class="d-flex aling-items-start">
+                            <div class="my-auto">
+                                <i class="bi bi-collection text-primary fw-bolder fs-4 mx-2"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold m-0">Prox. Cuentas por vencer</h5>
+                                <small class="text-muted">Listado de cuentas con poca o sin vigencia</small>
+                            </div>
+                        </div>
+                        <hr>
+
+                        <table class="table table-hover align-middle mb-0" id="tableAcc">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">
+                                        Plataforma
+                                    </th>
+                                    <th class="text-center">
+                                        Apodo
+                                    </th>
+                                    <th class="text-center">
+                                        Vencimiento
+                                    </th>
+                                    <th class="text-center">
+                                        Abrir
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for acc in account %}
+                                <tr>
+                                    <td class="text-nowrap">
+                                        <a href="{{url_for('account.getAccount', pla_id = acc[0], acc_nickname = acc[2])}}"
+                                            class="text-decoration-none fw-medium text-black">
+                                            {{ acc[1] }}
+                                        </a>
+                                    </td>
+                                    <td class="text-nowrap">{{ acc[2] }}</td>
+                                    <td class="text-center text-nowrap">{{ acc[3] }}</td>
+                                    <td class="text-center">
+                                        <!-- abrir plataforma -->
+                                        <a href="{{url_for('account.getAccount', pla_id = acc[0], acc_nickname = acc[2])}}"
+                                            class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-collection"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- fila -->
+    <div class="row g-4 mb-2">
+
+        <div class="col-md-5">
+            <div class="card shadow border-0" data-aos="zoom-in-up">
+                <div class="card-body">
+                    <canvas id="myChartSale" class="w-100 h-75" style="margin: auto;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow border-0" data-aos="zoom-in-up">
+                <div class="card-body">
+                    <canvas id="myChartPlatform" class="w-100 h-75" style="margin: auto;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4" data-aos="zoom-in-up">
+            <div class="card shadow border-0">
+                <div class="card-body">
+                    <div class="table-responsive">
+
+                        <div class="d-flex aling-items-start">
+                            <div class="my-auto">
+                                <i class="bi bi-clock-history text-primary fw-bolder fs-4 mx-2"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold m-0">Ultimos Movimientos</h5>
+                                <small class="text-muted">Lista los 5 ultimos movimientos en ventas</small>
+                            </div>
+                        </div>
+                        <hr>
+                        <table class="table table-hover align-middle mb-0" id="tableUltTrgSale">
+                            <thead>
+                                <tr>
+                                    <th>Accion</th>
+                                    <th class="text-center">Fecha</th>
+                                    <th class="text-center">Cliente</th>
+                                    <th class="text-center">Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in UltSale %}
+                                <tr>
+                                    <td class="text-nowrap">{{data['trg_action']}}</td>
+                                    <td class="text-center text-nowrap">{{data['trg_date']}}</td>
+                                    <td class="text-nowrap">{{data['cst_name']}} {{data['cst_lastname']}}</td>
+                                    <td class="text-nowrap">{{data['sal_price']}} </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
 
