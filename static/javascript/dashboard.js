@@ -65,7 +65,7 @@ function confirmLogout() {
     cancelButtonText: "Cancelar",
   }).then((result) => {
     if (result.isConfirmed) {
-      window.location.href = '/logout';
+      window.location.href = "/logout";
     }
   });
 }
@@ -187,3 +187,28 @@ $(document).ready(function () {
     },
   });
 });
+//  ================ TIEMPO TOTAL VENTAS
+document
+  .getElementById("sale_time_change")
+  .addEventListener("click", function (clk) {
+    let saletime = document.getElementById("sale-time");
+    let saletotal = document.getElementById("sale-total");
+
+    if (saletotal.classList.contains("sale")) {
+      saletotal.classList.replace("sale", "sale-today");
+      saletime.innerHTML = " (Hoy)";
+      saletotal.innerHTML = this.getAttribute("data-sale_total_today");
+    } else if (saletotal.classList.contains("sale-today")) {
+      saletotal.classList.replace("sale-today", "sale-yesterday");
+      saletime.innerHTML = " (Ayer)";
+      saletotal.innerHTML = this.getAttribute("data-sale_total_yesterday");
+    } else if (saletotal.classList.contains("sale-yesterday")) {
+      saletotal.classList.replace("sale-yesterday", "sale-weekly");
+      saletime.innerHTML = " (Act. Semana)";
+      saletotal.innerHTML = this.getAttribute("data-sale_total_weekly");
+    } else {
+      saletotal.classList.replace("sale-weekly", "sale");
+      saletime.innerHTML = "";
+      saletotal.innerHTML = this.getAttribute("data-sale_total");
+    }
+  });
