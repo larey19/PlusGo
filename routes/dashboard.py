@@ -14,7 +14,7 @@ def dashboard():
                         SELECT t_platform.pla_id, t_platform.pla_name,  t_account.acc_nickname, t_account.acc_date_pay 
                         FROM t_account 
                             JOIN t_platform ON t_account.pla_id = t_platform.pla_id 
-                        WHERE t_account.acc_state = 'enable' AND t_account.acc_date_pay <= CURDATE() + 3 
+                        WHERE t_account.acc_state = 'enable' AND t_account.acc_date_pay <= DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR) + 3 
                         ORDER BY t_account.acc_date_pay ASC""")
         account = cursor.fetchall() #Cuentas por vencer o vencidas
         
@@ -25,7 +25,7 @@ def dashboard():
                             JOIN t_profile ON t_account.acc_id = t_profile.acc_id
                             JOIN t_sale ON t_sale.pro_id = t_profile.pro_id
                             JOIN t_customer ON t_sale.cst_id = t_customer.cst_id
-                        WHERE t_account.acc_state = 'enable' AND t_sale.sal_date_end <= CURDATE() + 3
+                        WHERE t_account.acc_state = 'enable' AND t_sale.sal_date_end <= DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR) + 3
                         ORDER BY t_sale.sal_date_end ASC
                         """)
         sale = cursor.fetchall() #Ventas por vencer o vencidas
@@ -34,7 +34,7 @@ def dashboard():
                 SELECT 
                 DATE_FORMAT(trg_date, '%Y-%m') AS mes, COUNT(*) as total
                 FROM trg_sale  
-                WHERE trg_action LIKE '%registro%'
+                WHERE trg_action LIKE '%registro%' AND sal_description NOT REGEXP 'gta|grta|garanti|garant|garantia'
                 GROUP BY mes
                 """)
         trgsale = cursor.fetchall() #total de ventas registradas por mes
@@ -46,13 +46,13 @@ def dashboard():
             mes_txt = fecha.strftime("%b %Y")  
             meses.append(mes_txt)
             totalsale.append(int(row[1]))   
-        
+         
         cursor.execute("""
                         SELECT t_platform.pla_name, COUNT(*) AS total
                         FROM t_account 
                             JOIN t_platform ON t_account.pla_id = t_platform.pla_id 
                             JOIN t_profile ON t_account.acc_id = t_profile.acc_id
-                            JOIN t_sale ON t_sale.pro_id = t_profile.pro_id 
+                            JOIN t_sale ON t_sale.pro_id = t_profile.pro_id
                         GROUP BY t_platform.pla_name
                         """)
         platformSale = cursor.fetchall() #total de cada plataforma vendida
@@ -74,7 +74,50 @@ def dashboard():
             "cst_name":trg[2],
             "cst_lastname":trg[3]
         } for trg in cursor.fetchall()] #obtener los ult 5 registros
-
+        
+        cursor.execute("""
+                        SELECT COUNT(DISTINCT cst_id) FROM t_sale
+                        """)#clientes activos en plusgo
+        total_customer = cursor.fetchone()
+        
+        cursor.execute("""
+                        SELECT COUNT(*) 
+                            FROM t_profile 
+                            JOIN t_account 
+                            ON t_profile.acc_id = t_account.acc_id 
+                        WHERE pro_state in ('enable', 'pending')
+                        AND acc_state = 'enable'
+                        """)#PERFILES SIN VENDER en plusgo
+        total_profiles_enable = cursor.fetchone()
+        
+        cursor.execute("""
+                        SELECT COUNT(*) FROM t_account WHERE acc_state = 'enable'
+                        """)#PERFILES SIN VENDER en plusgo
+        total_account_enable = cursor.fetchone()
+        
+        
+        
+        
+        cursor.execute("""
+                        SELECT COUNT(*) FROM t_sale 
+                        """)#total de ventas 
+        total_sale =  cursor.fetchone()
+        
+        cursor.execute("""
+                        SELECT COUNT(*) FROM trg_sale WHERE DATE(TRG_DATE) = DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR) AND  trg_action LIKE '%registro%' AND sal_description NOT REGEXP 'gta|grta|garanti|garant|garantia'
+                        """)#total de ventas hoy
+        total_sale_today = cursor.fetchone()        
+                
+        cursor.execute("""
+                        SELECT COUNT(*) FROM trg_sale WHERE DATE(TRG_DATE) = DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR)-1 AND trg_action LIKE '%registro%' AND sal_description NOT REGEXP 'gta|grta|garanti|garant|garantia'
+                        """)#total de ventas ayer
+        total_sale_yesterday = cursor.fetchone()
+        
+        cursor.execute("""
+                        SELECT COUNT(*) FROM trg_sale WHERE trg_action LIKE '%registro%' AND sal_description NOT REGEXP 'gta|grta|garanti|garant|garantia' AND (DATE(TRG_DATE) BETWEEN DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR) - 7 AND DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR));
+                        """)#total de ventas semana  
+        total_sale_weekly = cursor.fetchone() 
+        
         return render_template("dashboard.html", 
                                 account = account, 
                                 sale = sale, 
@@ -82,7 +125,14 @@ def dashboard():
                                 totalsale=json.dumps(totalsale), 
                                 plaName = json.dumps(plaName), 
                                 plaSale = json.dumps(plaSale),
-                                UltSale = UltSale)
+                                UltSale = UltSale,
+                                total_customer = total_customer,
+                                total_profiles_enable = total_profiles_enable,
+                                total_account_enable = total_account_enable,
+                                total_sale = total_sale,
+                                total_sale_today = total_sale_today,
+                                total_sale_yesterday = total_sale_yesterday,
+                                total_sale_weekly = total_sale_weekly)
     except OperationalError:
         flash("Conexion fallida, Intenta más tarde.", "error")
         return render_template("500.html")
