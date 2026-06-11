@@ -64,7 +64,7 @@
                         style="width: 130px;">
                 </div>
 
-                <form action="login" method="POST" class="w-100" data-aos="zoom-in-up">
+                <form action="login" method="POST" class="w-100 formlogin" data-aos="zoom-in-up">
                     {{form.hidden_tag()}}
                     <div class="mb-4">
                         <div class="input-group input-group-lg">
@@ -72,7 +72,7 @@
                                 <i class="bi bi-person-fill" style="color: rgba(4,17,43,0.92);"></i>
                             </span>
                             <div class="form-floating">
-                                {{form.user(class="form-control shadow-sm", placeholder="usuario12")}}
+                                {{form.user(class="form-control shadow-sm user", placeholder="usuario12")}}
                                 {{form.user.label(class="form-label fw-medium")}}
                             </div>
                         </div>
@@ -85,27 +85,28 @@
                                 <i class="bi bi-lock-fill" style="color: rgba(4,17,43,0.92);"></i>
                             </span>
                             <div class="form-floating position-relative">
-                                {{form.password(class="form-control shadow-sm",placeholder="****")}}
+                                {{form.password(class="form-control shadow-sm password",placeholder="****")}}
                                 {{form.password.label(class="form-label fw-medium")}}
                                 <i id="eyeIcon" class=" fs-4 bi bi-eye position-absolute top-50 button-50 end-0 translate-middle" onclick="password()">
                                 </i>
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-lg w-100 shadow" style="--bs-btn-color: rgba(4,17,43,0.92);
+                    <button type="submit" class="btn btn-lg disabled w-100 shadow btnsubmit" style="
+    --bs-btn-color: #fff;
+    --bs-btn-bg: rgba(4,17,43,0.92);
     --bs-btn-border-color: rgba(4,17,43,0.92);
     --bs-btn-hover-color: #fff;
     --bs-btn-hover-bg: rgba(4,17,43,0.92);
     --bs-btn-hover-border-color: rgba(4,17,43,0.92);
-    --bs-btn-focus-shadow-rgb: 25, 135, 84;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
     --bs-btn-active-color: #fff;
     --bs-btn-active-bg: rgba(4,17,43,0.92);
     --bs-btn-active-border-color: rgba(4,17,43,0.92);
     --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    --bs-btn-disabled-color: rgba(4,17,43,0.92);
-    --bs-btn-disabled-bg: transparent;
-    --bs-btn-disabled-border-color: rgba(4,17,43,0.92);
-    --bs-gradient: none;">
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: rgba(4,17,43,0.92);
+    --bs-btn-disabled-border-color: rgba(4,17,43,0.92)">
                         <i class="bi bi-box-arrow-in-right me-2"></i>
                         {{form.btnSubmit.label()}}
                     </button>
@@ -125,7 +126,7 @@
                         style="width: 160px;">
                 </div>
 
-                <form action="login" method="POST" class="w-100">
+                <form action="login" method="POST" class="w-100 formlogin">
                     {{form.hidden_tag()}}
                     <div class="mb-4">
                         <div class="input-group input-group-lg">
@@ -133,8 +134,8 @@
                                 <i class="bi bi-person-fill" style="color: rgba(4,17,43,0.92);"></i>
                             </span>
                             <div class="form-floating">
-                                {{form.user(class="form-control shadow-sm", placeholder="usuario12")}}
-                                {{form.user.label(class="form-label fw-medium")}}
+                                {{form.user(class="form-control shadow-sm user", placeholder="usuario12")}}
+                                {{form.user.label(class="form-label fw-medium password")}}
                             </div>
                         </div>
                     </div>
@@ -146,27 +147,28 @@
                                 <i class="bi bi-lock-fill" style="color: rgba(4,17,43,0.92);"></i>
                             </span>
                             <div class="form-floating position-relative">
-                                {{form.password(class="form-control shadow-sm",placeholder="****")}}
+                                {{form.password(class="form-control shadow-sm password",placeholder="****")}}
                                 {{form.password.label(class="form-label fw-medium")}}
                                 <i id="eyeIcon" class=" fs-4 bi bi-eye position-absolute top-50 button-50 end-0 translate-middle" onclick="password()">
                                 </i>
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-lg w-100 shadow" style="--bs-btn-color: rgba(4,17,43,0.92);
+                    <button type="submit" class="btn btn-lg disabled w-100 shadow btnsubmit" style="
+    --bs-btn-color: #fff;
+    --bs-btn-bg: rgba(4,17,43,0.92);
     --bs-btn-border-color: rgba(4,17,43,0.92);
     --bs-btn-hover-color: #fff;
     --bs-btn-hover-bg: rgba(4,17,43,0.92);
     --bs-btn-hover-border-color: rgba(4,17,43,0.92);
-    --bs-btn-focus-shadow-rgb: 25, 135, 84;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
     --bs-btn-active-color: #fff;
     --bs-btn-active-bg: rgba(4,17,43,0.92);
     --bs-btn-active-border-color: rgba(4,17,43,0.92);
     --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    --bs-btn-disabled-color: rgba(4,17,43,0.92);
-    --bs-btn-disabled-bg: transparent;
-    --bs-btn-disabled-border-color: rgba(4,17,43,0.92);
-    --bs-gradient: none;">
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: rgba(4,17,43,0.92);
+    --bs-btn-disabled-border-color: rgba(4,17,43,0.92)">
                         <i class="bi bi-box-arrow-in-right me-2"></i>
                         {{form.btnSubmit.label()}}
                     </button>
