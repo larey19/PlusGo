@@ -448,7 +448,7 @@ async function getProfile(acc_id) {
           </form>
         </div>
 
-        <div class="d-flex gap-2 my-2 ${data.pro_id === profiles.at(-1).pro_id ? 'd-none' : ''}">
+        <div class="d-flex gap-2 my-2 ${profiles.length == document.getElementById('max_profile_platform').textContent && data.pro_id === profiles.at(-1).pro_id ? 'd-none' : ''}">
           <div> 
             <button class="btn btn-outline-secondary btn-sm d-flex fw-bold text-nowrap" disabled>
               AND
