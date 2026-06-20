@@ -64,7 +64,7 @@
                             </td>
                             <td>{{ acc[2] }}</td>
                             <td class="text-center">{{ acc[3] }}</td>
-                            <td class="text-center">{{ acc[4] if acc[4] else (acc[5] if acc[5] else '') }}</td>
+                            <td class="text-center text-nowrap">{{ acc[4] if acc[4] else (acc[5] if acc[5] else '') }}</td>
 
                             <td class="text-center">
                                 {% if acc[7] == "enable" %}
@@ -77,10 +77,15 @@
                             <td class="text-center text-nowrap ">
 
                                 <!-- Perfiles -->
-                                <a href="{{url_for('profile.getProfile', acc_id = acc[0])}}"
+                                <!-- <a href="{{url_for('profile.getProfile', acc_id = acc[0])}}"
                                     class="btn btn-sm btn-outline-secondary">
                                     <i class="bi bi-person-lines-fill"></i>
-                                </a>
+                                </a> -->
+                                <button class="btn btn-sm btn-outline-secondary dataProfiles" data-acc_id="{{acc[0]}}"
+                                    data-acc_nickname="{{acc[1]}}" data-pla_max_profiles="{{acc[11]}}"  data-acc_profiles="{{acc[13]}}"data-bs-toggle="modal"
+                                    data-bs-target="#profilesModal" onclick="getProfile(`{{acc[0]}}`)">
+                                    <i class="bi bi-person-lines-fill"></i>
+                                </button>
 
                                 <!-- Editar -->
                                 <button class="btn btn-sm btn-outline-primary dataAccount" data-bs-toggle="modal"
@@ -164,8 +169,6 @@
     </div>
 </div>
 
-
-
 <!-- Modal Crear -->
 <div class="modal fade" id="createModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog">
@@ -221,6 +224,28 @@
         </div>
     </div>
 </div>
+
+<!-- ================================================================= -->
+
+<!-- Modal perfiles -->
+<div class="modal fade" id="profilesModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold">Perfiles de <span id="acc_nickname_modal"></span>
+                    <small class="fw-normal text-muted">(<span  id="max_profile_account"></span>/<span id="max_profile_platform"></span>)
+                    </small>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body row g-2 content_modal-profiles">
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 {% endblock %}
 
