@@ -1,386 +1,384 @@
-AOS.init();
-// SCRIPT COPIA DE DATOS DE VENTA
-document.querySelectorAll("#clipButton").forEach((sl) => {
-  sl.addEventListener("click", function (clk) {
-    if (sl.classList.contains("dataSaleClip")) {
-      sl.classList.replace("dataSaleClip", "dataSaleClip2");
-      document.querySelectorAll("#clipboard").forEach((clip) => {
-        clip.classList.replace("bi-clipboard", "bi-clipboard-x");
-        Swal.fire({
-          title: "Venta Copiada",
-          icon: "success",
-          showConfirmButton: false,
-          timer: 800,
-        });
-      });
+{% extends 'layouts/layout_2.html'%}
+{% block body %}
 
-      document.querySelectorAll(".dataSaleClip").forEach((sale) => {
-        sale.classList.add("d-none");
-      });
-
-      // ============== CARGAR DATOS EN MODAL REGISTRAR
-      document.querySelector(".cst_id").value = this.dataset.cst_id;
-      document.querySelector(".sal_date_start").value =
-        this.dataset.sal_date_start;
-      document.querySelector(".sal_date_end").value = this.dataset.sal_date_end;
-      document.querySelector(".sal_price").value = this.dataset.sal_price;
-      new Cleave(document.querySelector(".sal_price"), {
-        numeral: true,
-        numeralThousandsGroupStyle: "thousand",
-        numeralDecimalScale: 0,
-      });
-      document.querySelector(".sal_description").textContent =
-        this.dataset.sal_description;
-      document.querySelector(".pro_pin").value = this.dataset.pro_pin_profile;
-    } else {
-      this.classList.replace("dataSaleClip2", "dataSaleClip");
-      document.querySelectorAll("#clipboard").forEach((clip) => {
-        clip.classList.replace("bi-clipboard-x", "bi-clipboard");
-        Swal.fire({
-          title: "Venta Eliminada",
-          icon: "info",
-          showConfirmButton: false,
-          timer: 800,
-        });
-      });
-
-      // ============== ELIMINA DATOS DE REGISTRAR
-      document.querySelector(".cst_id").value = "";
-      document.querySelector(".sal_date_start").value = "";
-      document.querySelector(".sal_date_end").value = "";
-      document.querySelector(".sal_price").value = "";
-      document.querySelector(".sal_description").textContent = "";
-      document.querySelector(".pro_pin").value = "";
-      document.querySelectorAll(".dataSaleClip").forEach((sale) => {
-        sale.classList.remove("d-none");
-      });
-    }
-  });
-});
-
-// SCRIPTS MODAL DETALLES 
-document.querySelectorAll(".dataSaleDetails").forEach((sale) => {
-  sale.addEventListener("click", function (c) {
-    const sal_id = this.getAttribute("data-sal_id");
-    const sal_price = this.getAttribute("data-sal_price");
-    const sal_date_start = this.getAttribute("data-sal_date_start");
-    const sal_date_end = this.getAttribute("data-sal_date_end");
-    const sal_description = this.getAttribute("data-sal_description");
-    const acc_email = this.getAttribute("data-acc_email");
-    const acc_password = this.getAttribute("data-acc_password");
-    const cst_name = this.getAttribute("data-cst_name");
-    const cst_lastname = this.getAttribute("data-cst_lastname");
-    const cst_phone_number = this.getAttribute("data-cst_phone_number");
-    const pro_profile = this.getAttribute("data-pro_profile");
-    const pro_pin_profile = this.getAttribute("data-pro_pin_profile");
-    const pla_message = this.getAttribute("data-pla_message");
-    // ============= CARGA DATOS EN MODAL DETALLES
-    document.getElementById("cst_fullname").innerHTML =
-      `${cst_name} ${cst_lastname}`;
-    document.getElementById("cst_phone_number").innerHTML =
-      `<i class="bi bi-phone-fill me-1"></i>Tel: ${cst_phone_number}`;
-    document.getElementById("sal_date_start").innerHTML =
-      `<i class="bi bi-calendar-event me-2"></i> ${sal_date_start}`;
-    document.getElementById("sal_date_end").innerHTML =
-      `<i class="bi bi-calendar-check me-2"></i> ${sal_date_end}`;
-    document.getElementById("sal_price").innerHTML = `$ ${sal_price}`;
-    document.getElementById("acc_email").innerHTML =
-      `<i class="bi bi-envelope-at text-secondary"></i> ${acc_email}`;
-    document.getElementById("acc_password").innerHTML =
-      `<i class="bi bi-lock text-secondary"></i>Clave: ${acc_password}`;
-    document.getElementById("pro_profile").innerHTML =
-      `<i class="bi bi-tag-fill text-secondary"></i>Perfil ${pro_profile}`;
-    document.getElementById("pro_pin_profile").innerHTML =
-      `<i class="bi bi-lock text-secondary"></i>Pin: ${pro_pin_profile}`;
-    document.getElementById("sal_description").innerHTML =
-      `<i class="bi bi-info-circle me-1"></i> ${sal_description}`;
-
-    // ================ COPIAR EN PORTAPAPELES MENSAJE DE DATOS DE VENTA
-    document.getElementById("copyButton").addEventListener("click", () => {
-      if (pla_message) {
-        document
-          .getElementById("copyButton")
-          .classList.replace("bi-copy", "bi-check-circle");
-        navigator.clipboard.writeText(pla_message).then(() => {
-          setTimeout(
-            () =>
-              document
-                .getElementById("copyButton")
-                .classList.replace("bi-check-circle", "bi-copy"),
-            3000,
-          );
-        });
-      } else
-        document
-          .getElementById("copyButton")
-          .classList.replace("bi-copy", "bi-x-circle");
-      setTimeout(() => {
-        document
-          .getElementById("copyButton")
-          .classList.replace("bi-x-circle", "bi-copy");
-      }, 3000);
-    });
-  });
-});
-// SCRIPTS MODAL CREATE
-document.querySelectorAll(".dataSaleCreate").forEach((sale) => {
-  sale.addEventListener("click", function (c) {
-    const acc_email = this.getAttribute("data-acc_email");
-
-    // ============== CARGAR DATOS PARA MODAL REGISTRO
-    document.querySelectorAll(".proid").forEach((proid) => {
-      proid.value = this.dataset.pro_id;
-    });
-    document.querySelector(".propin").value = this.dataset.pro_pin_profile;
-
-    // VALIDACION DE CREACION
-    document
-      .getElementById("validateFormCrt")
-      .addEventListener("click", function (vld) {
-        vld.preventDefault();
-        form = this.closest("#form_crt");
-        account = acc_email;
-        if (form && form.checkValidity()) {
-          confirmCreate(account);
-        } else {
-          form.reportValidity();
-        }
-      });
-  });
-});
-// SCRIPTS MODAL UPDATE 
-document.querySelectorAll(".dataSaleUpdate").forEach((sale) => {
-  sale.addEventListener("click", function (c) {
-    const sal_id = this.getAttribute("data-sal_id");
-    const acc_email = this.getAttribute("data-acc_email");
-
-    // ============== CARGAR DATOS PARA EDITAR
-    document.querySelector(".cstid").value = this.dataset.cst_id;
-    document.querySelector(".saldatestart").value = this.dataset.sal_date_start;
-    document.querySelector(".saldateend").value = this.dataset.sal_date_end;
-    document.querySelector(".salprice").value = this.dataset.sal_price;
-    new Cleave(document.querySelector(".salprice"), {
-      numeral: true,
-      numeralThousandsGroupStyle: "thousand",
-      numeralDecimalScale: 0,
-    });
-    document.querySelectorAll(".proid").forEach((proid) => {
-      proid.value = this.dataset.pro_id;
-    });
-    document.querySelector(".propin").value = this.dataset.pro_pin_profile;
-    document.querySelector(".saldescription").textContent =
-      this.dataset.sal_description;
-    // VALIDACION EDITAR
-    document
-      .getElementById("validateFormUpd")
-      .addEventListener("click", function (vld) {
-        vld.preventDefault();
-        form = this.closest("#form_upd");
-        form.action = `/sale/${sal_id}`;
-        account = acc_email;
-        console.log(account);
-        if (form && form.checkValidity()) {
-          confirmUpdate(account);
-        } else {
-          form.reportValidity();
-        }
-      });
-  });
-});
-
-// CONFIRMACIONES DE ACCIONES
-function confirmCreate(account) {
-  Swal.fire({
-    title: "¿Registrar venta?",
-    text: `En ${account}`,
-    icon: "info",
-    showCancelButton: true,
-    confirmButtonColor: "rgba(4,17,43,0.92)",
-    confirmButtonText: "Sí, guardar",
-    cancelButtonText: "Cancelar",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      document.getElementById("form_crt").submit();
-    }
-  });
-}
-function confirmUpdate(account) {
-  Swal.fire({
-    title: "¿Actualizar venta?",
-    text: `En ${account}`,
-    icon: "info",
-    showCancelButton: true,
-    confirmButtonColor: "rgba(4,17,43,0.92)",
-    confirmButtonText: "Sí, guardar",
-    cancelButtonText: "Cancelar",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      document.getElementById("form_upd").submit();
-    }
-  });
-}
-function confirmDelete(id, account) {
-  if (id != null && id != "") {
+<!-- Alerts -->
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<script>
     Swal.fire({
-      title: "¿Eliminar venta?",
-      text: `En ${account}, Desactivar y eliminar una venta no se puede deshacer.`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.href = "/sale/state/" + id;
-      }
+        title: '{{ message }}',
+        icon: '{{ "warning" if category=="error" else "success" if category=="success" else "info" }}',
+        timer: 3000,
+        showConfirmButton: false
     });
-  }
-}
+</script>
+{% endfor %}
 
-// UTILIDADES DE PAGINA
-$(document).ready(function () {
-  let params = new URLSearchParams(window.location.search);
+<div class="col p-4">
 
-  let cst_name = params.get("cst_name");
-  let pro_profile = params.get("pro_profile");
-  let search = `${cst_name} ${pro_profile}`;
-  $("#table").DataTable({
-    stateSave: true,
-    order: [],
-    language: {
-      url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
-    },
-    columnDefs: [
-      {
-        targets: [2], // Ajusta al índice de tu columna de fecha
-        render: function (data, type) {
-          if (type === "display" && data) {
-            // Para formato ISO: "2024-01-15"
-            let partes = data.split("-");
-            if (partes.length === 3) {
-              return `${partes[2]}/${partes[1]}/${partes[0]}`; // DD/MM/YYYY
-            }
-          }
-          return data;
-        },
-      },
-      {
-        targets: [1], // Ajusta al índice de tu columna de fecha
-        render: function (data, type) {
-          if (type === "display" && data) {
-            // Para formato ISO: "2024-01-15"
-            let partes = data.split("-");
-            if (partes.length === 3) {
-              return `${partes[2]}/${partes[1]}/${partes[0]}`; // DD/MM/YYYY
-            }
-          }
-          return data;
-        },
-      },
-      {
-        targets: [3],
-        render: function (data, type) {
-          if (type === "display") {
-            if (data != null && data != "") {
-              let formateado = new Intl.NumberFormat("es-CO", {
-                style: "currency",
-                currency: "COP",
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-              }).format(data);
+    <!-- Header -->
+    <div class="mb-4">
+        <h4 class="fw-bold mb-0">Ventas {{plaName}}</h4>
+        <small class="text-muted">Gestión de ventas {{plaName if plaName else ', seleccione una plataforma'}}</small>
+    </div>
 
-              return `<span class="badge bg-primary">${formateado}</span>`;
-            }
-          }
-          return data;
-        },
-      },
-      {
-        targets: [4], // Ajusta al índice de tu columna de email y cel
-        render: function (data, type, row) {
-          if (type === "display" && data) {
-            if (data) {
-              let partes = data.match(/^(\d{3})(\d{3})(\d{4})$/);
-              if (partes) {
-                return `(${partes[1]}) ${partes[2]}-${partes[3]}`; // (322) 000-0000
-              }
-            }
-          }
-          return data;
-        },
-      },
-    ],
-    initComplete: function () {
-      if (
-        (cst_name && cst_name !== null) ||
-        (pro_profile && pro_profile !== null)
-      ) {
-        this.api().search(search).draw();
-        this.api().state.clear();
-      }
-    },
-  });
-});
-// select de clientes
-$(document).on("shown.bs.modal", ".modal", function () {
-  $(this)
-    .find(".js-example-responsive")
-    .select2({
-      theme: "bootstrap-5",
-      width: "100%",
-      placeholder: "Cliente",
-      allowClear: true,
-      dropdownParent: $(this),
-      language: {
-        noResults: function () {
-          return "No se encontró el cliente";
-        },
-      },
-    });
-});
-// formatea el precio de la modal de registro
-new Cleave(document.querySelector(".sal_price"), {
-  numeral: true,
-  numeralThousandsGroupStyle: "thousand",
-  numeralDecimalScale: 0,
-});
-// input de pin del perfil modales registro y edicion
-document.querySelectorAll("#buttonPin").forEach((button) => {
-  button.closest(".modal").addEventListener("hide.bs.modal", () => {
-    button.classList.replace("bi-pencil-fill", "bi-pencil");
-    document.querySelectorAll("#propin").forEach((propin) => {
-      propin.setAttribute("disabled", true);
-    });
-  });
-  button.addEventListener("click", function (clk) {
-    if (button.classList.contains("bi-pencil")) {
-      button.classList.replace("bi-pencil", "bi-pencil-fill");
-      document.querySelectorAll("#propin").forEach((propin) => {
-        propin.removeAttribute("disabled");
-      });
-    } else {
-      button.classList.replace("bi-pencil-fill", "bi-pencil");
-      document.querySelectorAll("#propin").forEach((propin) => {
-        propin.setAttribute("disabled", true);
-      });
-    }
-  });
-});
-// informacion de la cuenta modal detalles
-document.getElementById("dataAcc").addEventListener("click", function (clk) {
-  if (!document.getElementById("dataAcc").classList.contains("flex-column")) {
-    document.getElementById("dataAcc").classList.add("flex-column");
-    document.getElementById("acc_email").style.maxWidth = "100%";
-    document.getElementById("acc_password").style.maxWidth = "100%";
-    document.getElementById("pro_profile").style.maxWidth = "100%";
-    document.getElementById("pro_pin_profile").classList.remove("d-none");
-    document.getElementById("copyData").classList.remove("d-none");
-  } else {
-    document.getElementById("dataAcc").classList.remove("flex-column");
-    document.getElementById("acc_email").style.maxWidth = "150px";
-    document.getElementById("acc_password").style.maxWidth = "150px";
-    document.getElementById("pro_profile").style.maxWidth = "150px";
-    document.getElementById("pro_pin_profile").classList.add("d-none");
-    document.getElementById("copyData").classList.add("d-none");
-  }
-});
+
+    <!-- Plataformas -->
+    <div class="mb-3 overflow-auto list-group list-group-horizontal">
+        {% for platform in platform %}
+        <a href="{{url_for('sale.getSale', pla_id=platform['pla_id'])}}" class="btn btn-sm mb-2">
+            {{platform['pla_name']}}
+        </a>
+        {% endfor %}
+    </div>
+
+
+
+    <!-- Tabla -->
+    <div class="card shadow card border-0 mb-4" data-aos="zoom-in-up">
+
+        <div class="card-body table-responsive">
+
+            <table class="table table-hover align-middle mb-0" id="table">
+
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th class="text-center text-nowrap">Fecha Inicio</th>
+                        <th class="text-center text-nowrap">Fecha Fin</th>
+                        <th class="text-center">Precio</th>
+                        <th class="text-center">Cuenta</th>
+                        <th class="text-center">Perfil</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for data in data %}
+                    <tr>
+                        <td class="text-nowrap text-truncate" style="max-width: 150px">
+                            {{data['cst_name'] | default('', True)}}
+                            {{data['cst_lastname'] | default('', True)}}
+                        </td>
+
+                        <td class="text-nowrap">{{data['sal_date_start'] | default('', True)}}</td>
+                        <td class="text-nowrap">{{data['sal_date_end'] | default('', True)}}</td>
+
+                        <td class="text-nowrap">
+
+                            {{data['sal_price'] if data['sal_price'] else (data['sal_price'] if data['sal_price']
+                            == 0.00 else '')}}
+
+                        </td>
+
+                        <td class="text-nowrap text-center">
+                            {{data['acc_email'] if data['acc_email'] else (data['acc_number_phone'] if
+                            data['acc_number_phone'] else '' )}}
+                        </td>
+
+                        <td class="text-nowrap text-center">Perfil {{data['pro_profile']}}</td>
+
+                        <td class="text-center text-nowrap">
+                            <!-- Vender -->
+                            <button class="btn btn-sm dataSaleCreate {{'d-none' if data['sal_id'] != None}}"
+                                data-bs-toggle="modal" data-bs-target="#crtSale" data-pro_id="{{data['pro_id']}}"
+                                data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else ''}}"
+                                data-acc_email="{% if data['acc_number_phone'] %}({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}}{% else %}{{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}}{% endif %}"
+                                style="--bs-btn-color: rgba(4,17,43,0.92);
+    --bs-btn-border-color: rgba(4,17,43,0.92);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: rgba(4,17,43,0.92);
+    --bs-btn-hover-border-color: rgba(4,17,43,0.92);
+    --bs-btn-focus-shadow-rgb: 25, 135, 84;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: rgba(4,17,43,0.92);
+    --bs-btn-active-border-color: rgba(4,17,43,0.92);
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: rgba(4,17,43,0.92);
+    --bs-btn-disabled-bg: transparent;
+    --bs-btn-disabled-border-color: rgba(4,17,43,0.92);
+    --bs-gradient: none;">
+                                <i class="bi bi-cash-coin"></i>
+                            </button>
+
+                            <!-- Ver -->
+                            <button
+                                class="btn btn-sm btn-outline-secondary dataSaleDetails {{'d-none' if data['sal_id'] == None}}"
+                                data-bs-toggle="modal"
+                                data-bs-target="#getSale{{'' if data['sal_id'] != None else None}}" data-sal_date_start="{{data['sal_date_start'].strftime('%d-%m-%Y')
+                                if
+                                data['sal_date_start'] else '--'}}" data-sal_date_end="{{data['sal_date_end'].strftime('%d-%m-%Y')
+                                if
+                                data['sal_date_end'] else '--'}}" data-sal_price={{ "{:,}" .format(data['sal_price'])
+                                if data['sal_price'] else '0' }} data-sal_description="{{data['sal_description'] if
+                                data['sal_description'] else 'Ninguna observación registrada.'}}"
+                                data-cst_name="{{data['cst_name'] if data['cst_name'] else ''}}"
+                                data-cst_lastname="{{data['cst_lastname'] if data['cst_lastname'] else ''}}"
+                                data-acc_email="{% if data['acc_number_phone'] %} ({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}} {% else %} {{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}} {% endif %}"
+                                data-pro_profile="{{data['pro_profile'] if data['pro_profile']}}"
+                                data-acc_password="{{data['acc_password'] if data['acc_password'] else 'No registra'}}"
+                                data-cst_phone_number="{% if data['cst_phone_number'] %} ({{data['cst_phone_number'][0:3] if data['cst_phone_number']}}) {{data['cst_phone_number'][3:6] if data['cst_phone_number']}}-{{data['cst_phone_number'][6:] if data['cst_phone_number']}} {% else %} Sin Numero {% endif %}"
+                                data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else 'Sin Pin'}}"
+                                data-pla_message="{{data['pla_message'] if data['pla_message'] else ''}}">
+                                <i class="bi bi-view-list"></i>
+                            </button>
+
+
+                            <!-- Editar -->
+                            <button
+                                class="btn btn-sm btn-outline-primary dataSaleUpdate {{'d-none' if data['sal_id'] == None}}"
+                                data-bs-toggle="modal"
+                                data-bs-target="#putSale{{'' if data['sal_id'] != None else None}}"
+                                data-sal_id="{{data['sal_id']}}" data-sal_date_start="{{data['sal_date_start']}}"
+                                data-sal_date_end="{{data['sal_date_end']}}" data-sal_price="{{data['sal_price']}}"
+                                data-cst_id="{{data['cst_id']}}" data-pro_id="{{data['pro_id']}}"
+                                data-sal_description="{{data['sal_description']}}"
+                                data-acc_email="{% if data['acc_number_phone'] %} ({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}} {% else %} {{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}} {% endif %}"
+                                data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else ''}}">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+
+                            <!-- COPIAR -->
+                            <button id="clipButton"
+                                class="btn btn-sm btn-outline-secondary dataSaleClip{{'none' if data['sal_id'] == None}} {{'d-none' if data['sal_id'] == None}}"
+                                data-sal_date_start="{{data['sal_date_start']}}"
+                                data-sal_date_end="{{data['sal_date_end']}}" data-sal_price="{{data['sal_price']}}"
+                                data-cst_id="{{data['cst_id']}}" data-sal_description="{{data['sal_description']}}"
+                                data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else ''}}">
+                                <i class="bi bi-clipboard" id="clipboard"></i>
+                            </button>
+
+                            <!-- Eliminar -->
+                            <button class="btn btn-sm btn-outline-danger  {{'d-none' if data['sal_id'] == None}}"
+                                onclick="confirmDelete(`{{data['sal_id'] if data['sal_id'] != None}}`, `{% if data['acc_number_phone'] %}({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}}{% else %}{{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}}{% endif %}`)"
+                                data-acc_email="{% if data['acc_number_phone'] %}({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}}{% else %}{{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}}{% endif %}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ================= MODAL DETALLES ================= -->
+
+<div class="modal fade" id="getSale" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalles de Venta {{plaName}}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="ms-3">
+                        <h5 class="mb-0 fw-bold text-dark" id="cst_fullname">
+                        </h5>
+                        <small class="text-muted me-2" id="cst_phone_number">
+                        </small>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-3 rounded bg-light border-end-0 shadow-sm border-primary"
+                            style="border-left: 5px solid">
+                            <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Fecha
+                                Inicio</small>
+                            <span class="text-dark text-nowrap" id="sal_date_start">
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded bg-light shadow-sm border-primary" style="border-left: 5px solid">
+                            <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Fecha
+                                Fin</small>
+                            <span class="text-dark text-nowrap" id="sal_date_end"></span>
+                        </div>
+                    </div>
+
+                    <!-- Precio Destacado -->
+                    <div class="col-12">
+                        <div class="p-3 border rounded bg-opacity-10 d-flex justify-content-between align-items-center">
+                            <span class="fw-bold"><i class="bi bi-cash-stack me-2"></i>PRECIO TOTAL</span>
+                            <h5 class="mb-0 fw-bold" id="sal_price">
+                            </h5>
+                        </div>
+                    </div>
+
+                    <!-- Cuenta -->
+                    <div class="col-12">
+                        <div class="p-3  rounded shadow-sm bg-light border-primary" style="border-left: 5px solid;">
+                            <small class="text-muted d-block text-uppercase fw-bold mb-1"
+                                style="font-size: 0.7rem;">Información de Cuenta</small>
+                            <div id="dataAcc" class="d-flex justify-content-between gap-2" role="button">
+                                <span id="acc_email" class="text-truncate" style="max-width : 150px"></span>
+                                <span id="acc_password" class="text-nowrap text-truncate"
+                                    style="max-width : 150px"></span>
+                                <span id="pro_profile" class="text-nowrap text-truncate"
+                                    style="max-width : 150px"></span>
+                                <span id="pro_pin_profile" class="text-nowrap text-truncate d-none"
+                                    style="max-width : 150px"></span>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <span id="copyData" class="d-none">
+                                    <i class="bi bi-copy" role="button" id="copyButton"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="col-12">
+                        <div class="p-3 rounded border">
+                            <small class="text-muted d-block text-uppercase fw-bold mb-1"
+                                style="font-size: 0.7rem;">Descripción</small>
+                            <p class="mb-0 small italic" id="sal_description">
+
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ================= MODAL CREAR ================= -->
+
+<div class="modal fade" id="crtSale" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Registrar Venta {{plaName}}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form action="{{url_for('sale.crtSale')}}" method="post" id="form_crt" class="row g-3">
+                    {{ form.csrf_token() }}
+                    {{ form.proid(class="proid") }}
+
+                    <div class="col-md-12">
+                        {{ form.cstid.label(class="form-label") }}*
+                        {{ form.cstid(class="js-example-responsive form-select cst_id")}}
+                    </div>
+
+                    <div class="col-md-6">
+                        {{ form.saldatestart.label(class="form-label") }}*
+                        {{ form.saldatestart(class="form-control sal_date_start" ) }}
+                    </div>
+
+                    <div class="col-md-6">
+                        {{ form.saldateend.label(class="form-label") }}*
+                        {{ form.saldateend(class="form-control sal_date_end") }}
+                    </div>
+
+                    <div class="col-md-6">
+                        {{ form.salprice.label(class="form-label") }}*
+                        {{ form.salprice(class="form-control sal_price", placeholder="Precio") }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.propin.label(class="form-label") }}
+                        <div class="input-group">
+                            {{ form.propin(class="form-control pro_pin", placeholder="0323 (Opcional)", disabled = true) }}
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="bi bi-pencil" id="buttonPin"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        {{ form.saldescription.label(class="form-label") }}
+                        {{ form.saldescription(class="form-control sal_description", placeholder="Descripción") }}
+                    </div>
+
+                    <div class="d-grid">
+                        {{ form.btnSubmit(class="btn",
+                        style="background-color: rgba(4,17,43,0.92); color:white;",
+                        id="validateFormCrt") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ================= MODAL EDITAR ================= -->
+
+<div class="modal fade" id="putSale" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizar Venta {{plaName}}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form method="post" id="form_upd" class="row g-3">
+                    {{ form.csrf_token() }}
+                    {{ form.proid(class="proid") }}
+
+                    <div class="col-md-12">
+                        {{ form.cstid.label(class="form-label") }}*
+                        {{ form.cstid(class="js-example-responsive form-select cstid")}}
+                    </div>
+
+                    <div class="col-md-6">
+                        {{ form.saldatestart.label(class="form-label") }}*
+                        {{ form.saldatestart(class="form-control saldatestart") }}
+                    </div>
+
+                    <div class="col-md-6">
+                        {{ form.saldateend.label(class="form-label") }}*
+                        {{ form.saldateend(class="form-control saldateend") }}
+                    </div>
+
+                    <div class="col-md-6">
+                        {{ form.salprice.label(class="form-label") }}*
+                        {{ form.salprice(class="form-control salprice", placeholder="Precio")
+                        }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.propin.label(class="form-label") }}
+                        <div class="input-group">
+                            {{ form.propin(class="form-control propin", placeholder="0323 (Opcional)", disabled = true) }}
+                            <button class="btn btn-outline-secondary" type="button"><i class="bi bi-pencil"
+                                    id="buttonPin"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        {{ form.saldescription.label(class="form-label") }}
+                        {{ form.saldescription(class="form-control saldescription", placeholder="Descripción") }}
+                    </div>
+
+                    <div class="d-grid">
+                        {{ form.btnSubmit(class="btn", id="validateFormUpd",
+                        style="background-color: rgba(4,17,43,0.92); color:white;") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block script %}
+<script src="{{url_for('static', filename='javascript/sale.js')}}"></script>
+{% endblock %}
