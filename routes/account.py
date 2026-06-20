@@ -7,6 +7,7 @@ from MySQLdb.cursors import DictCursor
 from MySQLdb import OperationalError 
 from datetime import datetime
 from .utils.wtf import accForm
+from .utils.wtf import proForm
 import uuid
 
 account_bp = Blueprint("account", __name__, template_folder= "../templates")
@@ -34,7 +35,7 @@ def lcl_Cst_Pla():
 def crtAccount():
     if request.referrer and '/account' in request.referrer:
         session["url_back_post"] = request.referrer
-    try:
+    try: 
         form = accForm()
         if form.validate_on_submit():
             accid = uuid.uuid4()
@@ -238,12 +239,25 @@ def getAccount(pla_id):
             accBackup['accdatepay'] = datetime.strptime(accBackup['accdatepay'], '%Y-%m-%d').date()
         form = accForm(data = accBackup)
         form.plaid.data = pla_id
+        form_profile = proForm()
         cursor = current_app.mysql.connection.cursor()
         cursor.execute("SELECT pla_name FROM t_platform WHERE pla_id = %s",(pla_id,))
         pla_name = cursor.fetchone()
-        cursor.execute("SELECT * FROM t_account JOIN t_platform ON t_account.pla_id = t_platform.pla_id WHERE t_platform.pla_id = %s ORDER BY t_account.acc_state DESC,  t_account.acc_nickname ASC", (pla_id,))
+        cursor.execute("""
+                    SELECT 
+                        *, (
+                            SELECT COUNT(*) 
+                            FROM t_profile 
+                            WHERE t_profile.acc_id = t_account.acc_id
+                            ) AS profiles
+                    FROM t_account
+                    JOIN t_platform ON t_account.pla_id = t_platform.pla_id 
+                    WHERE t_platform.pla_id = %s
+                    ORDER BY t_account.acc_state DESC,  t_account.acc_nickname ASC
+                        """, (pla_id,))
+        
         account = cursor.fetchall()
-        return render_template("account.html", account = account, form = form, pla_name = pla_name[0])
+        return render_template("account.html", account = account, form = form, form_profile = form_profile, pla_name = pla_name[0])
     except OperationalError as e:
         print(e)
         flash("Conexion fallida, Intenta más tarde.", "error")
