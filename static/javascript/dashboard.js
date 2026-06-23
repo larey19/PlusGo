@@ -1,4 +1,14 @@
-AOS.init();
+AOS.init({
+    once: true
+});
+
+$('#tableSale').on('draw.dt', function () {
+    AOS.refreshHard();
+});
+
+$('#tableAcc').on('draw.dt', function () {
+    AOS.refreshHard();
+});
 // DIAGRAMAS
 const data = document.getElementById("data");
 const cSale = document.getElementById("myChartSale");
