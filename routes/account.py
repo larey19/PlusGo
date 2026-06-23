@@ -17,19 +17,6 @@ def backup(form):
     backup['accdatepay'] = backup['accdatepay'].strftime("%Y-%m-%d")
     session["accBackup"] = backup
 
-@account_bp.context_processor
-def lcl_Cst_Pla():
-    try:
-        cursor = current_app.mysql.connection.cursor(DictCursor)
-        cursor.execute("SELECT pla_id FROM t_platform")
-        pla_id = cursor.fetchone()
-        return dict(
-            pla_id=pla_id
-        )
-    except Exception as e:
-        print(e)
-        return abort(500)
-
 @account_bp.route("/account", methods = ["POST"])
 @token
 def crtAccount():
@@ -114,7 +101,7 @@ def crtAccount():
         return redirect(url_for("account.getAccount", pla_id = plaid))
     except OperationalError:
         flash("Conexion fallida, Intenta más tarde.", "error")
-        return render_template("500.html")
+        return abort(500)
     except Exception as e:
         print(e)
         flash("Ocurrio un error, Intenta más tarde.", "error")
@@ -147,7 +134,7 @@ def putAccount(acc_id):
             cursor.execute("SELECT * FROM t_account WHERE acc_id = %s", (acc_id,))
             data = cursor.fetchone()
             if not data:
-                return render_template("404.html")
+                return abort(404)
             cursor.execute("SELECT acc_email FROM t_account WHERE acc_email = %s AND pla_id = %s AND acc_id != %s", (accemail, plaid, acc_id,))
             sql = cursor.fetchone()
             if accemail and sql:
@@ -188,11 +175,11 @@ def putAccount(acc_id):
     except OperationalError as e:
         print(e)
         flash("Conexion fallida, Intenta más tarde.", "error")
-        return render_template("500.html")
+        return abort(500)
     except Exception as e:
         print(e)
         flash("Ocurrio un error, Intenta más tarde.", "error")
-        return render_template("500.html")
+        return abort(500)
 
 @account_bp.route("/account/state/<acc_id>")
 @token
@@ -205,7 +192,7 @@ def putState(acc_id):
         cursor.execute("SELECT acc_state, pla_id FROM t_account WHERE acc_id = %s", (acc_id,))
         data = cursor.fetchone()
         if not data:
-            return render_template("404.html")
+            return abort(404)
         accstate = "disable" if data[0] == "enable" else "enable" 
         cursor.execute("""SELECT t_profile.pro_id FROM t_account 
                         JOIN t_profile ON t_account.acc_id = t_profile.acc_id
@@ -216,19 +203,23 @@ def putState(acc_id):
             if cursor.fetchone():
                 flash("Error al modificar estado de la cuenta", "info")
                 return redirect(session.get('url_back_post'))
-        for pro_id in data:
-            cursor.execute("UPDATE t_profile SET pro_state = %s WHERE pro_id = %s", ('disable', pro_id,))
+            else:
+                if accstate == "enable":
+                    cursor.execute("UPDATE t_profile SET pro_state = %s WHERE pro_id = %s", ('enable', pro_id,))
+                    flash("Cuenta activada", "info")
+                else:
+                    cursor.execute("UPDATE t_profile SET pro_state = %s WHERE pro_id = %s", ('disable', pro_id,))
+                    flash("Cuenta desactivada", "info")
         cursor.execute("UPDATE t_account SET acc_state = %s WHERE acc_id = %s", (accstate, acc_id,))
         cursor.connection.commit()
-        flash("Estado de cuenta mofidicado", "info")
         return redirect(session.get('url_back_post'))
     
     except OperationalError:
         flash("Conexion fallida, Intenta más tarde.", "error")
-        return render_template("500.html")
+        return abort(500)
     except Exception:
         flash("Ocurrio un error, Intenta más tarde.", "error")
-        return render_template("500.html")
+        return abort(500)
 
 @account_bp.route("/account/<pla_id>")
 @token
@@ -256,13 +247,33 @@ def getAccount(pla_id):
                     ORDER BY t_account.acc_state DESC,  t_account.acc_nickname ASC
                         """, (pla_id,))
         
+        # cursor.execute("""
+        #             SELECT 
+        #                 t_account.*, t_platform.*,
+        #                 (
+        #                     SELECT JSON_ARRAYAGG( 
+        #                         JSON_OBJECT(
+        #                             'pro_id', t_profile.pro_id,
+        #                             'pro_profile', t_profile.pro_profile,
+        #                             'pro_state', t_profile.pro_state,
+        #                             'pro_pin_profile', t_profile.pro_pin_profile
+        #                         )
+        #                     )
+        #                     FROM t_profile
+        #                     WHERE t_profile.acc_id = t_account.acc_id
+        #                 ) AS perfiles
+        #             FROM t_account
+        #             JOIN t_platform ON t_account.pla_id = t_platform.pla_id 
+        #             WHERE t_platform.pla_id = %s
+        #             ORDER BY t_account.acc_state DESC,  t_account.acc_nickname ASC
+        #                 """, (pla_id,))
         account = cursor.fetchall()
         return render_template("account.html", account = account, form = form, form_profile = form_profile, pla_name = pla_name[0])
     except OperationalError as e:
         print(e)
         flash("Conexion fallida, Intenta más tarde.", "error")
-        return render_template("500.html")
+        return abort(500)
     except Exception as e:
         print(e)
         flash("Ocurrio un error, Intenta más tarde.", "error")
-        return render_template("500.html") 
+        return abort(500) 
