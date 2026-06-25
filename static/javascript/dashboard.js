@@ -1,13 +1,13 @@
 AOS.init({
-    once: true
+  once: true,
 });
 
-$('#tableSale').on('draw.dt', function () {
-    AOS.refreshHard();
+$("#tableSale").on("draw.dt", function () {
+  AOS.refreshHard();
 });
 
-$('#tableAcc').on('draw.dt', function () {
-    AOS.refreshHard();
+$("#tableAcc").on("draw.dt", function () {
+  AOS.refreshHard();
 });
 // DIAGRAMAS
 const data = document.getElementById("data");
@@ -20,15 +20,23 @@ new Chart(cSale, {
     labels: meses,
     datasets: [
       {
-        label: "Ventas por Mes",
         data: totalsale,
-        borderWidth: 3,
+
+        borderWidth: 1,
+        backgroundColor: ["rgba(54, 162, 235, 0.2)"],
+        borderColor: ["rgb(54, 162, 235)"],
+        borderRadius: 10,
       },
     ],
   },
 
   options: {
     responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
     scales: {
       y: {
         beginAtZero: true,
@@ -40,13 +48,13 @@ const cPlatform = document.getElementById("myChartPlatform");
 const plaName = JSON.parse(data.dataset.planame);
 const plaSale = JSON.parse(data.dataset.plasale);
 new Chart(cPlatform, {
-  type: "doughnut",
+  type: "pie",
   data: {
     labels: plaName,
     datasets: [
       {
         data: plaSale,
-        borderWidth: 0,
+        borderWidth: 1,
       },
     ],
   },
@@ -55,11 +63,7 @@ new Chart(cPlatform, {
     responsive: true,
     plugins: {
       legend: {
-        position: "top",
-      },
-      title: {
-        display: true,
-        text: "Plataformas Vendidas",
+        display : false
       },
     },
   },
