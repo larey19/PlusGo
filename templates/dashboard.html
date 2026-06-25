@@ -16,7 +16,8 @@
 
 
 <!-- Main Content -->
-<div class="col p-3">
+
+<div class="col-lg-10 col-xl-10 col-xxl-11 p-3 mx-auto" style="max-width: 1200px;">
 
     <!-- Topbar -->
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -25,30 +26,43 @@
             <small class="text-muted">Informacion general PlusGo</small>
         </div>
         <div class="dropdown">
-            <button class="btn border-0 d-flex align-items-center gap-2 rounded-pill px-3 py-2 shadow-sm"
-                type="button" data-bs-toggle="dropdown" aria-expanded="false" style="    --bs-btn-color: #fff;
-    --bs-btn-bg: rgba(4,17,43,0.92);
-    --bs-btn-border-color: rgba(4,17,43,0.92);
-    --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: rgba(4,17,43,0.92);
-    --bs-btn-hover-border-color: rgba(4,17,43,0.92);
-    --bs-btn-focus-shadow-rgb: 49, 132, 253;
-    --bs-btn-active-color: #fff;
-    --bs-btn-active-bg: rgba(4,17,43,0.92);
-    --bs-btn-active-border-color: rgba(4,17,43,0.92);
-    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    --bs-btn-disabled-color: #fff;
-    --bs-btn-disabled-bg: rgba(4,17,43,0.92);
-    --bs-btn-disabled-border-color: rgba(4,17,43,0.92)">
+            <button class="btn border-0 d-flex align-items-center gap-2 rounded-pill px-3 py-2 shadow-sm" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false" style="    --bs-btn-color: #fff;
+         --bs-btn-bg: rgba(4,17,43,0.92);
+         --bs-btn-border-color: rgba(4,17,43,0.92);
+         --bs-btn-hover-color: #fff;
+         --bs-btn-hover-bg: rgba(4,17,43,0.92);
+         --bs-btn-hover-border-color: rgba(4,17,43,0.92);
+         --bs-btn-focus-shadow-rgb: 49, 132, 253;
+         --bs-btn-active-color: #fff;
+         --bs-btn-active-bg: rgba(4,17,43,0.92);
+         --bs-btn-active-border-color: rgba(4,17,43,0.92);
+         --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+         --bs-btn-disabled-color: #fff;
+         --bs-btn-disabled-bg: rgba(4,17,43,0.92);
+         --bs-btn-disabled-border-color: rgba(4,17,43,0.92)">
                 <i class="bi bi-person-circle fs-5 text-secondary text-white"></i>
                 <i class="bi bi-three-dots-vertical small text-white "></i>
             </button>
-            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-3 mt-2">
+            <ul class="dropdown-menu border-0 shadow-lg rounded-3 mt-2 p-2">
                 <li>
-                    <a class="dropdown-item d-flex align-items-center" href="#"
-                        onclick="confirmLogout()">
-                        <i class="bi bi-box-arrow-right fs-5 mx-2"></i>
-                        <span class="fw-semibold">Cerrar Sesión</span>
+                    <a href="#" onclick="" class="text-decoration-none text-black d-flex justify-content-between mb-1">
+                        <i class="bi bi-person-fill-gear fs-4"></i>
+                        <span class="fw-semibold my-auto">Perfil</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="" class="text-decoration-none text-black d-flex  justify-content-between">
+                        <i class="bi bi-gear-fill fs-4"></i>
+                        <span class="fw-semibold my-auto">Ajustes</span>
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="#" onclick="confirmLogout()"
+                        class="text-decoration-none text-danger d-flex  justify-content-between">
+                        <i class="bi bi-box-arrow-right fs-4"></i>
+                        <span class="fw-semibold text-center my-auto">Cerrar Sesión</span>
                     </a>
                 </li>
             </ul>
@@ -58,22 +72,26 @@
 
     <!-- fila -->
     <div class="d-flex justify-content-between row g-3 mb-2">
-        <div class="col-7 col-lg-3" data-aos="zoom-in-up">
+        <div class="col-7 col-sm-3 col-md-3 col-lg-3" data-aos="zoom-in-up">
             <div class="card border-bottom-0 border-end-0 border-start-0 border-primary shadow"
                 style="border-top: 5px solid">
                 <div class="card-body d-flex justify-content-between">
                     <div class="text-truncate">
-                        <small class="text-muted fw-bolder">Ventas Activas <span class="text-seccondary" id="sale-time"></span></small>
+                        <small class="text-muted fw-bolder">Ventas Activas <span class="text-seccondary"
+                                id="sale-time"></span></small>
                         <h4 class="fw-bold m-0 sale" id="sale-total">{{total_sale[0]}}</h4>
                     </div>
                     <div class="alert alert-primary m-0 border-0 h-25" style="
-                    --bs-alert-padding-x: 0.65rem; --bs-alert-padding-y: 0.35rem;" data-sale_total="{{total_sale[0]}}" data-sale_total_today="{{total_sale_today[0]}}" data-sale_total_yesterday="{{total_sale_yesterday[0]}}" data-sale_total_weekly="{{total_sale_weekly[0]}}" role="button" id="sale_time_change">
+                         --bs-alert-padding-x: 0.65rem; --bs-alert-padding-y: 0.35rem;"
+                        data-sale_total="{{total_sale[0]}}" data-sale_total_today="{{total_sale_today[0]}}"
+                        data-sale_total_yesterday="{{total_sale_yesterday[0]}}"
+                        data-sale_total_weekly="{{total_sale_weekly[0]}}" role="button" id="sale_time_change">
                         <i class="bi bi-graph-up-arrow"></i>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-5 col-lg-3" data-aos="zoom-in-up">
+        <div class="col-5 col-sm-3 col-md-3 col-lg-3" data-aos="zoom-in-up">
             <div class="card border-bottom-0 border-end-0 border-start-0 border-warning shadow"
                 style="border-top: 5px solid">
                 <div class="card-body d-flex justify-content-between ">
@@ -82,14 +100,14 @@
                         <h4 class="fw-bold m-0">{{total_customer[0]}}</h4>
                     </div>
                     <div class="alert alert-warning m-0 border-0 h-25" style="
-                    --bs-alert-padding-x: 0.65rem; --bs-alert-padding-y: 0.35rem;">
+                         --bs-alert-padding-x: 0.65rem; --bs-alert-padding-y: 0.35rem;">
                         <i class="bi bi-people-fill"></i>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-5 col-lg-3" data-aos="zoom-in-up">
+        <div class="col-5 col-sm-3 col-md-3 col-lg-3" data-aos="zoom-in-up">
             <div class="card border-bottom-0 border-end-0 border-start-0 border-success shadow"
                 style="border-top: 5px solid">
                 <div class="card-body d-flex justify-content-between">
@@ -98,23 +116,23 @@
                         <h4 class="fw-bold m-0">{{total_account_enable[0]}}</h4>
                     </div>
                     <div class="alert alert-success m-0 border-0 h-25" style="
-                    --bs-alert-padding-x: 0.65rem; --bs-alert-padding-y: 0.35rem;">
+                         --bs-alert-padding-x: 0.65rem; --bs-alert-padding-y: 0.35rem;">
                         <i class="bi bi-collection"></i>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-7 col-lg-3" data-aos="zoom-in-up">
+        <div class="col-7 col-sm-3 col-md-3 col-lg-3" data-aos="zoom-in-up">
             <div class="card border-bottom-0 border-end-0 border-start-0 border-danger shadow"
                 style="border-top: 5px solid">
-                <div class="card-body d-flex justify-content-between  text-truncate">
+                <div class="card-body d-flex justify-content-between">
                     <div class="text-truncate">
                         <small class="text-muted fw-bolder">Perfiles Disponibles</small>
                         <h4 class="fw-bold m-0">{{total_profiles_enable[0]}}</h4>
                     </div>
                     <div class="alert alert-danger m-0 border-0 h-25" style="
-                    --bs-alert-padding-x: 0.65rem; --bs-alert-padding-y: 0.35rem;">
-                        <i class="bi bi-person-lines-fill"></i>
+                         --bs-alert-padding-x: 0.65rem; --bs-alert-padding-y: 0.35rem;">
+                        <i class="bi bi-tag-fill"></i>
                     </div>
                 </div>
             </div>
@@ -123,15 +141,15 @@
 
 
     <!-- fila de ventas y cuentas -->
-    <div class="row g-4 mb-2">
-        <div class="col-md-8" data-aos="zoom-in-up">
+    <div class="row g-3 mb-2">
+        <div class="col-12 col-sm-7 col-md-7 col-lg-8" data-aos="zoom-in-up">
             <div class="card border-0 shadow">
                 <div class="card-body">
                     <div class="table-responsive">
 
                         <div class="d-flex aling-items-start">
                             <div class="my-auto">
-                                <i class="bi bi-collection text-primary fw-bolder fs-4 mx-2"></i>
+                                <i class="bi bi-cart text-primary fw-bolder fs-4 mx-2"></i>
                             </div>
                             <div>
                                 <h5 class="fw-bold m-0">Prox. ventas por vencer</h5>
@@ -182,7 +200,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4" data-aos="zoom-in-up">
+        <div class="col-12 col-sm-5 col-md-5 col-lg-4" data-aos="zoom-in-up">
             <div class="card border-0 shadow">
                 <div class="card-body ">
                     <div class="table-responsive">
@@ -244,25 +262,47 @@
 
 
     <!-- fila -->
-    <div class="row g-4 mb-2">
+    <div class="row g-3 mb-2">
 
-        <div class="col-md-5">
-            <div class="card shadow border-0" data-aos="zoom-in-up">
+        <div class="col-12 col-sm-8 col-md-8 col-lg-5" data-aos="zoom-in-up">
+            <div class="card shadow border-0">
                 <div class="card-body">
+
+                    <div class="d-flex aling-items-start">
+                        <div class="my-auto">
+                            <i class="bi bi-bar-chart text-primary fw-bolder fs-4 mx-2"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold m-0">Ventas por mes</h5>
+                            <small class="text-muted">Total de ventas por cada mes</small>
+                        </div>
+                    </div>
+                    <hr>
                     <canvas id="myChartSale" class="w-100 h-75" style="margin: auto;"></canvas>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card shadow border-0" data-aos="zoom-in-up">
+        <div class="col-12 col-sm-4 col-md-4 col-lg-3" data-aos="zoom-in-up">
+            <div class="card shadow border-0">
                 <div class="card-body">
+
+                    <div class="d-flex aling-items-start">
+                        <div class="my-auto">
+                            <i class="bi bi-pie-chart text-primary fw-bolder fs-4 mx-2"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold m-0">Plataformas Activas</h5>
+                            <small class="text-muted">Ventas por cada plataforma activa</small>
+                        </div>
+                    </div>
+                    <hr>
                     <canvas id="myChartPlatform" class="w-100 h-75" style="margin: auto;"></canvas>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4" data-aos="zoom-in-up">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-4" data-aos="zoom-in-up">
             <div class="card shadow border-0">
                 <div class="card-body">
                     <div class="table-responsive">
