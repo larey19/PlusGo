@@ -69,10 +69,8 @@
         </button>
         <div class="row">
             <!-- Sidebar -->
-            <div class="d-none d-lg-flex flex-column align-items-center py-4 sticky-top vh-100 px-2"
-                style="max-width:120px;background: linear-gradient(135deg, rgba(0,0,0,1), rgba(4,17,43,0.92)),url('{{ url_for('static', filename='images/pattern.png') }}') ;background-size: cover; box-shadow: 3px 0 20px rgba(0,0,0,.45);">
-
-
+            <div class="d-none d-lg-flex sticky-top px-2 vh-100 overflow-auto flex-column align-items-center py-4 shadow"
+                style="max-width:120px;background: linear-gradient(135deg, rgba(0,0,0,1), rgba(4,17,43,0.92)),url('{{ url_for('static', filename='images/pattern.png') }}') ;background-size: cover; -ms-overflow-style: none; scrollbar-width: none; -webkit-scrollbar.display: none;">
                 <a href="{{url_for('dashboard.dashboard')}}">
                     <img src="{{ url_for('static', filename='images/plusgo.png') }}" class="mb-4" style="width:100px;">
                 </a>
@@ -105,8 +103,8 @@
 
             </div>
             <!-- Sidebar Mobile -->
-            <div class="offcanvas offcanvas-start bg-dark text-white"
-                style="background: linear-gradient(135deg,rgba(0,0,0,1), rgba(4,17,43,0.92)),url('{{ url_for('static', filename='images/pattern.png') }}');background-size: cover; box-shadow: 3px 0 20px rgba(0,0,0,.45);"
+            <div class="offcanvas offcanvas-start bg-dark text-white shadow"
+                style="background: linear-gradient(135deg,rgba(0,0,0,1), rgba(4,17,43,0.92)),url('{{ url_for('static', filename='images/pattern.png') }}');background-size: cover;"
                 tabindex="-1" id="mobileSidebar">
                 <div class="d-flex justify-content-between">
                     <a href="{{url_for('dashboard.dashboard')}}">
@@ -117,7 +115,7 @@
                         aria-label="Close"></button>
                 </div>
 
-                <div class="offcanvas-body d-flex flex-column">
+                <div class="offcanvas-body d-flex flex-column" style="-ms-overflow-style: none; scrollbar-width: none; -webkit-scrollbar.display: none;">
                     <a href="{{url_for('dashboard.dashboard')}}" class="text-white text-decoration-none fs-5 mb-3">
                         <i class="bi bi-house-door-fill me-2"></i> Panel Principal
                     </a>
