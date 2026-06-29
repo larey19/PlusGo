@@ -3,11 +3,9 @@ from .utils.auth import token
 from email_validator import validate_email, EmailNotValidError
 import phonenumbers
 from phonenumbers import NumberParseException
-from MySQLdb.cursors import DictCursor 
 from MySQLdb import OperationalError 
 from datetime import datetime
 from .utils.wtf import accForm
-from .utils.wtf import proForm
 import uuid
 
 account_bp = Blueprint("account", __name__, template_folder= "../templates")
@@ -31,11 +29,12 @@ def crtAccount():
             accdatepay = form.accdatepay.data
             accemail = (form.accemail.data).strip()
             accnumberphone = (((form.accnumberphone.data).strip()).replace("+57","")).replace(" ", "")
+            accuser = (form.accuser.data).strip()
             accpassword = (form.accpassword.data).strip()
             plaid = (form.plaid.data).strip()
-            if not (accnumberphone or accemail):
+            if not (accnumberphone or accemail or accuser):    
                 backup(form)
-                flash("Debe ingresar un correo o telefono", "error")      
+                flash("Debe ingresar un correo, telefono o usuario", "error")      
                 return  redirect(session.get('url_back_post'))  
             if accemail:
                 validate_email(accemail)
@@ -63,10 +62,12 @@ def crtAccount():
                 acc_date_pay, 
                 acc_email, 
                 acc_number_phone, 
+                acc_user,
                 acc_password, 
                 acc_state,
                 pla_id) 
                 VALUES (
+                    %s,
                     %s,
                     %s,
                     %s,
@@ -82,6 +83,7 @@ def crtAccount():
                         accdatepay, 
                         accemail, 
                         accnumberphone, 
+                        accuser,
                         accpassword,
                         'enable',
                         plaid,))
@@ -120,10 +122,11 @@ def putAccount(acc_id):
             accdatepay = form.accdatepay.data
             accemail = (form.accemail.data).strip()
             accnumberphone = (((form.accnumberphone.data).strip()).replace("+57","")).replace(" ", "")
+            accuser = (form.accuser.data).strip()
             accpassword = (form.accpassword.data).strip()
             plaid = (form.plaid.data).strip()
-            if not (accnumberphone or accemail):    
-                flash("Debe ingresar un correo o telefono", "error")      
+            if not (accnumberphone or accemail or accuser):    
+                flash("Debe ingresar un correo, telefono o usuario", "error")      
                 return  redirect(session.get('url_back_post'))  
             if accemail:
                 validate_email(accemail) 
@@ -140,7 +143,11 @@ def putAccount(acc_id):
             if accemail and sql:
                 flash("Correo duplicado en esta plataforma", "error")      
                 return redirect(session.get('url_back_post')) 
-
+            cursor.execute("SELECT acc_user FROM t_account WHERE acc_user = %s AND pla_id = %s AND acc_id != %s", (accuser, plaid, acc_id,))
+            sql = cursor.fetchone()
+            if accuser and sql:
+                flash("Usuario duplicado en esta plataforma", "error")      
+                return redirect(session.get('url_back_post')) 
             cursor.execute("SELECT acc_nickname FROM t_account WHERE acc_nickname = %s AND pla_id = %s AND acc_id != %s", (accnickname, plaid, acc_id,))
             sql = cursor.fetchone()
             if sql:
@@ -152,7 +159,8 @@ def putAccount(acc_id):
                 acc_date_pay     = %s, 
                 acc_password     = %s,
                 acc_email        = %s,
-                acc_number_phone = %s
+                acc_number_phone = %s,
+                acc_user         = %s
                 WHERE acc_id     = %s""", (
                         accnickname, 
                         accprovider, 
@@ -160,7 +168,8 @@ def putAccount(acc_id):
                         accpassword, 
                         accemail, 
                         accnumberphone, 
-                        acc_id))
+                        accuser,
+                        acc_id,))
             cursor.connection.commit()
             flash("Actualizacion Exitosa", "success")
             return redirect(session.get('url_back_post'))
@@ -185,7 +194,6 @@ def putAccount(acc_id):
 @token
 def putState(acc_id):
     if request.referrer and '/account' in request.referrer:
-        session.clear()
         session["url_back_post"] = request.referrer
     try:
         cursor = current_app.mysql.connection.cursor()
@@ -201,7 +209,7 @@ def putState(acc_id):
         for pro_id in data:
             cursor.execute("SELECT sal_state FROM t_sale WHERE pro_id = %s", (pro_id,))
             if cursor.fetchone():
-                flash("Error al modificar estado de la cuenta", "info")
+                flash("Hay uno o mas perfiles vendidos", "info")
                 return redirect(session.get('url_back_post'))
             else:
                 if accstate == "enable":
@@ -230,45 +238,36 @@ def getAccount(pla_id):
             accBackup['accdatepay'] = datetime.strptime(accBackup['accdatepay'], '%Y-%m-%d').date()
         form = accForm(data = accBackup)
         form.plaid.data = pla_id
-        form_profile = proForm()
         cursor = current_app.mysql.connection.cursor()
         cursor.execute("SELECT pla_name FROM t_platform WHERE pla_id = %s",(pla_id,))
         pla_name = cursor.fetchone()
         cursor.execute("""
                     SELECT 
-                        *, (
+                        t_account.acc_id,
+                        t_account.acc_nickname,
+                        t_account.acc_provider,
+                        t_account.acc_date_pay,
+                        t_account.acc_email,
+                        t_account.acc_number_phone,
+                        t_account.acc_password,
+                        t_account.acc_state,
+                        t_platform.pla_id,
+                        t_platform.pla_name,
+                        t_platform.pla_profiles,
+                        t_platform.pla_message,
+                        (
                             SELECT COUNT(*) 
                             FROM t_profile 
                             WHERE t_profile.acc_id = t_account.acc_id
-                            ) AS profiles
+                        ) AS profiles,
+                        t_account.acc_user
                     FROM t_account
                     JOIN t_platform ON t_account.pla_id = t_platform.pla_id 
                     WHERE t_platform.pla_id = %s
                     ORDER BY t_account.acc_state DESC,  t_account.acc_nickname ASC
                         """, (pla_id,))
-        
-        # cursor.execute("""
-        #             SELECT 
-        #                 t_account.*, t_platform.*,
-        #                 (
-        #                     SELECT JSON_ARRAYAGG( 
-        #                         JSON_OBJECT(
-        #                             'pro_id', t_profile.pro_id,
-        #                             'pro_profile', t_profile.pro_profile,
-        #                             'pro_state', t_profile.pro_state,
-        #                             'pro_pin_profile', t_profile.pro_pin_profile
-        #                         )
-        #                     )
-        #                     FROM t_profile
-        #                     WHERE t_profile.acc_id = t_account.acc_id
-        #                 ) AS perfiles
-        #             FROM t_account
-        #             JOIN t_platform ON t_account.pla_id = t_platform.pla_id 
-        #             WHERE t_platform.pla_id = %s
-        #             ORDER BY t_account.acc_state DESC,  t_account.acc_nickname ASC
-        #                 """, (pla_id,))
         account = cursor.fetchall()
-        return render_template("account.html", account = account, form = form, form_profile = form_profile, pla_name = pla_name[0])
+        return render_template("account.html", account = account, form = form, pla_name = pla_name[0])
     except OperationalError as e:
         print(e)
         flash("Conexion fallida, Intenta más tarde.", "error")
