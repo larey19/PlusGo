@@ -96,9 +96,6 @@ def dashboard():
                         """)#PERFILES SIN VENDER en plusgo
         total_account_enable = cursor.fetchone()
         
-        
-        
-        
         cursor.execute("""
                         SELECT COUNT(*) FROM t_sale 
                         """)#total de ventas 
