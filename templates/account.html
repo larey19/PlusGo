@@ -11,8 +11,6 @@
     });
 </script>
 {% endfor %}
-
-
 <div class="col-lg-10 col-xl-10 col-xxl-11 p-3 mx-auto" style="max-width: 1200px;">
 
     <!-- Header -->
@@ -65,7 +63,7 @@
                             </td>
                             <td>{{ acc[2] }}</td>
                             <td class="text-center">{{ acc[3] }}</td>
-                            <td class="text-center text-nowrap">{{ acc[4] if acc[4] else (acc[5] if acc[5] else '') }}</td>
+                            <td class="text-center text-nowrap">{{ acc[4] if acc[4] else (acc[5] if acc[5] else (acc[13] if acc[13] else ''))}}</td>
 
                             <td class="text-center">
                                 {% if acc[7] == "enable" %}
@@ -83,7 +81,7 @@
                                     <i class="bi bi-person-lines-fill"></i>
                                 </a> -->
                                 <button class="btn btn-sm btn-outline-secondary dataProfiles" data-acc_id="{{acc[0]}}"
-                                    data-acc_nickname="{{acc[1]}}" data-pla_max_profiles="{{acc[11]}}"  data-acc_profiles="{{acc[13]}}"data-bs-toggle="modal"
+                                    data-acc_nickname="{{acc[1]}}" data-pla_max_profiles="{{acc[10]}}"  data-acc_profiles="{{acc[11] if acc[11] else 0}}"data-bs-toggle="modal"
                                     data-bs-target="#profilesModal" onclick="getProfile(`{{acc[0]}}`)">
                                     <i class="bi bi-person-lines-fill"></i>
                                 </button>
@@ -92,7 +90,7 @@
                                 <button class="btn btn-sm btn-outline-primary dataAccount" data-bs-toggle="modal"
                                     data-bs-target="#editModal" data-acc_id="{{acc[0]}}" data-acc_nickname="{{acc[1]}}"
                                     data-acc_provider="{{acc[2]}}" data-acc_date_pay="{{acc[3]}}"
-                                    data-acc_email="{{acc[4]}}" data-acc_number_phone="{{acc[5]}}"
+                                    data-acc_email="{{acc[4]}}" data-acc_number_phone="{{acc[5]}}" data-acc_user = "{{acc[13]}}"
                                     data-acc_password="{{acc[6]}}">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
@@ -117,39 +115,42 @@
 
 <!-- Modal Editar -->
 <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Editar Cuenta</h5>
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold">Editar Cuenta</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form method="post" id="form_upd">
                 <div class="modal-body row g-2">
-                    <div class="col-md-4">
+                    <div class="col-6 col-md-4">
                         {{form.hidden_tag()}}
                         {{form.accnickname.label(class="form-label")}}*
-                        {{form.accnickname(class="form-control mb-2 accnickname", placeholder="La normal")}}
+                        {{form.accnickname(class="form-control accnickname", placeholder="La normal")}}
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-6 col-md-4">
                         {{form.accprovider.label(class="form-label")}}*
-                        {{form.accprovider(class="form-control mb-2 accprovider", placeholder="Yo mismo")}}
+                        {{form.accprovider(class="form-control accprovider", placeholder="Yo mismo")}}
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-12 col-md-4">
                         {{form.accdatepay.label(class="form-label")}}*
-                        {{form.accdatepay(class="form-control mb-2 accdatepay")}}
+                        {{form.accdatepay(class="form-control accdatepay")}}
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-12 col-md-4">
                         {{form.accemail.label(class="form-label")}}*
-                        {{form.accemail(class="form-control mb-2 accemail", placeholder="plusgo@gmail.com")
+                        {{form.accemail(class="form-control accemail", placeholder="plusgo@gmail.com")
                         }}
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-6 col-md-4">
                         {{form.accnumberphone.label(class="form-label")}}*
-                        {{form.accnumberphone(class="form-control mb-2 accphonenumber", placeholder="3008000333")
+                        {{form.accnumberphone(class="form-control accphonenumber", placeholder="3008000333")
                         }}
-
                     </div>
-                    <div class="col-12 ">
+                    <div class="col-6 col-md-4">
+                        {{form.accuser.label(class="form-label")}}*
+                        {{form.accuser(class="form-control accuser", placeholder="plusgo123")}}
+                    </div>
+                    <div class="col-12 col-md-12">
                         {{form.accpassword.label(class="form-label")}}
                         <div class="position-relative">
                             {{form.accpassword(class="form-control accpassword", placeholder="******")}}
@@ -161,7 +162,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer bg-light">
                     {{form.btnSubmit( class="btn w-100 validateFormUpd",
                     style="background-color: rgba(4,17,43,0.92); color: white;")}}
                 </div>
@@ -172,39 +173,42 @@
 
 <!-- Modal Crear -->
 <div class="modal fade" id="createModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
 
-            <div class="modal-header">
-                <h5 class="modal-title">Nueva Cuenta</h5>
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold">Nueva Cuenta</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
             <form action="{{url_for('account.crtAccount')}}" method="post" id="form_crt">
                 <div class="modal-body row g-2">
-                    <div class="col-md-4">
+                    <div class="col-6 col-md-4">
                         {{form.hidden_tag()}}
                         {{form.accnickname.label(class="form-label")}}*
-                        {{form.accnickname(class="form-control mb-2", placeholder="La normal")}}
+                        {{form.accnickname(class="form-control", placeholder="La normal")}}
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-6 col-md-4">
                         {{form.accprovider.label(class="form-label")}}*
-                        {{form.accprovider(class="form-control mb-2", placeholder="Yo mismo")}}
+                        {{form.accprovider(class="form-control", placeholder="Yo mismo")}}
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-12 col-md-4">
                         {{form.accdatepay.label(class="form-label")}}*
-                        {{form.accdatepay(class="form-control mb-2")}}
+                        {{form.accdatepay(class="form-control")}}
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-12 col-md-4">
                         {{form.accemail.label(class="form-label")}}*
-                        {{form.accemail(class="form-control mb-2", placeholder="plusgo@gmail.com")}}
+                        {{form.accemail(class="form-control", placeholder="plusgo@gmail.com")}}
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-6 col-md-4">
                         {{form.accnumberphone.label(class="form-label")}}*
-                        {{form.accnumberphone(class="form-control mb-2 accphonenumber", placeholder="3008000333")}}
-
+                        {{form.accnumberphone(class="form-control accphonenumber", placeholder="3008000333")}}
                     </div>
-                    <div class="col-12">
+                    <div class="col-6 col-md-4">
+                        {{form.accuser.label(class="form-label")}}*
+                        {{form.accuser(class="form-control accuser", placeholder="plusgo123")}}
+                    </div>
+                    <div class="col-12 col-md-12">
                         {{form.accpassword.label(class="form-label")}}
                         <div class="position-relative">
                             {{form.accpassword(class="form-control", placeholder="******")}}
@@ -216,7 +220,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer bg-light">
                     {{form.btnSubmit( class="btn w-100",
                     style="background-color: rgba(4,17,43,0.92); color: white;",
                     id="validateFormCrt")}}
