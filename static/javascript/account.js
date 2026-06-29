@@ -21,6 +21,9 @@ document.querySelectorAll(".dataAccount").forEach((button) => {
     document.querySelectorAll(".accpassword").forEach((accpassword) => {
       accpassword.value = this.dataset.acc_password;
     });
+    document.querySelectorAll(".accuser").forEach((accuser) => {
+      accuser.value = this.dataset.acc_user;
+    });
     // reporte de campos en el formulario de edicion
     document.querySelectorAll(".validateFormUpd").forEach((button) => {
       button.addEventListener("click", function (vld) {
