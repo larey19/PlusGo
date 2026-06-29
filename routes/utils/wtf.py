@@ -54,10 +54,12 @@ class cstForm(FlaskForm):
         validators=[DataRequired(), length(min=3, max=50)]
     )
     cstlastname = StringField(
-        "Apellido"
+        "Apellido", 
+        validators=[Optional(), length(max=50, min=3)]
     )
     cstphonenumber = TelField(
-        "Numero de Telefono"
+        "Numero de Telefono",
+        validators=[Optional(), length(max=10, min=10)]
     )
     btnSubmit = SubmitField("Guardar")
 
@@ -90,10 +92,16 @@ class accForm(FlaskForm):
         validators=[DataRequired()]
     )
     accemail = EmailField(
-        "Correo"
+        "Correo",
+        validators=[Optional(), length(max=100, min=10)]
     )
     accnumberphone = TelField(
-        "Numero de celular"
+        "Num. de celular",
+        validators=[Optional(), length(max=10, min=10)]
+    )
+    accuser = StringField(
+        "Usuario",
+        validators=[Optional(), length(max=50, min=3)]
     )
     accpassword = PasswordField(
         "Contraseña"
@@ -107,7 +115,8 @@ class proForm(FlaskForm):
         validators=[DataRequired(), length(min=2)]
     )
     propin = StringField(
-        "Pin"
+        "Pin",
+        validators=[Optional(), length(max=6, min=3)]
     )
     accid = HiddenField(
         validators=[DataRequired()]
@@ -135,6 +144,35 @@ class mngForm(FlaskForm):
     mngfrom = SelectMultipleField(
         "Remitente",
         validators=[DataRequired(), length(min=3)]
+    )
+    btnSubmit = SubmitField("Guardar")
+
+class admForm(FlaskForm):
+    admname = StringField(
+        "Nombre",
+        validators=[DataRequired(), length(max=50, min=3)]
+    )
+    admlastname = StringField(
+        "Apellido",
+        validators=[Optional(), length(max=50, min=3)]
+    )
+    admuser = StringField(
+        "Usuario",
+        validators=[DataRequired(), length(max=50, min=50)]
+    )
+
+class admForm(FlaskForm):
+    admpassword = PasswordField(
+        "Contraseña Actual",
+        validators=[DataRequired(), length(min=5)]
+    )
+    admpasswordcheck = PasswordField(
+        "Reescribe la contraseña nueva",
+        validators=[DataRequired() , length(min=5)]
+    )
+    admpasswordnew = PasswordField(
+        "Contraseña Nueva",
+        validators=[DataRequired(), length(min=5)]
     )
     btnSubmit = SubmitField("Guardar")
 
