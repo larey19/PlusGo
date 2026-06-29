@@ -55,7 +55,9 @@ def getTriggerAccount():
             "acc_date_pay": trg[6],
             "acc_email": trg[7],
             "acc_number_phone":trg[8],
-            "pla_name":trg[9],
+            "acc_user":trg[9],
+            "pla_name":trg[10],
+            
 
         } for trg in trg]
         return render_template("trigger.html", account = data)
