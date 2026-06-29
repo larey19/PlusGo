@@ -14,9 +14,10 @@ def dashboard():
                         SELECT t_platform.pla_id, t_platform.pla_name,  t_account.acc_nickname, t_account.acc_date_pay 
                         FROM t_account 
                             JOIN t_platform ON t_account.pla_id = t_platform.pla_id 
-                        WHERE t_account.acc_state = 'enable' AND t_account.acc_date_pay <= DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR) + 3 
+                        WHERE t_account.acc_state = 'enable' AND t_account.acc_date_pay <= DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR) + INTERVAL 3 DAY
                         ORDER BY t_account.acc_date_pay ASC""")
         account = cursor.fetchall() #Cuentas por vencer o vencidas
+        print(account)
         
         cursor.execute("""
                         SELECT t_customer.cst_name, t_customer.cst_lastname, t_sale.sal_date_end, t_account.acc_email, t_account.acc_number_phone, t_platform.pla_name, t_profile.pro_profile, t_platform.pla_id
@@ -25,7 +26,7 @@ def dashboard():
                             JOIN t_profile ON t_account.acc_id = t_profile.acc_id
                             JOIN t_sale ON t_sale.pro_id = t_profile.pro_id
                             JOIN t_customer ON t_sale.cst_id = t_customer.cst_id
-                        WHERE t_account.acc_state = 'enable' AND t_sale.sal_date_end <= DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR) + 3
+                        WHERE t_account.acc_state = 'enable' AND t_sale.sal_date_end <= DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR) + INTERVAL 3 DAY
                         ORDER BY t_sale.sal_date_end ASC
                         """)
         sale = cursor.fetchall() #Ventas por vencer o vencidas
@@ -114,7 +115,7 @@ def dashboard():
         total_sale_yesterday = cursor.fetchone()
         
         cursor.execute("""
-                        SELECT COUNT(*) FROM trg_sale WHERE trg_action LIKE '%registro%' AND sal_description NOT REGEXP 'gta|grta|garanti|garant|garantia' AND (DATE(TRG_DATE) BETWEEN DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR) - 7 AND DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR));
+                        SELECT COUNT(*) FROM trg_sale WHERE trg_action LIKE '%registro%' AND sal_description NOT REGEXP 'gta|grta|garanti|garant|garantia' AND YEARWEEK(TRG_DATE - INTERVAL 5 HOUR, 1) = YEARWEEK(UTC_TIMESTAMP() - INTERVAL 5 HOUR, 1);
                         """)#total de ventas semana  
         total_sale_weekly = cursor.fetchone() 
         
