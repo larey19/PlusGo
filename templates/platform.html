@@ -12,7 +12,6 @@
 </script>
 {% endfor %}
 
-
 <div class="col-lg-10 col-xl-10 col-xxl-11 p-3 mx-auto" style="max-width: 1200px;">
 
     <!-- Header -->
@@ -92,29 +91,29 @@
     <div class="modal-dialog">
         <div class="modal-content">
 
-            <div class="modal-header">
-                <h5 class="modal-title">Editar Plataforma</h5>
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold">Editar Plataforma</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
             <form method="post" id="form_upd">
                 <div class="modal-body row g-2">
                     {{form.hidden_tag()}}
-                    <div class="col-md-6">
+                    <div class="col-6">
                         {{ form.planame.label(class="form-label") }}*
                         {{ form.planame(class="form-control planame", placeholder="Netflix") }}
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-6">
                         {{ form.plaprofiles.label(class="form-label") }}*
                         {{ form.plaprofiles(class="form-control plaprofiles", placeholder="5") }}
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-12 ">
                         {{ form.plamessage.label(class="form-label") }}
-                        {{ form.plamessage(class="form-control plamessage", placeholder="Mensaje para el usuario") }}
+                        {{ form.plamessage(class="form-control plamessage auto-expand", placeholder="Mensaje para el usuario", style="field-sizing: content;") }}
                     </div>
                 </div>
 
-                <div class="modal-footer">
+                <div class="modal-footer bg-light">
                     {{form.btnSubmit(class="btn w-100 validateFormUpd",
                     style="background-color: rgba(4,17,43,0.92); color: white;")}}
                 </div>
@@ -128,29 +127,29 @@
     <div class="modal-dialog">
         <div class="modal-content">
 
-            <div class="modal-header">
-                <h5 class="modal-title">Nueva Plataforma</h5>
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold">Nueva Plataforma</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
             <form method="post" id="form_crt">
                 <div class="modal-body row g-2">
                     {{ form.hidden_tag() }}
-                    <div class="col-md-6">
+                    <div class="col-6">
                         {{ form.planame.label(class="form-label") }}*
                         {{ form.planame(class="form-control", placeholder="Netflix") }}
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-6">
                         {{ form.plaprofiles.label(class="form-label") }}*
                         {{ form.plaprofiles(class="form-control", placeholder="5") }}
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-12 ">
                         {{ form.plamessage.label(class="form-label") }}
-                        {{ form.plamessage(class="form-control", placeholder="Mensaje para el usuario") }}
+                        {{ form.plamessage(class="form-control plamessage", placeholder="Mensaje para el usuario",  style="field-sizing: content;") }}
                     </div>
                 </div>
 
-                <div class="modal-footer">
+                <div class="modal-footer bg-light">
                     {{form.btnSubmit(class="btn w-100",
                     style="background-color: rgba(4,17,43,0.92); color: white;",
                     id="validateFormCrt")}}
