@@ -1,5 +1,28 @@
 AOS.init();
 
+
+document.querySelectorAll(".plamessage").forEach((pla) => {
+  pla.value=`*... {tittle_add}🍿*
+{account}
+*CLV:* {password}
+
+*Perfil 👤*
+{profile}
+
+*Pin*
+{pin}
+
+*VIGENCIA {date} 🗓️*
+
+*NO CAMBIAR PREFIJO DEL PERFIL ⚠️*
+
+RENOVACIONES 1, 2 y 3 DÍAS ANTES DE VENCER.
+
+*Gracias por tu compra 🫂*`
+});
+
+
+
 document.querySelectorAll(".dataPlatform").forEach((pla) => {
   pla.addEventListener("click", function (platform) {
     const pla_id = this.getAttribute("data-pla_id");
@@ -65,6 +88,7 @@ function confirmCreate() {
 }
 $(document).ready(function () {
   $("#table").DataTable({
+    order: [],
     language: {
       url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
     },
