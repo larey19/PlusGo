@@ -43,7 +43,7 @@ def log():
                 flash ("Parece que no estas registrado", "info")
                 return render_template("login.html", form = form)
             elif admin:
-                hash_password = admin[3]
+                hash_password = admin[4]
                 if not check_password_hash(hash_password, password):
                     session["loginBackup"] = form.data
                     flash ("Contraseña incorrecta", "error")
