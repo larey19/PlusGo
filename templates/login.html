@@ -16,27 +16,92 @@
     <div class="row min-vh-100">
 
         <!-- ========= IZQUIERDA DESKTOP ========= -->
-        <div class="col-lg-7 d-none d-lg-flex flex-column justify-content-between text-white px-5 py-5 position-relative z-2 .d-none .d-lg-block .d-xl-none"
+        <div class="col-sm-9 col-md-7 col-lg-7 d-none d-md-flex flex-column justify-content-between text-white px-5 py-5 position-relative z-2 .d-none .d-lg-block .d-xl-none"
             style="background: linear-gradient(135deg, rgba(0,0,0,1), rgba(4,17,43,0.92)), url('{{ url_for('static', filename='images/pattern.png') }}'); background-size: cover;  box-shadow: 10px 0 25px rgba(0,0,0,.45);">
 
             <div class="m-5 my-auto">
                 <img src="{{ url_for('static', filename='images/plusgo.png') }}" alt="PlusGo" class="mb-4"
                     style="width: 220px;">
 
-                <h2 class="fw-bold mb-3">
+                <h2 class="fw-bold">
                     Todo en un solo lugar
                 </h2>
 
-                <p class="fs-5 opacity-75" style="max-width: 420px;">
-                    Lleva el control sin complicaciones,
-                    desde cualquier dispositivo.
+                <p class="fs-5 opacity-75 text-break" style="max-width: 420px;">
+                    Lleva el control sin complicaciones<span class="d-none d-xl-flex">desde cualquier dispositivo.</span>
                 </p>
             </div>
         </div>
 
 
+
+
+        <!-- ========= DERECHA DESKTOP ========= -->
+        <div
+            class="col-sm-3 col-md-5 col-lg-5 d-none d-md-flex align-items-center justify-content-center bg-white position-relative z-1">
+
+            <div class="w-75" data-aos="zoom-in-up" style="max-width: 380px;">
+
+                <div class="w-100 d-flex justify-content-center mb-3">
+                    <img src="{{url_for('static', filename='images/plusgo_letter_blue.png')}}" alt="..."
+                        style="width: 160px;">
+                </div>
+
+                <form action="login" method="POST" class="w-100 formlogin" >
+                    {{form.hidden_tag()}}
+                    <div class="mb-4">
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text">
+                                <i class="bi bi-person-fill" style="color: rgba(4,17,43,0.92);"></i>
+                            </span>
+                            <div class="form-floating">
+                                {{form.user(class="form-control shadow-sm user", placeholder="usuario12")}}
+                                {{form.user.label(class="form-label fw-medium password")}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="input-group input-group-lg">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-lock-fill" style="color: rgba(4,17,43,0.92);"></i>
+                            </span>
+                            <div class="form-floating position-relative">
+                                {{form.password(class="form-control shadow-sm password",placeholder="****")}}
+                                {{form.password.label(class="form-label fw-medium")}}
+                                <i id="eyeIcon"
+                                    class=" fs-4 bi bi-eye position-absolute top-50 button-50 end-0 translate-middle"
+                                    onclick="password()">
+                                </i>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-lg disabled w-100 shadow btnsubmit" style="
+    --bs-btn-color: #fff;
+    --bs-btn-bg: rgba(4,17,43,0.92);
+    --bs-btn-border-color: rgba(4,17,43,0.92);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: rgba(4,17,43,0.92);
+    --bs-btn-hover-border-color: rgba(4,17,43,0.92);
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: rgba(4,17,43,0.92);
+    --bs-btn-active-border-color: rgba(4,17,43,0.92);
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: rgba(4,17,43,0.92);
+    --bs-btn-disabled-border-color: rgba(4,17,43,0.92)">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                        {{form.btnSubmit.label()}}
+                    </button>
+                </form>
+            </div>
+        </div>
+
+
         <!-- ========= MOBILE ========= -->
-        <div class="col-12 d-lg-none d-flex flex-column px-0 text-white min-vh-100"
+        <div class="col-12 d-md-none d-flex flex-column px-0 text-white min-vh-100"
             style="background: linear-gradient(90deg, rgba(0,0,0,1), rgba(4,17,43,0.92)), url('{{ url_for('static', filename='images/pattern.png') }}'); background-size: cover;  box-shadow: 10px 0 25px rgba(0,0,0,.45);">
 
             <!-- HEADER -->
@@ -87,7 +152,9 @@
                             <div class="form-floating position-relative">
                                 {{form.password(class="form-control shadow-sm password",placeholder="****")}}
                                 {{form.password.label(class="form-label fw-medium")}}
-                                <i id="eyeIcon" class=" fs-4 bi bi-eye position-absolute top-50 button-50 end-0 translate-middle" onclick="password()">
+                                <i id="eyeIcon"
+                                    class=" fs-4 bi bi-eye position-absolute top-50 button-50 end-0 translate-middle"
+                                    onclick="password()">
                                 </i>
                             </div>
                         </div>
@@ -112,67 +179,6 @@
                     </button>
                 </form>
 
-            </div>
-        </div>
-
-
-        <!-- ========= DERECHA DESKTOP ========= -->
-        <div class="col-lg-5 d-none d-lg-flex align-items-center justify-content-center bg-white position-relative z-1">
-
-            <div class="w-100" style="max-width: 380px;" data-aos="zoom-in-up">
-
-                <div class="w-100 d-flex justify-content-center mb-3">
-                    <img src="{{url_for('static', filename='images/plusgo_letter_blue.png')}}" alt="..."
-                        style="width: 160px;">
-                </div>
-
-                <form action="login" method="POST" class="w-100 formlogin">
-                    {{form.hidden_tag()}}
-                    <div class="mb-4">
-                        <div class="input-group input-group-lg">
-                            <span class="input-group-text">
-                                <i class="bi bi-person-fill" style="color: rgba(4,17,43,0.92);"></i>
-                            </span>
-                            <div class="form-floating">
-                                {{form.user(class="form-control shadow-sm user", placeholder="usuario12")}}
-                                {{form.user.label(class="form-label fw-medium password")}}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <div class="input-group input-group-lg">
-
-                            <span class="input-group-text">
-                                <i class="bi bi-lock-fill" style="color: rgba(4,17,43,0.92);"></i>
-                            </span>
-                            <div class="form-floating position-relative">
-                                {{form.password(class="form-control shadow-sm password",placeholder="****")}}
-                                {{form.password.label(class="form-label fw-medium")}}
-                                <i id="eyeIcon" class=" fs-4 bi bi-eye position-absolute top-50 button-50 end-0 translate-middle" onclick="password()">
-                                </i>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-lg disabled w-100 shadow btnsubmit" style="
-    --bs-btn-color: #fff;
-    --bs-btn-bg: rgba(4,17,43,0.92);
-    --bs-btn-border-color: rgba(4,17,43,0.92);
-    --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: rgba(4,17,43,0.92);
-    --bs-btn-hover-border-color: rgba(4,17,43,0.92);
-    --bs-btn-focus-shadow-rgb: 49, 132, 253;
-    --bs-btn-active-color: #fff;
-    --bs-btn-active-bg: rgba(4,17,43,0.92);
-    --bs-btn-active-border-color: rgba(4,17,43,0.92);
-    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    --bs-btn-disabled-color: #fff;
-    --bs-btn-disabled-bg: rgba(4,17,43,0.92);
-    --bs-btn-disabled-border-color: rgba(4,17,43,0.92)">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>
-                        {{form.btnSubmit.label()}}
-                    </button>
-                </form>
             </div>
         </div>
 
