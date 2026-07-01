@@ -59,7 +59,7 @@ class cstForm(FlaskForm):
     )
     cstphonenumber = TelField(
         "Numero de Telefono",
-        validators=[Optional(), length(max=10, min=10)]
+        validators=[Optional(), length(max=20, min=10)]
     )
     btnSubmit = SubmitField("Guardar")
 
