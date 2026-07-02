@@ -1,4 +1,5 @@
 AOS.init();
+
 // SCRIPT COPIA DE DATOS DE VENTA
 document.querySelectorAll("#clipButton").forEach((sl) => {
   sl.addEventListener("click", function (clk) {
@@ -6,12 +7,6 @@ document.querySelectorAll("#clipButton").forEach((sl) => {
       sl.classList.replace("dataSaleClip", "dataSaleClip2");
       document.querySelectorAll("#clipboard").forEach((clip) => {
         clip.classList.replace("bi-clipboard", "bi-clipboard-x");
-        Swal.fire({
-          title: "Venta Copiada",
-          icon: "success",
-          showConfirmButton: false,
-          timer: 800,
-        });
       });
 
       document.querySelectorAll(".dataSaleClip").forEach((sale) => {
@@ -32,18 +27,17 @@ document.querySelectorAll("#clipButton").forEach((sl) => {
       document.querySelector(".sal_description").textContent =
         this.dataset.sal_description;
       document.querySelector(".pro_pin").value = this.dataset.pro_pin_profile;
+
+      flashy("Venta Copiada en la modal de registro", {
+        Animation: "bounce",
+        closable: false,
+        icon: `<i class="bi bi-clipboard-data"></i>`,
+      });
     } else {
       this.classList.replace("dataSaleClip2", "dataSaleClip");
       document.querySelectorAll("#clipboard").forEach((clip) => {
         clip.classList.replace("bi-clipboard-x", "bi-clipboard");
-        Swal.fire({
-          title: "Venta Eliminada",
-          icon: "info",
-          showConfirmButton: false,
-          timer: 800,
-        });
       });
-
       // ============== ELIMINA DATOS DE REGISTRAR
       document.querySelector(".cst_id").value = "";
       document.querySelector(".sal_date_start").value = "";
@@ -54,11 +48,16 @@ document.querySelectorAll("#clipButton").forEach((sl) => {
       document.querySelectorAll(".dataSaleClip").forEach((sale) => {
         sale.classList.remove("d-none");
       });
+      flashy("Venta Borrada de la modal de registro", {
+        Animation: "bounce",
+        closable: false,
+        icon: `<i class="bi bi-clipboard"></i>`,
+      });
     }
   });
 });
 
-// SCRIPTS MODAL DETALLES 
+// SCRIPTS MODAL DETALLES
 document.querySelectorAll(".dataSaleDetails").forEach((sale) => {
   sale.addEventListener("click", function (c) {
     const sal_id = this.getAttribute("data-sal_id");
@@ -148,7 +147,7 @@ document.querySelectorAll(".dataSaleCreate").forEach((sale) => {
       });
   });
 });
-// SCRIPTS MODAL UPDATE 
+// SCRIPTS MODAL UPDATE
 document.querySelectorAll(".dataSaleUpdate").forEach((sale) => {
   sale.addEventListener("click", function (c) {
     const sal_id = this.getAttribute("data-sal_id");
@@ -382,5 +381,22 @@ document.getElementById("dataAcc").addEventListener("click", function (clk) {
     document.getElementById("pro_profile").style.maxWidth = "150px";
     document.getElementById("pro_pin_profile").classList.add("d-none");
     document.getElementById("copyData").classList.add("d-none");
+  }
+});
+
+// centra la plataforma selecionada y si no tiene ningun venta disposible oculta boton de copiar
+document.addEventListener("DOMContentLoaded", function () {
+  const activo = document.querySelector(".text-primary");
+  if (activo) {
+    activo.scrollIntoView({ inline: "center" });
+  }
+
+  const existeClipnone = document.querySelector(".dataSaleClipnone") !== null;
+
+  // 2. Si NO existe ninguno, ocultamos TODOS los botones de tipo clipButton
+  if (!existeClipnone) {
+    document.querySelectorAll('#clipButton').forEach((x) => {
+      x.classList.add("d-none");
+    });
   }
 });
