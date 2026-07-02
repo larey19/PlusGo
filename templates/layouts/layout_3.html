@@ -6,10 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PlusGo</title>
     <link rel="icon" href="{{ url_for('static', filename='images/plusgo.png') }}" type="image/png">
-    <!-- swet alert -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <!-- cdn swet alert -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <!-- fuente Montserrat -->
@@ -20,13 +17,14 @@
         rel="stylesheet">
     <!-- cargar la pagina nProgress -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
+    <!-- animaciones en la carga -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
 
     <!-- Custom stlylesheet -->
     <style>
         * {
             font-family: Montserrat, -apple-system, system-ui;
-            -webkit-box-sizing: border-box;
             box-sizing: border-box;
         }
 
@@ -36,35 +34,13 @@
         }
 
         #notfound {
-            position: relative;
-            height: 100vh;
-        }
-
-        #notfound .notfound-bg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-image: url('{{ url_for("static", filename="images/pattern.png") }}');
-            background-size: cover;
-        }
-
-        #notfound .notfound-bg:after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
+            min-width: 100vw;
+            min-height: 100vh;
             background: linear-gradient(135deg, rgba(0, 0, 0), rgba(4, 17, 43, 0.92)),
             url('{{ url_for("static", filename="images/pattern.png") }}');
-            ;
-        }
-
-        #notfound .notfound {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            -webkit-transform: translate(-50%, -50%);
-            -ms-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .notfound {
@@ -74,21 +50,9 @@
             text-align: center;
         }
 
-        .notfound .notfound-404,
-        .notfound .notfound-500 {
-            position: relative;
-            height: 200px;
-        }
-
         .notfound .notfound-404 h1,
         .notfound .notfound-500 h1 {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            -webkit-transform: translate(-50%, -50%);
-            -ms-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
-            font-size: 220px;
+            font-size: 16rem;
             font-weight: 900;
             margin: 0px;
             color: #fff;
@@ -105,8 +69,7 @@
             margin-bottom: 15px;
         }
 
-        .notfound .home-btn,
-        .notfound .contact-btn {
+        .home-btn {
             display: inline-block;
             font-weight: 700;
             text-decoration: none;
@@ -131,55 +94,19 @@
             background: #fff;
         }
 
-        .notfound .contact-btn {
-            border: 2px solid rgba(255, 255, 255, 0.9);
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .notfound-social {
-            margin-top: 25px;
-        }
-
-        .notfound-social>a {
-            display: inline-block;
-            height: 40px;
-            line-height: 40px;
-            width: 40px;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.9);
-            margin: 0px 6px;
-            -webkit-transition: 0.2s all;
-            transition: 0.2s all;
-        }
-
-        .notfound-social>a:hover {
-            color: rgba(4, 17, 43, 0.92);
-            background-color: #fff;
-            border-radius: 50%;
-        }
-
         @media only screen and (max-width: 767px) {
 
             .notfound .notfound-404 h1,
             .notfound .notfound-500 h1 {
-                font-size: 182px;
-            }
-        }
-
-        @media only screen and (max-width: 480px) {
-
-            .notfound .notfound-404,
-            .notfound .notfound-500 {
-                height: 146px;
-            }
-
-            .notfound .notfound-404 h1,
-            .notfound .notfound-500 h1 {
-                font-size: 146px;
+                font-size: 130px;
             }
 
             .notfound h2 {
-                font-size: 16px;
+                font-size: 15px
+            }
+
+            .home-btn {
+                font-size: 13px;
             }
         }
 
@@ -210,10 +137,12 @@
     {% endblock %}
     <!-- jquery global -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- animaciones en la carga -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <!-- carga de pagina -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
     <script>
-        AOS.init()
+        AOS.init();
         // Configuración global opcional de NProgress
         NProgress.configure({ showSpinner: true, trickleSpeed: 200 });
 
@@ -254,8 +183,7 @@
         });
 
     </script>
-    <!-- animaciones en la carga -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
 </body>
 
 </html>
