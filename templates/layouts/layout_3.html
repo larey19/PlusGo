@@ -182,6 +182,25 @@
                 font-size: 16px;
             }
         }
+
+        #nprogress .bar {
+            height: 4px;
+            z-index: 999999 !important;
+        }
+
+        #nprogress .spinner {
+            display: block;
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 999999 !important;
+        }
+
+        #nprogress .spinner-icon {
+            width: 25px;
+            height: 25px;
+            z-index: 999999 !important;
+        }
     </style>
 
 </head>
@@ -194,9 +213,48 @@
     <!-- carga de pagina -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
     <script>
-        NProgress.start();
+        // Configuración global opcional de NProgress
+        NProgress.configure({ showSpinner: true, trickleSpeed: 200 });
+
+        // 1. Al empezar a salir de la página (Refresh o Navegación)
+        window.addEventListener('beforeunload', () => {
+            NProgress.start();
+        });
+
+        // 2. Al cargar el HTML y al finalizar toda la carga (Imágenes/Estilos)
+        window.addEventListener('DOMContentLoaded', () => NProgress.start());
         window.addEventListener('load', () => NProgress.done());
+
+        // 3. Delegación de eventos para enlaces <a> (Eficiente y dinámico)
+        document.addEventListener('click', (event) => {
+            const link = event.target.closest('a');
+
+            // Solo activar si es un enlace válido, no abre en pestaña nueva y no es un ancla interna (#)
+            if (link && link.href && !link.target && !link.href.includes('#')) {
+                NProgress.start();
+            }
+        });
+
+        // 4. Envío de formularios (Mejorado con limpieza de intervalo)
+        document.addEventListener('submit', () => {
+            NProgress.start();
+
+            const interval = setInterval(() => {
+                // Si por alguna razón ya terminó, detenemos el intervalo
+                if (NProgress.isStarted()) {
+                    NProgress.inc();
+                } else {
+                    clearInterval(interval);
+                }
+            }, 600);
+
+            // Limpieza de seguridad por si la página tarda demasiado
+            window.addEventListener('beforeunload', () => clearInterval(interval));
+        });
+
     </script>
+    <!-- animaciones en la carga -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 </body>
 
 </html>
