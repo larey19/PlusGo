@@ -115,7 +115,8 @@
                         aria-label="Close"></button>
                 </div>
 
-                <div class="offcanvas-body d-flex flex-column" style="-ms-overflow-style: none; scrollbar-width: none; -webkit-scrollbar.display: none;">
+                <div class="offcanvas-body d-flex flex-column"
+                    style="-ms-overflow-style: none; scrollbar-width: none; -webkit-scrollbar.display: none;">
                     <a href="{{url_for('dashboard.dashboard')}}" class="text-white text-decoration-none fs-5 mb-3">
                         <i class="bi bi-house-door-fill me-2"></i> Panel Principal
                     </a>
@@ -179,6 +180,8 @@
     <script src="https://cdn.jsdelivr.net/npm/cleave.js@1/dist/addons/cleave-phone.co.js"></script>
     <!-- Graficos de index -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- alertas flashy -->
+    <script src="https://unpkg.com/@pablotheblink/flashyjs@1.0.5/flashy.js"></script>
     {% block script %}
     {% endblock %}
 </body>
