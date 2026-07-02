@@ -12,19 +12,20 @@
     });
 </script>
 {% endfor %}
-
 <div class="col-lg-10 col-xl-10 col-xxl-11 p-3 mx-auto" style="max-width: 1200px;">
     <!-- Header -->
     <div class="mb-4">
         <h4 class="fw-bold mb-0">Ventas {{plaName}}</h4>
-        <small class="text-muted">Gestión de ventas {{plaName if plaName else ', seleccione una plataforma'}}</small>
+        <small class="text-muted">Gestión de ventas PlusGo</small>
     </div>
 
 
     <!-- Plataformas -->
-    <div class="mb-3 overflow-auto list-group list-group-horizontal">
+    <div class="mb-3 overflow-auto list-group list-group-horizontal"
+        style="-ms-overflow-style: none; scrollbar-width: none; -webkit-scrollbar.display: none;">
         {% for platform in platform %}
-        <a href="{{url_for('sale.getSale', pla_id=platform['pla_id'])}}" class="btn btn-sm mb-2">
+        <a href="{{url_for('sale.getSale', pla_id=platform['pla_id'])}}"
+            class="btn btn-sm mb-2 rounded text-nowrap {{'bg-light border-start-0 border-end-0 border-top-0 border-5 border-bottom shadow-sm border-primary text-primary' if platform['pla_name'] == plaName}}">
             {{platform['pla_name']}}
         </a>
         {% endfor %}
@@ -33,6 +34,7 @@
 
 
     <!-- Tabla -->
+    {% if data %}
     <div class="card shadow card border-0 mb-4" data-aos="zoom-in-up">
 
         <div class="card-body table-responsive">
@@ -64,15 +66,13 @@
                         <td class="text-nowrap">{{data['sal_date_end'] | default('', True)}}</td>
 
                         <td class="text-nowrap">
-
                             {{data['sal_price'] if data['sal_price'] else (data['sal_price'] if data['sal_price']
                             == 0.00 else '')}}
-
                         </td>
 
                         <td class="text-nowrap text-center">
                             {{data['acc_email'] if data['acc_email'] else (data['acc_number_phone'] if
-                            data['acc_number_phone'] else '' )}}
+                            data['acc_number_phone'] else (data['acc_user'] if data['acc_user'] else 'Sin cuenta') )}}
                         </td>
 
                         <td class="text-nowrap text-center">Perfil {{data['pro_profile']}}</td>
@@ -113,10 +113,10 @@
                                 data['sal_description'] else 'Ninguna observación registrada.'}}"
                                 data-cst_name="{{data['cst_name'] if data['cst_name'] else ''}}"
                                 data-cst_lastname="{{data['cst_lastname'] if data['cst_lastname'] else ''}}"
-                                data-acc_email="{% if data['acc_number_phone'] %} ({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}} {% else %} {{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}} {% endif %}"
+                                data-acc_email="{% if data['acc_number_phone'] %} ({{data['acc_number_phone'][0:3]}}) {{data['acc_number_phone'][3:6]}}-{{data['acc_number_phone'][6:]}} {% elif data['acc_email'] %} {{data['acc_email']}} {% else %} {{data['acc_user'] if data['acc_user'] else 'Sin Cuenta'}} {% endif %}"
                                 data-pro_profile="{{data['pro_profile'] if data['pro_profile']}}"
                                 data-acc_password="{{data['acc_password'] if data['acc_password'] else 'No registra'}}"
-                                data-cst_phone_number="{% if data['cst_phone_number'] %} ({{data['cst_phone_number'][0:3] if data['cst_phone_number']}}) {{data['cst_phone_number'][3:6] if data['cst_phone_number']}}-{{data['cst_phone_number'][6:] if data['cst_phone_number']}} {% else %} Sin Numero {% endif %}"
+                                data-cst_phone_number="{% if data['cst_phone_number'] %} ({{data['cst_phone_number'][0:3]}}) {{data['cst_phone_number'][3:6]}}-{{data['cst_phone_number'][6:]}} {% else %} Sin Numero {% endif %}"
                                 data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else 'Sin Pin'}}"
                                 data-pla_message="{{data['pla_message'] if data['pla_message'] else ''}}">
                                 <i class="bi bi-view-list"></i>
@@ -149,8 +149,8 @@
 
                             <!-- Eliminar -->
                             <button class="btn btn-sm btn-outline-danger  {{'d-none' if data['sal_id'] == None}}"
-                                onclick="confirmDelete(`{{data['sal_id'] if data['sal_id'] != None}}`, `{% if data['acc_number_phone'] %}({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}}{% else %}{{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}}{% endif %}`)"
-                                data-acc_email="{% if data['acc_number_phone'] %}({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}}{% else %}{{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}}{% endif %}">
+                                onclick="confirmDelete(`{{data['sal_id'] if data['sal_id'] != None}}`,`{% if data['acc_number_phone'] %}({{data['acc_number_phone'][0:3]}}) {{data['acc_number_phone'][3:6]}}-{{data['acc_number_phone'][6:]}}{% elif data['acc_email'] %}{{data['acc_email']}}{% else %}{{data['acc_user'] if data['acc_user'] else 'Sin Cuenta'}}{% endif %}`)"
+                                data-acc_email="{% if data['acc_number_phone'] %}({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}){{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}}{% elif data['acc_email'] %}{{data['acc_email']}}{% else %}{{data['acc_user'] if data['acc_user'] else 'Sin Cuenta'}}{% endif %}">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
@@ -164,7 +164,17 @@
 
         </div>
     </div>
-
+    {% else %}
+    <div class="d-flex justify-content-center flex-column align-items-center">
+        <div class="alert alert-primary shadow-sm" role="alert" data-aos="fade">
+            <i class="bi bi-hand-index-fill text-primary fs-3"></i>
+        </div>
+        <div data-aos="zoom-in-down">
+            <h5 class="fw-semibold mb-0 text-center">Ventas de PlusGo</h5>
+            <p class="text-muted m-0 text-center">Selecciona una plataforma</p>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 
@@ -173,14 +183,14 @@
 <div class="modal fade" id="getSale" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Detalles de Venta {{plaName}}</h5>
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold">Detalles de Venta {{plaName}}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
                 <div class="d-flex align-items-center mb-4">
                     <div class="ms-3">
-                        <h5 class="mb-0 fw-bold text-dark" id="cst_fullname">
+                        <h5 class="mb-0 fw-semibold text-dark" id="cst_fullname">
                         </h5>
                         <small class="text-muted me-2" id="cst_phone_number">
                         </small>
@@ -189,8 +199,7 @@
 
                 <div class="row g-3">
                     <div class="col-6">
-                        <div class="p-3 rounded bg-light border-end-0 shadow-sm border-primary"
-                            style="border-left: 5px solid">
+                        <div class="p-3 rounded bg-light border-start border-5 shadow-sm border-primary">
                             <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Fecha
                                 Inicio</small>
                             <span class="text-dark text-nowrap" id="sal_date_start">
@@ -198,7 +207,7 @@
                         </div>
                     </div>
                     <div class="col-6">
-                        <div class="p-3 rounded bg-light shadow-sm border-primary" style="border-left: 5px solid">
+                        <div class="p-3 rounded bg-light border-start border-5 shadow-sm border-primary">
                             <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Fecha
                                 Fin</small>
                             <span class="text-dark text-nowrap" id="sal_date_end"></span>
@@ -216,7 +225,7 @@
 
                     <!-- Cuenta -->
                     <div class="col-12">
-                        <div class="p-3  rounded shadow-sm bg-light border-primary" style="border-left: 5px solid;">
+                        <div class="p-3  rounded shadow-sm bg-light border-start border-5 border-primary">
                             <small class="text-muted d-block text-uppercase fw-bold mb-1"
                                 style="font-size: 0.7rem;">Información de Cuenta</small>
                             <div id="dataAcc" class="d-flex justify-content-between gap-2" role="button">
@@ -251,7 +260,7 @@
         </div>
     </div>
 </div>
- 
+
 
 <!-- ================= MODAL CREAR ================= -->
 
@@ -259,8 +268,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
 
-            <div class="modal-header">
-                <h5 class="modal-title">Registrar Venta {{plaName}}</h5>
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold">Registrar Venta {{plaName}}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -292,7 +301,8 @@
                     <div class="col-md-6">
                         {{ form.propin.label(class="form-label") }}
                         <div class="input-group">
-                            {{ form.propin(class="form-control pro_pin", placeholder="0323 (Opcional)", disabled = true) }}
+                            {{ form.propin(class="form-control pro_pin", placeholder="0323 (Opcional)", disabled = true)
+                            }}
                             <button class="btn btn-outline-secondary" type="button">
                                 <i class="bi bi-pencil" id="buttonPin"></i>
                             </button>
@@ -322,8 +332,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
 
-            <div class="modal-header">
-                <h5 class="modal-title">Actualizar Venta {{plaName}}</h5>
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold">Actualizar Venta {{plaName}}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -356,7 +366,8 @@
                     <div class="col-md-6">
                         {{ form.propin.label(class="form-label") }}
                         <div class="input-group">
-                            {{ form.propin(class="form-control propin", placeholder="0323 (Opcional)", disabled = true) }}
+                            {{ form.propin(class="form-control propin", placeholder="0323 (Opcional)", disabled = true)
+                            }}
                             <button class="btn btn-outline-secondary" type="button"><i class="bi bi-pencil"
                                     id="buttonPin"></i></button>
                         </div>
