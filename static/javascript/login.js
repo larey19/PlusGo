@@ -1,18 +1,5 @@
 AOS.init();
 // ========== ANIMACION CARGA DE PAGINA
-
-window.addEventListener("load", () => {
-  NProgress.start();
-  NProgress.done();
-});
-
-document.addEventListener("submit", () => {
-  NProgress.start();
-  const interval = setInterval(() => {
-    NProgress.inc();
-  }, 600);
-});
-
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/static/pwa/sw.js");
 }
