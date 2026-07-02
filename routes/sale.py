@@ -55,21 +55,27 @@ def sale():
 @token
 def getSale(pla_id):
     try:
+        # si viene de un error del CREAR convierte la fecha a formato date 
         saleBackup = session.pop("saleBackup", {})
         if saleBackup.get('saldatestart') and saleBackup.get('saldateend'):
             saleBackup['saldatestart'] = datetime.strptime(saleBackup['saldatestart'], '%Y-%m-%d').date()
             saleBackup['saldateend'] = datetime.strptime(saleBackup['saldateend'], '%Y-%m-%d').date()
         
+        # cargamos la informacion que tenia el formulario de crear al momento del error
         form = saleForm(data=saleBackup)
+        
+        # asignamos los clientes al select
         cursor = current_app.mysql.connection.cursor()
         cursor.execute("SELECT * FROM t_customer ORDER BY cst_name ASC")
         customers = cursor.fetchall()
-        form.cstid.choices = [(cst[0], (f"{cst[1]}  {cst[2]} - {cst[3] if cst[3] else 'Sin Numero'}")) for cst in customers]
+        form.cstid.choices = [(cst[0], (f"{cst[1] if cst[1] else 'Sin nombre'}  {cst[2] if cst[2] else ''} - {f'({cst[3][:3]}) {cst[3][3:6]}-{cst[3][6:]}' if cst[3] and len(cst[3]) == 10 else 'Sin Numero'}")) for cst in customers]
+        
+        # consulta para las ventas
         cursor.execute("""SELECT t_account.acc_id, t_account.acc_email, 
                         t_profile.pro_id , t_profile.pro_profile, t_profile.pro_pin_profile, 
                         t_sale.sal_id, t_sale.sal_date_start, t_sale.sal_date_end, t_sale.sal_price, t_sale.sal_description, 
                         t_customer.cst_id, t_customer.cst_name, t_customer.cst_lastname, t_customer.cst_phone_number, 
-                        t_account.acc_number_phone,  t_account.acc_password, t_profile.pro_pin_profile, t_platform.pla_message
+                        t_account.acc_number_phone,  t_account.acc_password, t_profile.pro_pin_profile, t_platform.pla_message, t_account.acc_user
                         FROM t_account 
                         INNER JOIN t_platform ON t_account.pla_id = t_platform.pla_id 
                         INNER JOIN t_profile ON t_account.acc_id = t_profile.acc_id
@@ -99,7 +105,7 @@ def getSale(pla_id):
                 "pla_message": x[17].replace(
                     '{tittle_add}', 'GARANTIA ' if re.search(r'\b(gta|grta|garantia|garanti|garant)\b', x[9] if x[9] else '') else ''
                     ).replace(   
-                        '{account}', x[1] if x[1] else x[2]
+                        '{account}', x[1] if x[1] else (x[18] if x[18] else x[2]) 
                         ).replace(
                             '{password}', x[15] if x[15] else 'Sin Contraseña'
                             ).replace(
@@ -108,10 +114,14 @@ def getSale(pla_id):
                                     '{pin}', x[16] if x[16] else 'Sin Pin'
                                 ).replace(
                                     '{date}', str(x[7].strftime("%d/%m")) if x[7] else 'Sin Fecha'
-                                ) if x[17] else ''
+                                ) if x[17] else '',
+                "acc_user" : x[18] 
             } for x in cursor.fetchall()]
+        # consulta para el name de la plataforma
         cursor.execute("SELECT pla_name FROM t_platform WHERE pla_id = %s",(pla_id,))
         plaName = cursor.fetchone()
+        
+        # renderizamos html y enviamos la info
         return render_template("sale.html", 
                                 data = data, 
                                 form = form,
@@ -129,14 +139,18 @@ def getSale(pla_id):
 @sale_bp.route("/sale", methods = ["POST"])
 @token
 def crtSale():
+    # GUARDAMOS LA URL 
     if request.referrer and '/sale' in request.referrer:
         session["url_back_post"] = request.referrer 
     try:
+        form = saleForm()
+        # asignamos los clientes al select
         cursor = current_app.mysql.connection.cursor()
         cursor.execute("SELECT * FROM t_customer ORDER BY cst_name ASC")
         customers = cursor.fetchall()
-        form = saleForm()
-        form.cstid.choices = [(cst[0], (f"{cst[1]}  {cst[2]}")) for cst in customers]
+        form.cstid.choices = [(cst[0], (f"{cst[1] if cst[1] else 'Sin nombre'}  {cst[2] if cst[2] else ''} - {f'{cst[3][:3]} {cst[3][3:6]}-{cst[3][6:]}' if cst[3] and len(cst[3]) == 10 else 'Sin Numero'}")) for cst in customers]
+        
+        # VALIDAMOS QUE SEA POST Y QUE SE ENVIE LA INFO REQ 
         if form.validate_on_submit():
             salid = uuid.uuid4()
             saldatestart = form.saldatestart.data
@@ -147,8 +161,8 @@ def crtSale():
             cstid = (form.cstid.data).strip()
             proid = (form.proid.data).strip()
             propin = (form.propin.data).strip() if form.propin.data else form.propin.data
-
-
+            
+            # BLOCK DE VALIDACIONES
             if propin and not propin.isdigit():
                 flash("Pin Invalido", "error")
                 return redirect(session.get('url_back_post'))
@@ -157,6 +171,7 @@ def crtSale():
                 backup(form)
                 flash("Fecha Fin Invalida", "error")
                 return redirect(session.get('url_back_post'))
+            
             cursor = current_app.mysql.connection.cursor()
             cursor.execute("SELECT pro_state FROM t_profile WHERE pro_id = %s", (proid,))
             prostate = cursor.fetchone()
@@ -164,15 +179,26 @@ def crtSale():
                 backup(form)
                 flash("Perfil No Disponible", "error")
                 return redirect(session.get('url_back_post'))
+            
             sql = f"UPDATE t_profile SET pro_state = %s {',pro_pin_profile = %s' if propin else ''} WHERE pro_id = %s"
             if propin:
                 cursor.execute(sql,('disable', propin, proid,))
             else:
                 cursor.execute(sql,('disable', proid,))
-            cursor.execute("INSERT INTO t_sale (sal_id, sal_date_start, sal_date_end, sal_price, sal_description, sal_state, cst_id, pro_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (salid, saldatestart, saldateend, salprice, saldescription, 'active', cstid, proid,))
+            
+            # QUERY DE REGISTRO
+            cursor.execute("""INSERT INTO t_sale 
+                            (sal_id, sal_date_start, sal_date_end, sal_price, sal_description, sal_state, cst_id, pro_id) 
+                            VALUES 
+                            (%s, %s, %s, %s, %s, %s, %s, %s)""", 
+                            (salid, saldatestart, saldateend, salprice, saldescription, 'active', cstid, proid,))
             cursor.connection.commit()
             flash ("Registro Exitoso", "success")
+            
+            # REDIRECCIONA A LA URL QUE GUARDO 
             return redirect(session.get('url_back_post'))
+        
+        # SI NO CUMPLIO CON EL METODO O FALTA INFO REQ
         print(form.errors)
         backup(form)
         flash("Ingresa toda la información requerida", "error")
@@ -195,14 +221,19 @@ def crtSale():
 @sale_bp.route("/sale/<sal_id>", methods = ["POST"])
 @token
 def putSale(sal_id):
+    # GUARDAMOS URL
     if request.referrer and '/sale' in request.referrer:
         session["url_back_post"] = request.referrer 
     try:
+        # ASIGNAMOS LOS CLIENTES AL SELECT
+        form = saleForm() 
+        
         cursor = current_app.mysql.connection.cursor()
         cursor.execute("SELECT * FROM t_customer ORDER BY cst_name ASC")
         customers = cursor.fetchall()
-        form = saleForm() 
-        form.cstid.choices = [(cst[0], (f"{cst[1]}  {cst[2]}")) for cst in customers]
+        form.cstid.choices = [(cst[0], (f"{cst[1] if cst[1] else 'Sin nombre'}  {cst[2] if cst[2] else ''} - {f'{cst[3][:3]} {cst[3][3:6]}-{cst[3][6:]}' if cst[3] and len(cst[3]) == 10 else 'Sin Numero'}")) for cst in customers]
+
+        # valida que se este enviando metodo e info req
         if form.validate_on_submit():
             saldatestart = form.saldatestart.data
             saldateend = form.saldateend.data
@@ -210,11 +241,10 @@ def putSale(sal_id):
             salprice = form.salprice.data
             saldescription = (form.saldescription.data).strip()
             cstid = (form.cstid.data).strip()
-            
             proid = (form.proid.data).strip()
             propin = (form.propin.data).strip() if form.propin.data else form.propin.data
             
-            
+            # BLOCK DE VALIDACIONES
             if saldateend < saldatestart:
                 flash("Fecha Fin Invalida", "error")
                 return redirect(session.get('url_back_post'))
@@ -224,17 +254,30 @@ def putSale(sal_id):
                 return redirect(session.get('url_back_post'))
             
             cursor = current_app.mysql.connection.cursor()
-            cursor.execute("SELECT t_sale.sal_id, t_sale.sal_state, t_profile.pro_state FROM t_sale JOIN t_profile ON t_sale.pro_id = t_profile.pro_id WHERE sal_id = %s", (sal_id,))
+            cursor.execute("""SELECT t_sale.sal_id, t_sale.sal_state, t_profile.pro_state 
+                            FROM t_sale 
+                            JOIN t_profile ON t_sale.pro_id = t_profile.pro_id 
+                            WHERE sal_id = %s""", (sal_id,))
             state = cursor.fetchone()
-            if state and (state[1] == "expired") or ((state[2] == "disable" or  state[2] == "pending") and sal_id != state[0]):
+            
+            if state and ((state[2] == "disable" or  state[2] == "pending") and sal_id != state[0]):
                 flash("Esta venta no se puede Actualizar", "error")
                 return redirect(session.get('url_back_post'))
-            cursor.execute("UPDATE t_sale SET sal_date_start = %s, sal_date_end = %s, sal_price = %s, sal_description = %s, cst_id = %s WHERE sal_id = %s", (saldatestart, saldateend, salprice, saldescription, cstid, sal_id,))
+            
+            # QUERY DE UPDATE
+            cursor.execute("""UPDATE t_sale 
+                            SET sal_date_start = %s, sal_date_end = %s, sal_price = %s, sal_description = %s, cst_id = %s 
+                            WHERE sal_id = %s""", 
+                            (saldatestart, saldateend, salprice, saldescription, cstid, sal_id,))
             if propin:
                 cursor.execute("UPDATE t_profile SET pro_pin_profile = %s WHERE pro_id = %s",(propin, proid,))
             cursor.connection.commit()
             flash ("Venta Actualizada", "success")
+            
+            # REDIRECT A LA URL GUARDADA 
             return redirect(session.get('url_back_post'))
+        
+        # SI NO ENVIO EL METODO CORRECTO O LA INFO REQ 
         print(form.errors)
         backup(form)
         flash("Ingresa toda la información requerida", "error")
