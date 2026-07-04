@@ -17,7 +17,6 @@ def dashboard():
                         WHERE t_account.acc_state = 'enable' AND t_account.acc_date_pay <= DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR) + INTERVAL 3 DAY
                         ORDER BY t_account.acc_date_pay ASC""")
         account = cursor.fetchall() #Cuentas por vencer o vencidas
-        print(account)
         
         cursor.execute("""
                         SELECT t_customer.cst_name, t_customer.cst_lastname, t_sale.sal_date_end, t_account.acc_email, t_account.acc_number_phone, t_platform.pla_name, t_profile.pro_profile, t_platform.pla_id
@@ -33,9 +32,18 @@ def dashboard():
         
         cursor.execute("""
                 SELECT 
-                DATE_FORMAT(trg_date, '%Y-%m') AS mes, COUNT(*) as total
-                FROM trg_sale  
-                WHERE trg_action LIKE '%registro%' AND sal_description NOT REGEXP 'gta|grta|garanti|garant|garantia'
+                    DATE_FORMAT(trg_date, '%Y-%m') AS mes, 
+                    COUNT(*) as total
+                FROM trg_sale trg
+                WHERE trg_action LIKE '%registro%' 
+                    AND sal_description NOT REGEXP 'gta|grta|garanti|garant|garantia'
+                    AND NOT EXISTS (
+                        SELECT 1
+                        FROM trg_sale trg2
+                        WHERE trg2.sal_id = trg.sal_id 
+                        AND trg2.trg_action LIKE '%elimino%' 
+                        AND DATE(trg2.trg_date) = DATE(trg.trg_date) 
+                    )
                 GROUP BY mes
                 """)
         trgsale = cursor.fetchall() #total de ventas registradas por mes
@@ -47,7 +55,7 @@ def dashboard():
             mes_txt = fecha.strftime("%b %Y")  
             meses.append(mes_txt)
             totalsale.append(int(row[1]))   
-         
+        
         cursor.execute("""
                         SELECT t_platform.pla_name, COUNT(*) AS total
                         FROM t_account 
@@ -93,7 +101,7 @@ def dashboard():
         
         cursor.execute("""
                         SELECT COUNT(*) FROM t_account WHERE acc_state = 'enable'
-                        """)#PERFILES SIN VENDER en plusgo
+                        """)#CUENTAS ACTIVAS en plusgo
         total_account_enable = cursor.fetchone()
         
         cursor.execute("""
@@ -102,17 +110,50 @@ def dashboard():
         total_sale =  cursor.fetchone()
         
         cursor.execute("""
-                        SELECT COUNT(*) FROM trg_sale WHERE DATE(TRG_DATE) = DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR) AND  trg_action LIKE '%registro%' AND sal_description NOT REGEXP 'gta|grta|garanti|garant|garantia'
+                        SELECT COUNT(*)
+                        FROM trg_sale
+                        WHERE DATE(TRG_DATE) = DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR) 
+                            AND trg_action LIKE '%registro%' 
+                            AND sal_description NOT REGEXP 'gta|grta|garanti|garant|garantia'
+                            AND NOT EXISTS (
+                                SELECT 3
+                                FROM trg_sale trg2
+                                WHERE trg2.sal_id = sal_id 
+                                AND trg2.trg_action LIKE '%elimino%' 
+                                AND DATE(trg2.trg_date = DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR)) = DATE(trg_date = DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR) ) 
+                            )
                         """)#total de ventas hoy
         total_sale_today = cursor.fetchone()        
                 
         cursor.execute("""
-                        SELECT COUNT(*) FROM trg_sale WHERE DATE(TRG_DATE) = DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR)-1 AND trg_action LIKE '%registro%' AND sal_description NOT REGEXP 'gta|grta|garanti|garant|garantia'
+                        SELECT COUNT(*) 
+                        FROM trg_sale 
+                        WHERE DATE(TRG_DATE) = DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR)-1 
+                            AND trg_action LIKE '%registro%' 
+                            AND sal_description NOT REGEXP 'gta|grta|garanti|garant|garantia'
+                            AND NOT EXISTS (
+                                SELECT 3
+                                FROM trg_sale trg2
+                                WHERE trg2.sal_id = sal_id 
+                                AND trg2.trg_action LIKE '%elimino%' 
+                                AND DATE(trg2.trg_date = DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR)-1) = DATE(trg_date = DATE(UTC_TIMESTAMP() - INTERVAL 5 HOUR)-1 ) 
+                            )
                         """)#total de ventas ayer
         total_sale_yesterday = cursor.fetchone()
         
         cursor.execute("""
-                        SELECT COUNT(*) FROM trg_sale WHERE trg_action LIKE '%registro%' AND sal_description NOT REGEXP 'gta|grta|garanti|garant|garantia' AND YEARWEEK(TRG_DATE - INTERVAL 5 HOUR, 1) = YEARWEEK(UTC_TIMESTAMP() - INTERVAL 5 HOUR, 1);
+                        SELECT COUNT(*) 
+                        FROM trg_sale 
+                        WHERE trg_action LIKE '%registro%' 
+                            AND sal_description NOT REGEXP 'gta|grta|garanti|garant|garantia' 
+                            AND YEARWEEK(TRG_DATE - INTERVAL 5 HOUR, 1) = YEARWEEK(UTC_TIMESTAMP() - INTERVAL 5 HOUR, 1)
+                            AND NOT EXISTS (
+                                SELECT 3
+                                FROM trg_sale trg2
+                                WHERE trg2.sal_id = sal_id 
+                                AND trg2.trg_action LIKE '%elimino%' 
+                                AND DATE(YEARWEEK(trg2.trg_date - INTERVAL 5 HOUR, 1) = YEARWEEK(UTC_TIMESTAMP() - INTERVAL 5 HOUR, 1)) = (YEARWEEK(TRG_DATE - INTERVAL 5 HOUR, 1) = YEARWEEK(UTC_TIMESTAMP() - INTERVAL 5 HOUR, 1) )
+                            )
                         """)#total de ventas semana  
         total_sale_weekly = cursor.fetchone() 
         
