@@ -13,4 +13,5 @@ email_validator
 phonenumbers
 # validacio de formularios
 flask-wtf
-
+# Reescribir los links del correo (server-side, con BeautifulSoup)
+beautifulsoup4
