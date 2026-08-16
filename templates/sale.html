@@ -1,0 +1,484 @@
+{% extends 'layouts/layout_2.html'%}
+{% block body %}
+
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold text-dark m-0">Ventas {{plaName}}</h3>
+        <small class="text-dark-emphasis fw-medium">Gestion de ventas de PlusGo</small>
+    </div>
+</div>
+
+<!-- Plataformas -->
+<div class="position-relative mb-3">
+
+    <!-- Flecha izquierda -->
+    <a type="button"
+        class="position-absolute top-50 start-0 translate-middle-y text-dark-emphasis btn_cristal p-2 text-decoration-none rounded-2"
+        id="platformLeft">
+        <i class="ti ti-chevron-left fs-4 fw-medium"></i>
+    </a>
+
+    <!-- Lista -->
+    <div id="platformScroll" class="overflow-auto list-group list-group-horizontal gap-2 rounded-0 hidden-bar-overflow">
+
+        {% for platform in platform %}
+        <a href="{{url_for('sale.getSale', pla_id=platform['pla_id'])}}" class="p-1 text-decoration-none text-nowrap text-capitalize
+            {{ 'border-5 border-bottom border-primary text-primary fw-semibold'
+            if platform['pla_name'] == plaName
+            else 'text-dark-emphasis' }}">
+            {{platform['pla_name']}}
+        </a>
+        {% endfor %}
+
+    </div>
+
+    <!-- Flecha derecha -->
+    <a type="button"
+        class="position-absolute top-50 end-0 translate-middle-y text-dark-emphasis btn_cristal p-2 text-decoration-none rounded-2"
+        id="platformRight">
+        <i class="ti ti-chevron-right fs-4 fw-medium"></i>
+    </a>
+
+</div>
+
+
+
+<!-- Tabla -->
+{% if data %}
+<div class="card shadow card border-0 mb-4" data-aos="zoom-in-up">
+
+    <div class="card-body">
+
+        <table class="table table-hover align-middle mb-0" id="table">
+
+            <thead>
+                <tr>
+                    <th class="text-dark text-nowrap fw-semibold">Cliente</th>
+                    <th class="text-center text-dark text-nowrap fw-semibold">Fecha Inicio</th>
+                    <th class="text-center text-dark text-nowrap fw-semibold">Fecha Fin</th>
+                    <th class="text-dark text-nowrap fw-semibold">Precio</th>
+                    <th class="text-center text-dark text-nowrap fw-semibold">Dias Restantes</th>
+                    <th class="text-dark text-nowrap fw-semibold">Cuenta</th>
+                    <th class="text-center text-dark text-nowrap fw-semibold">Perfil</th>
+                    <th class="text-center text-dark text-nowrap fw-semibold">Venta</th>
+
+                    {% if 'sales.view' or 'sales.create' or 'sales.edit' or 'sales.delete' in
+                    session['permissionData']%}
+                    <th class="text-center text-dark text-nowrap fw-semibold">Acciones</th>
+                    {% endif %}
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for data in data %}
+                <tr>
+                    <td class="text-nowrap text-nowrap fw-semibold text-truncate" style="max-width: 260px">
+                        <a tabindex="0" class="popover-dismiss text-decoration-none text-dark-emphasis" {% if
+                            data['sal_state'] %} data-cst_name="{{data['cst_name']}}"
+                            data-cst_lastname="{{data['cst_lastname']}}"
+                            data-sal_date_end="{{data['sal_date_end'].strftime('%d/%m/%Y')}}"
+                            data-sal_date_start="{{data['sal_date_start'].strftime('%d/%m/%Y')}}"
+                            data-acc_email="{{data['acc_email']}}"
+                            data-acc_number_phone="({{data['acc_number_phone'][0:3]}}) {{data['acc_number_phone'][3:6]}}-{{data['acc_number_phone'][6:]}}"
+                            data-acc_user="{{data['acc_user']}}" data-pla_name="{{plaName}}"
+                            data-pro_profile="{{data['pro_profile']}}"
+                            data-sal_price='{{"{:,.0f}".format(data["sal_price"]).replace(",",".")}}' role="button"
+                            {%endif%}>
+                            {{data['cst_name'] if data['cst_name']}}
+                            {{data['cst_lastname'] if data['cst_lastname']}}
+                        </a>
+                    </td>
+
+                    <td class="text-center text-dark-emphasis text-nowrap">{{data['sal_date_start'].strftime('%d/%m/%Y')
+                        if
+                        data['sal_date_start'] }}
+                    </td>
+
+                    <td class="text-center text-dark-emphasis text-nowrap">{{data['sal_date_end'].strftime('%d/%m/%Y')
+                        if
+                        data['sal_date_start'] }}
+                    </td>
+                    <td class="text-center text-nowrap">
+                        {% if data['sal_price'] != None and data['sal_price'] >= 0%}
+                        <span class="badge bg-primary-subtle text-primary-emphasis">
+                            $ {{"{:,.0f}".format(data['sal_price']).replace(",",".")}}
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td class="text-dark-emphasis text-nowrap text-center fw-medium">
+                        {{data['sal_days_enables'] ~ ' dias' if data['sal_days_enables'] != None and
+                        data['sal_days_enables'] >= 0}}
+                    </td>
+
+
+
+                    <td class="text-dark-emphasis text-nowrap text-center">
+                        {% if data['acc_email'] %}
+                        {{data['acc_email']}}
+                        {% elif data['acc_number_phone'] %}
+                        ({{data['acc_number_phone'][0:3]}})
+                        {{data['acc_number_phone'][3:6]}}-{{data['acc_number_phone'][6:]}}
+                        {% else %}
+                        {{data['acc_user']}}
+                        {% endif %}
+                    </td>
+
+                    <td class="text-dark-emphasis text-nowrap text-center">Perfil {{data['pro_profile']}}</td>
+
+                    <td class="text-nowrap text-center">
+                        {% if data['sal_state'] == "active" and data['sal_days_enables'] > 5 %}
+                        <span class="badge bg-primary-subtle text-primary-emphasis px-2 rounded-pill">Activa</span>
+                        {% elif data['sal_state'] == "active" and data['sal_days_enables'] > 0 and
+                        data['sal_days_enables'] < 6 %} <span
+                            class="badge bg-warning-subtle text-warning-emphasis px-2 rounded-pill">
+                            Por Vencer
+                            </span>
+                            {% elif data['sal_state'] == "active" and data['sal_days_enables'] == 0 %}
+                            <span class="badge bg-danger-subtle text-danger-emphasis px-2 rounded-pill">
+                                Vencida
+                            </span>
+                            {% elif data['pro_state'] == "pending" or data['sal_state'] == "pending" %}
+                            <span class="badge bg-secondary-subtle text-secondary-emphasis px-2 rounded-pill">
+                                Pendiente
+                            </span>
+                            {% else %}
+                            <span class="badge bg-light-subtle text-light-emphasis px-2 rounded-pill">
+                                Disponible
+                            </span>
+                            {% endif %}
+                    </td>
+
+
+                    {% if 'sales.view' or 'sales.create' or 'sales.edit' or 'sales.delete' in
+                    session['permissionData']%}
+                    <td class="text-center text-nowrap">
+                        {% if 'sales.view' in session['permissionData'] and data['sal_state'] %}
+                        <!-- Ver -->
+                        <button class="btn btn-sm btn-outline-secondary dataSaleDetails" data-bs-toggle="modal"
+                            data-bs-target="#getSale"
+                            data-sal_date_start="{{data['sal_date_start'].strftime('%d/%m/%Y') }}"
+                            data-sal_date_end="{{data['sal_date_end'].strftime('%d/%m/%Y') }}"
+                            data-sal_price="{{ '{:,.0f}'.format(data['sal_price']).replace(',','.') }}"
+                            data-sal_description="{{data['sal_description'] if data['sal_description'] else 'Ninguna observación registrada.'}}"
+                            data-cst_name="{{data['cst_name']}}"
+                            data-cst_lastname="{{data['cst_lastname'] if data['cst_lastname'] else ''}}"
+                            data-acc_email="{% if data['acc_number_phone'] %} ({{data['acc_number_phone'][0:3]}}) {{data['acc_number_phone'][3:6]}}-{{data['acc_number_phone'][6:]}} {% elif data['acc_email'] %} {{data['acc_email']}} {% else %} {{data['acc_user'] if data['acc_user'] else 'Sin Cuenta'}} {% endif %}"
+                            data-pro_profile="{{data['pro_profile']}}"
+                            data-acc_password="{{data['acc_password'] if data['acc_password'] else 'No registra'}}"
+                            data-cst_phone_number="{% if data['cst_phone_number'] %} ({{data['cst_phone_number'][0:3]}}) {{data['cst_phone_number'][3:6]}}-{{data['cst_phone_number'][6:]}} {% else %} Sin Numero {% endif %}"
+                            data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else 'Sin Pin'}}"
+                            data-pla_message="{{data['pla_message'] if data['pla_message'] else ''}}">
+                            <i class="fs-5 ti ti-arrows-maximize"></i>
+                        </button>
+                        {% endif %}
+
+                        {% if 'sales.create' in session['permissionData'] %}
+                        <!-- Vender -->
+                        <button
+                            class="btn btn-sm dataSaleCreate btn_blue_plusgo_outline {{'d-none' if data['sal_id'] != None}}"
+                            data-bs-toggle="modal" data-bs-target="#crtSale" data-pro_id="{{data['pro_id']}}"
+                            data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else ''}}"
+                            data-acc_email="{% if data['acc_number_phone'] %}({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}}{% else %}{{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}}{% endif %}">
+                            <i class="fs-5 ti ti-shopping-bag-plus"></i>
+                        </button>
+                        {% endif %}
+
+                        {% if 'sales.edit' in session['permissionData'] and data['sal_state']%}
+                        <!-- Editar -->
+                        <button class="btn btn-sm btn-outline-primary dataSaleUpdate" data-bs-toggle="modal"
+                            data-bs-target="#editSale{{'' if data['sal_id'] != None else None}}"
+                            data-sal_id="{{data['sal_id']}}"
+                            data-sal_date_start="{{data['sal_date_start'].strftime('%d/%m/%Y')}}"
+                            data-sal_date_end="{{data['sal_date_end'].strftime('%d/%m/%Y')}}"
+                            data-sal_price='{{"{:.0f}".format(data["sal_price"])}}' data-cst_id="{{data['cst_id']}}"
+                            data-pro_id="{{data['pro_id']}}" data-sal_description="{{data['sal_description']}}"
+                            data-acc_email="{% if data['acc_email'] %}{{data['acc_email']}}{% elif data['acc_number_phone'] %}({{data['acc_number_phone'][0:3]}}){{data['acc_number_phone'][3:6]}}-{{data['acc_number_phone'][6:]}}{% else %}{{data['acc_user']}}{% endif %}"
+                            data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else ''}}"
+                            data-sal_state="{{data['sal_state']}}">
+                            <i class="fs-5 ti ti-edit"></i>
+                        </button>
+                        {% endif %}
+
+                        {% if 'sales.create' in session['permissionData'] and data['sal_state']%}
+                        <!-- COPIAR -->
+                        <button id="copySale" class="btn btn-sm btn_blue_plusgo_outline copy"
+                            data-sal_date_start="{{data['sal_date_start'].strftime('%d/%m/%Y')}}"
+                            data-sal_date_end="{{data['sal_date_end'].strftime('%d/%m/%Y')}}"
+                            data-sal_price='{{"{:.0f}".format(data["sal_price"]) }}' data-cst_id="{{data['cst_id']}}"
+                            data-pro_id="{{data['pro_id']}}" data-sal_description="{{data['sal_description']}}"
+                            data-acc_email="{% if data['acc_email'] %}{{data['acc_email']}}{% elif data['acc_number_phone'] %}({{data['acc_number_phone'][0:3]}}){{data['acc_number_phone'][3:6]}}-{{data['acc_number_phone'][6:]}}{% else %}{{data['acc_user']}}{% endif %}"
+                            data-pro_pin_profile="{{data['pro_pin_profile']}}" data-sal_state="{{data['sal_state']}}">
+                            <i class="fs-5 ti ti-copy-plus" id="iconCopy"></i>
+                        </button>
+                        {% endif %}
+
+                        {% if 'sales.delete' in session['permissionData'] and data['sal_state']%}
+                        <!-- Eliminar -->
+                        <button class="btn btn-sm btn-outline-danger"
+                            onclick="confirmSale('delete','', {account: `{% if data['acc_email'] %}{{data['acc_email']}}{% elif data['acc_number_phone'] %}({{data['acc_number_phone'][0:3]}}){{data['acc_number_phone'][3:6]}}-{{data['acc_number_phone'][6:]}}{% else %}{{data['acc_user']}}{% endif %}`, id : `{{data['sal_id']}}`})">
+                            <i class="fs-5 ti ti-trash"></i>
+                        </button>
+                        {% endif %}
+
+                    </td>
+                    {% endif %}
+
+
+                </tr>
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+{% else %}
+<div class="d-flex justify-content-center flex-column align-items-center">
+    <div class="py-3 px-3 rounded bg-primary-subtle shadow-sm" data-aos="zoom-in-top">
+        <i class="ti ti-hand-click text-primary-emphasis fs-3"></i>
+    </div>
+    <div data-aos="zoom-in-down">
+        <p class="text-dark-emphasis fw-medium m-0 text-center">Selecciona una plataforma</p>
+    </div>
+</div>
+{% endif %}
+
+
+<!-- ================= MODAL DETALLES ================= -->
+
+<div class="modal fade" id="getSale" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold text-dark">Detalles de Venta {{plaName}}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="d-flex align-items-center mb-4 gap-1 ms-2">
+                    <div
+                        class="rounded-circle shadow-sm p-2 d-flex justify-content-center align-items-center text-white bg-primary">
+                        <i class="bi bi-person-fill fs-4 px-2"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0 fw-semibold text-dark-emphasis" id="cst_fullname">
+                        </h5>
+                        <small class="text-muted d-flex align-items-center" id="cst_phone_number">
+                        </small>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-3 rounded bg-light border-start border-5 shadow-sm border-primary">
+                            <small class="text-muted d-block text-uppercase fw-bold">Fecha
+                                Inicio</small>
+                            <span class="text-dark-emphasis text-nowrap d-flex align-items-center gap-2"
+                                id="sal_date_start">
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded bg-light border-start border-5 shadow-sm border-primary">
+                            <small class="text-muted d-block text-uppercase fw-bold">Fecha
+                                Fin</small>
+                            <span class="text-dark-emphasis text-nowrap d-flex align-items-center gap-2"
+                                id="sal_date_end"></span>
+                        </div>
+                    </div>
+
+                    <!-- Precio Destacado -->
+                    <div class="col-12">
+                        <div class="p-3 border rounded bg-opacity-10 d-flex justify-content-between align-items-center">
+                            <span class="fw-bold d-flex align-items-center gap-2"><i class="ti ti-cash fs-4"></i>PRECIO
+                                TOTAL</span>
+                            <h5 class="mb-0 fw-bold " id="sal_price">
+                            </h5>
+                        </div>
+                    </div>
+
+                    <!-- Cuenta -->
+                    <div class="col-12">
+                        <div
+                            class="p-3 rounded shadow-sm bg-light border-start border-5 border-primary position-relative">
+                            <small class="text-muted d-block text-uppercase fw-bold mb-1">Información de Cuenta</small>
+                            <i class="d-none position-absolute top-0 end-0 p-2 ti ti-chevron-up fs-5 text-dark-emphasis"
+                                role="button" id="copyButton2"></i>
+
+                            <div id="dataAcc" class="d-flex justify-content-between gap-1">
+                                <span id="acc_email"
+                                    class="text-dark-emphasis text-truncate d-flex align-items-center gap-2"
+                                    style="max-width : 150px">
+                                </span>
+                                <span id="acc_password"
+                                    class="text-dark-emphasis text-truncate d-flex align-items-center gap-2"
+                                    style="max-width : 150px">
+                                </span>
+                                <span id="pro_profile"
+                                    class="text-dark-emphasis text-truncate d-flex align-items-center gap-2"
+                                    style="max-width : 150px">
+                                </span>
+                                <span id="pro_pin_profile"
+                                    class="text-dark-emphasis text-truncate d-flex align-items-center gap-2 d-none"
+                                    style="max-width : 150px">
+                                </span>
+                            </div>
+
+                            <i class="ti ti-copy d-none position-absolute bottom-0 end-0 p-2 text-dark-emphasis fs-5"
+                                role="button" id="copyButton"></i>
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="col-12">
+                        <div class="p-3 rounded border">
+                            <small class="text-muted d-block text-uppercase fw-bold">Descripción</small>
+                            <span class="text-dark-emphasis text-nowrap d-flex align-items-center small gap-1   "
+                                id="sal_description">
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ 
+<!-- ================= MODAL CREAR ================= -->
+
+<div class="modal fade" id="crtSale" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold">Registrar Venta {{plaName}}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+
+            <form method="post">
+                <div class="modal-body row g-3">
+                    {{ form.csrf_token() }}
+                    {{ form.proid(class="proid") }}
+
+                    <div class="col-12 col-lg-6 ">
+                        {{ form.cstid.label(class="form-label text-dark-emphasis") }}*
+                        {{ form.cstid(class="select-client form-select")}}
+                    </div>
+
+                    <div class="col-8 col-lg-6 ">
+                        {{ form.saldate.label(class="form-label text-dark-emphasis") }}*
+                        <div class="position-relative">
+                            {{ form.saldate(class="form-control", placeholder="Seleccione las fechas",
+                            autocomplete="off" )}}
+                            <i class="fs-4 ti text-dark-emphasis ti-calendar-event position-absolute top-50 button-50 end-0 translate-middle bg-white buttonDates"
+                                role="button"></i>
+                        </div>
+                    </div>
+                    <div class="col-4 col-lg-3 ">
+                        {{ form.salprice.label(class="form-label text-dark-emphasis") }}*
+                        {{ form.salprice(class="form-control", placeholder="40000")
+                        }}
+                    </div>
+                    <div class="col-6 col-lg-5 ">
+                        {{ form.propin.label(class="form-label text-dark-emphasis") }}
+                        <div class="position-relative">
+                            {{ form.propin(class="form-control", placeholder="0323 (Opcional)", disabled = true) }}
+                            <i class=" fs-4 ti text-dark-emphasis ti-pencil fs-5 position-absolute top-50 button-50 end-0 translate-middle"
+                                role="button" id="buttonPin"></i>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-4 ">
+                        {{ form.salstate.label(class="form-label text-dark-emphasis") }}*
+                        {{ form.salstate(class="form-select select-state")}}
+                    </div>
+                    <div class="col-12 col-lg-12 ">
+                        {{ form.saldescription.label(class="form-label text-dark-emphasis") }}
+                        <div class="position-relative">
+                            {{ form.saldescription(class="form-control", placeholder="rvd cmp con net") }}
+                            <i class="fs-5 text-dark-emphasis ti ti-x position-absolute top-0 end-0 p-1 d-none"
+                                role="button" id="clrDescription"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light d-none">
+                    {{form.btnSubmit(class="btn w-100 btn_blue_plusgo")}}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- ================= MODAL EDITAR ================= -->
+
+<div class="modal fade" id="editSale" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold text-dark">Actualizar Venta {{plaName}}</h5>
+                <button type="button" class="btn-close"></button>
+            </div>
+
+            <form method="post">
+                <div class="modal-body row g-3">
+                    {{ form.csrf_token() }}
+                    {{ form.proid(class="proid") }}
+
+                    <div class="col-12 col-lg-6 ">
+                        {{ form.cstid.label(class="form-label text-dark-emphasis") }}*
+                        {{ form.cstid(class="select-client form-select")}}
+                    </div>
+
+                    <div class="col-8 col-lg-6 ">
+                        {{ form.saldate.label(class="form-label text-dark-emphasis") }}*
+                        <div class="position-relative">
+                            {{ form.saldate(class="form-control", placeholder="Seleccione las fechas",
+                            autocomplete="off" )}}
+                            <i class="fs-4 ti text-dark-emphasis ti-calendar-event position-absolute top-50 button-50 end-0 translate-middle bg-white buttonDates"
+                                role="button"></i>
+                        </div>
+                    </div>
+                    <div class="col-4 col-lg-3 ">
+                        {{ form.salprice.label(class="form-label text-dark-emphasis") }}*
+                        {{ form.salprice(class="form-control", placeholder="40000")
+                        }}
+                    </div>
+                    <div class="col-6 col-lg-5 ">
+                        {{ form.propin.label(class="form-label text-dark-emphasis") }}
+                        <div class="position-relative">
+                            {{ form.propin(class="form-control", placeholder="0323 (Opcional)", disabled = true) }}
+                            <i class=" fs-4 ti text-dark-emphasis ti-pencil fs-5 position-absolute top-50 button-50 end-0 translate-middle"
+                                role="button" id="buttonPin"></i>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-4 ">
+                        {{ form.salstate.label(class="form-label text-dark-emphasis") }}*
+                        {{ form.salstate(class="form-select select-state")}}
+                    </div>
+                    <div class="col-12 col-lg-12 ">
+                        {{ form.saldescription.label(class="form-label text-dark-emphasis") }}
+                        <div class="position-relative">
+                            {{ form.saldescription(class="form-control", placeholder="rvd cmp con net") }}
+                            <i class="fs-5 text-dark-emphasis ti ti-x position-absolute top-0 end-0 p-1 d-none"
+                                role="button" id="clrDescription"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light d-none">
+                    {{form.btnSubmit(class="btn w-100 btn_blue_plusgo")}}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block script %}
+<script src="{{url_for('static', filename='javascript/sale.js')}}"></script>
+{% endblock %}

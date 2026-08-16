@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlusGo</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/plusgo.png') }}" type="image/png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <!-- fuente Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <!-- cargar la pagina nProgress -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
+    <!-- animaciones en la carga -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+
+    <!-- Custom stlylesheet -->
+    <style>
+        * {
+            font-family: Montserrat, -apple-system, system-ui;
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        #notfound {
+            min-width: 100vw;
+            min-height: 100vh;
+            background: linear-gradient(135deg, rgba(0, 0, 0), rgba(4, 17, 43, 0.92)),
+            url('{{ url_for("static", filename="images/pattern.png") }}');
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .notfound {
+            max-width: 910px;
+            width: 100%;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .notfound .notfound-404 h1,
+        .notfound .notfound-500 h1 {
+            font-size: 16rem;
+            font-weight: 900;
+            margin: 0px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 10px;
+        }
+
+        .notfound h2 {
+            font-size: 22px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #fff;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        .home-btn {
+            display: inline-block;
+            font-weight: 700;
+            text-decoration: none;
+            background-color: transparent;
+            border: 2px solid transparent;
+            text-transform: uppercase;
+            padding: 13px 25px;
+            font-size: 18px;
+            border-radius: 40px;
+            margin: 7px;
+            -webkit-transition: 0.2s all;
+            transition: 0.2s all;
+        }
+
+        .notfound .home-btn:hover,
+        .notfound .contact-btn:hover {
+            opacity: 0.9;
+        }
+
+        .notfound .home-btn {
+            color: rgba(4, 17, 43, 0.92);
+            background: #fff;
+        }
+
+        @media only screen and (max-width: 767px) {
+
+            .notfound .notfound-404 h1,
+            .notfound .notfound-500 h1 {
+                font-size: 130px;
+            }
+
+            .notfound h2 {
+                font-size: 15px
+            }
+
+            .home-btn {
+                font-size: 13px;
+            }
+        }
+
+        #nprogress .bar {
+            height: 4px;
+            z-index: 999999 !important;
+        }
+
+        #nprogress .spinner {
+            display: block;
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 999999 !important;
+        }
+
+        #nprogress .spinner-icon {
+            width: 25px;
+            height: 25px;
+            z-index: 999999 !important;
+        }
+    </style>
+
+</head>
+
+<body>
+    {% block body %}
+    {% endblock %}
+    <!-- jquery global -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- animaciones en la carga -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- carga de pagina -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+    <script>
+        AOS.init();
+        // Configuración global opcional de NProgress
+        NProgress.configure({ showSpinner: true, trickleSpeed: 200 });
+
+        // 1. Al empezar a salir de la página (Refresh o Navegación)
+        window.addEventListener('beforeunload', () => {
+            NProgress.start();
+        });
+
+        // 2. Al cargar el HTML y al finalizar toda la carga (Imágenes/Estilos)
+        window.addEventListener('DOMContentLoaded', () => NProgress.start());
+        window.addEventListener('load', () => NProgress.done());
+
+        // 3. Delegación de eventos para enlaces <a> (Eficiente y dinámico)
+        document.addEventListener('click', (event) => {
+            const link = event.target.closest('a');
+
+            // Solo activar si es un enlace válido, no abre en pestaña nueva y no es un ancla interna (#)
+            if (link && link.href && !link.target && !link.href.includes('#')) {
+                NProgress.start();
+            }
+        });
+
+        // 4. Envío de formularios (Mejorado con limpieza de intervalo)
+        document.addEventListener('submit', () => {
+            NProgress.start();
+
+            const interval = setInterval(() => {
+                // Si por alguna razón ya terminó, detenemos el intervalo
+                if (NProgress.isStarted()) {
+                    NProgress.inc();
+                } else {
+                    clearInterval(interval);
+                }
+            }, 600);
+
+            // Limpieza de seguridad por si la página tarda demasiado
+            window.addEventListener('beforeunload', () => clearInterval(interval));
+        });
+
+    </script>
+
+</body>
+
+</html>

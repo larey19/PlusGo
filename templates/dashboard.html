@@ -1,0 +1,445 @@
+{% extends 'layouts/layout_2.html'%}
+
+{% block body %}
+
+{% if session["passChange"] == True %}
+<!-- ================= MODAL CONTRASEÑA ================= -->
+<div class="modal fade" id="passwordUser" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold">Actualizar contraseña</h5>
+            </div>
+
+            <form action="{{url_for('user.putPasswordTemporary', user_id = user[3])}}" method="post" id="formpassword">
+                <div class="modal-body p-0">
+
+                    {{ PasswordForm.csrf_token() }}
+                    <div class="p-4">
+                        <p class="text-black text-opacity-75 text-break">Protege tu cuenta con una contraseña exclusiva
+                            de al menos 5 caracteres.</p>
+                        <div class="userpasswordnew mb-2">
+                            <div class="form-floating position-relative">
+                                {{PasswordForm.userpasswordnew(class="form-control shadow-sm", placeholder="****")}}
+                                <label class="form-label">{{PasswordForm.userpasswordnew.label()}}*</label>
+                                <i id="eyeIcon"
+                                    class=" fs-5 text-opacity-75 text-black ti ti-eye fs-5 position-absolute top-50 button-50 end-0 translate-middle"
+                                    role="button" onclick="password('{{PasswordForm.userpasswordnew.id}}',this)">
+                                </i>
+                            </div>
+                        </div>
+                        <div class="userpasswordcheck mb-2">
+                            <div class="form-floating position-relative">
+                                {{PasswordForm.userpasswordcheck(class="form-control shadow-sm", placeholder="****")}}
+                                <label class="form-label">{{PasswordForm.userpasswordcheck.label()}}*</label>
+                                <i id="eyeIcon"
+                                    class=" fs-5 text-opacity-75 text-black ti ti-eye fs-5 position-absolute top-50 button-50 end-0 translate-middle"
+                                    role="button" onclick="password('{{PasswordForm.userpasswordcheck.id}}',this)">
+                                </i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer bg-light">
+                        {{PasswordForm.btnSubmit(class="btn w-100 btn_blue_plusgo",
+                        onclick="validatePassword(this, event)")}}
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- sera un div data -->
+<input type="hidden" id="data" data-meses='{{ meses | safe }}' data-totalsale='{{ totalsale | safe }}'
+    data-planame='{{ plaName | safe }}' data-plasale='{{ plaSale | safe }}'>
+
+
+<!-- Topbar -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold text-dark m-0">Panel Principal</h3>
+        <small class="text-dark-emphasis fw-medium">Informacion general y reportes de PlusGo.</small>
+    </div>
+    <div>
+        <div class="btn border-0 d-flex align-items-center gap-2 rounded-pill px-3 py-2">
+            <div class="rounded-circle shadow-sm p-2 d-flex justify-content-center align-items-center text-light fw-bolder text-uppercase btn_bg_plusgo"
+                style="width: 50px; height: 50px;">
+                {% if user[0] or user[1] %}
+                {{user[0][0:1]}}{{user[1][0:1]}}
+                {% else %}
+                <i class="bi bi-person-fill fs-4 text-light"></i>
+                {% endif %}
+            </div>
+            <div class="d-flex flex-column align-items-start d-sm-flex d-none">
+                <small class="text-primary-emphasis fw-semibold fs-6 text-capitalize text-nowrap text-truncate"
+                    style="max-width: 150px;">
+                    {% if user[0] or user[1] %}
+                    {{user[0]}} {{user[1]}}
+                    {% else %}
+                    PlusGo
+                    {% endif %}
+
+                </small>
+                <small class="text-primary-emphasis text-opacity-50 text-uppercase"
+                    style="margin-top: -5px;">{{user[2]}}</small>
+            </div>
+            <i class="bi bi-three-dots-vertical text-primary-emphasis" data-bs-toggle="dropdown"
+                aria-expanded="false"></i>
+            <ul class="dropdown-menu border-0 shadow-lg rounded-3 mt-4">
+                <a href="{{ url_for('user.getAccounts', user_id = session.get('user_id')) }}" class="text-decoration-none">
+                    <li class="dropdown-item p-1 text-decoration-none d-flex justify-content-between text-dark-emphasis">
+                        <i class="ti ti-user-circle fs-4"></i>
+                        <span class="fw-medium my-auto">Cuenta</span>
+                    </li>
+                </a>
+
+                <hr class="my-1">
+
+                <a href="#" class="text-decoration-none">
+                    <li class="dropdown-item p-1 d-flex justify-content-between text-dark-emphasis">
+                        <i class="ti ti-settings fs-4"></i>
+                        <span class="fw-medium my-auto">Ajustes</span>
+                    </li>
+                </a>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<!-- FILA 1 -->
+<div class="d-flex justify-content-between row g-3 mb-2">
+    <div class="col-7 col-sm-3 col-md-3 col-lg-3" data-aos="zoom-in-up">
+        <div class="card border-bottom-0 border-end-0 border-start-0 border-primary shadow"
+            style="border-top: 5px solid">
+            <div class="card-body d-flex justify-content-between">
+                <div class="text-truncate">
+                    <small class="text-dark-emphasis fw-bold">
+                        Ventas Activas
+                        <span class="text-seccondary" id="sale-time"></span>
+                    </small>
+                    <h4 class="fw-bold m-0 sale" id="sale-total">{{total_sale[0]}}</h4>
+                </div>
+                <div class="bg-primary rounded m-0 border-0 d-flex justify-content-center align-items-center shadow-sm"
+                    style="max-height: 37px; min-width: 37px;" data-sale_total="{{total_sale[0]}}"
+                    data-sale_total_today="{{total_sale_today[0]}}"
+                    data-sale_total_yesterday="{{total_sale_yesterday[0]}}"
+                    data-sale_total_weekly="{{total_sale_weekly[0]}}" role="button" id="sale_time_change">
+                    <i class="ti ti-shopping-bag fs-5 text-light"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-5 col-sm-3 col-md-3 col-lg-3" data-aos="zoom-in-up">
+        <div class="card border-bottom-0 border-end-0 border-start-0 border-primary-subtle shadow"
+            style="border-top: 5px solid">
+            <div class="card-body d-flex justify-content-between ">
+                <div class="text-truncate">
+                    <small class="text-muted fw-bolder">Clientes Activos</small>
+                    <h4 class="fw-bold m-0">{{total_customer[0]}}</h4>
+                </div>
+                <div class="bg-primary-subtle rounded m-0 border-0 d-flex justify-content-center align-items-center shadow-sm"
+                    style="max-height: 37px; min-width: 37px;">
+                    <i class="ti ti-users fs-5 text-primary-emphasis"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-5 col-sm-3 col-md-3 col-lg-3" data-aos="zoom-in-up">
+        <div class="card border-bottom-0 border-end-0 border-start-0 border-primary shadow"
+            style="border-top: 5px solid">
+            <div class="card-body d-flex justify-content-between">
+                <div class="text-truncate">
+                    <small class="text-muted fw-bolder">Cuentas Activas</small>
+                    <h4 class="fw-bold m-0">{{total_account_enable[0]}}</h4>
+                </div>
+                <div class="bg-primary rounded m-0 border-0 d-flex justify-content-center align-items-center shadow-sm"
+                    style="max-height: 37px; min-width: 37px;">
+                    <i class="ti ti-mail fs-5 text-light"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-7 col-sm-3 col-md-3 col-lg-3" data-aos="zoom-in-up">
+        <div class="card border-bottom-0 border-end-0 border-start-0 border-primary-subtle shadow"
+            style="border-top: 5px solid">
+            <div class="card-body d-flex justify-content-between">
+                <div class="text-truncate">
+                    <small class="text-muted fw-bolder">Perfiles Disponibles</small>
+                    <h4 class="fw-bold m-0">{{total_profiles_enable[0]}}</h4>
+                </div>
+                <div class="bg-primary-subtle rounded m-0 border-0 d-flex justify-content-center align-items-center shadow-sm"
+                    style="max-height: 37px; min-width: 37px;">
+                    <i class="ti ti-tags fs-5 text-primary-emphasis"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- FILA 2 -->
+<div class="row g-3 mb-2">
+    <div class="col-12 col-sm-7 col-md-7 col-lg-8" data-aos="fade-in-up">
+        <div class="card border-0 shadow">
+            <div class="card-body">
+
+
+                <div class="d-flex aling-items-start mb-4">
+                    <div class="my-auto">
+                        <i class="ti ti-shopping-bag text-primary fw-medium fs-4 me-2"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark m-0">Prox. ventas por vencer</h5>
+                        <small class="text-dark-emphasis fw-medium">Listado de ventas con poca o sin
+                            vigencia</small>
+                    </div>
+                </div>
+
+                <table class="table table-hover align-middle mb-0 overflow-hidden" id="tableSale">
+                    <thead>
+                        <tr>
+                            <th class="text-dark text-nowrap fw-semibold">Cliente</th>
+                            <th class=" text-center text-dark text-nowrap fw-semibold">Vencimineto</th>
+                            <th class="  text-center text-dark text-nowrap fw-semibold">Precio </th>
+                            <th class="text-dark text-nowrap fw-semibold">Plataforma</th>
+                            <th class="text-dark text-nowrap fw-semibold">Cuenta</th>
+                            <th class=" text-center text-dark text-nowrap fw-semibold">Perfil</th>
+
+                            {% if 'sales.view' in session['permissionData']%}
+                            <th class="text-dark text-nowrap fw-semibold">Abrir</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sale in sale %}
+                        <tr>
+                            <td class="text-nowrap text-nowrap fw-semibold">
+                                <a tabindex="0" role="button"
+                                    class="popover-dismiss text-decoration-none text-dark-emphasis "
+                                    data-cst_name="{{sale[0]}}" data-cst_lastname="{{sale[1]}}"
+                                    data-sal_date_end="{{sale[2].strftime('%d/%m/%Y')}}"
+                                    data-sal_date_start="{{sale[10].strftime('%d/%m/%Y')}}" data-acc_email="{{sale[3]}}"
+                                    data-acc_number_phone="{{sale[4]}}" data-acc_user="{{sale[8]}}"
+                                    data-pla_name="{{sale[5]}}" data-pro_profile="{{sale[6]}}"
+                                    data-sal_price='{{"{:,.0f}".format(sale[9]).replace(",",".")}}'>
+                                    {{sale[0]}} {{sale[1]}}
+                                </a>
+                            </td>
+
+                            <td class="text-center text-dark-emphasis text-nowrap">{{sale[2].strftime('%d/%m/%Y')}}</td>
+
+                            <td class="text-dark-emphasis text-nowrap text-center">
+                                <span class="badge bg-primary-subtle text-primary-emphasis">
+                                    $ {{"{:,.0f}".format(sale[9]).replace(",",".")}}
+                                </span>
+                            </td>
+
+                            <td class="text-dark-emphasis text-nowrap">
+                                {{sale[5]}}
+                            </td>
+
+                            <td class="text-dark-emphasis text-nowrap">
+                                {% if sale[3] %}
+                                {{sale[3]}}
+                                {% elif sale[4] %}
+                                ({{sale[4][0:3]}}) {{sale[4][3:6]}}-{{sale[4][6:]}}
+                                {% else %}
+                                {{sale[8]}}
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center text-dark-emphasis text-nowrap">Perfil {{sale[6]}}</td>
+                            {% if 'sales.view' in session['permissionData']%}
+                            <td class="text-center">
+                                <!-- abir venta -->
+                                <a href="{{url_for('sale.getSale', pla_id = sale[7], cst_name = sale[0], cst_lastname = sale[1] , pro_profile = sale[6])}}"
+                                    class="btn btn-sm btn-outline-secondary">
+                                    <i class="ti ti-external-link fs-5"></i>
+                                </a>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-5 col-md-5 col-lg-4" data-aos="fade-in-up">
+        <div class="card border-0 shadow">
+            <div class="card-body ">
+                <div class="d-flex aling-items-start mb-4">
+                    <div class="my-auto">
+                        <i class="ti ti-mail text-primary fw-medium fs-4 me-2"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark m-0">Prox. Cuentas por vencer</h5>
+                        <small class="text-dark-emphasis fw-medium">Listado de cuentas con poca o sin
+                            vigencia</small>
+                    </div>
+                </div>
+
+                <table class="table table-hover align-middle mb-0" id="tableAcc">
+                    <thead>
+                        <tr>
+                            <th class="text-center text-dark text-nowrap fw-semibold">
+                                Plataforma
+                            </th>
+                            <th class="text-center text-dark text-nowrap fw-semibold">
+                                Apodo
+                            </th>
+                            <th class="text-center text-dark text-nowrap fw-semibold">
+                                Vencimiento
+                            </th>
+                            {% if 'accounts.view' in session['permissionData']%}
+                            <th class="text-center text-dark text-nowrap fw-semibold">
+                                Abrir
+                            </th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for acc in account %}
+                        <tr>
+                            <td class="text-nowrap fw-semibold text-dark-emphasis text-nowrap">
+                                <a href="{{url_for('account.getAccount', pla_id = acc[0], acc_nickname = acc[2])}}"
+                                    class="text-decoration-none text-dark-emphasis">
+                                    {{ acc[1] }}
+                                </a>
+                            </td>
+                            <td class="text-nowrap text-dark-emphasis text-nowrap">{{ acc[2] }}</td>
+                            <td class="text-center text-dark-emphasis text-nowrap">{{ acc[3].strftime('%d/%m/%Y') }}
+                            </td>
+                            {% if 'accounts.view' in session['permissionData']%}
+                            <td class="text-center text-dark text-nowrap">
+                                <a href="{{url_for('account.getAccount', pla_id = acc[0], acc_nickname = acc[2])}}"
+                                    class="btn btn-sm btn-outline-secondary">
+                                    <i class="ti ti-external-link fs-5"></i>
+                                </a>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- FILA 3 -->
+<div class="row g-3 mb-2">
+
+    <div class="col-12 col-sm-8 col-md-8 col-lg-5" data-aos="zoom-in-up">
+        <div class="card shadow border-0">
+            <div class="card-body">
+
+                <div class="d-flex aling-items-start mb-4">
+                    <div class="my-auto">
+                        <i class="ti ti-chart-bar text-primary fw-medium fs-4 me-2"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark m-0">Ventas por mes</h5>
+                        <small class="text-dark-emphasis fw-medium">Cada fila contiene el total de ventas de su
+                            mes</small>
+                    </div>
+                </div>
+
+                <canvas id="myChartSale" class="w-100 h-75" style="margin: auto;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-4 col-md-4 col-lg-3" data-aos="zoom-in-up">
+        <div class="card shadow border-0">
+            <div class="card-body">
+
+                <div class="d-flex aling-items-start mb-4">
+                    <div class="my-auto">
+                        <i class="ti ti-chart-pie-4 text-primary fw-medium fs-4 me-2"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark m-0">Plataformas Activas</h5>
+                        <small class="text-dark-emphasis fw-medium">Ventas por cada plataforma activa</small>
+                    </div>
+                </div>
+
+                <canvas id="myChartPlatform" class="w-100 h-75" style="margin: auto;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-12 col-md-12 col-lg-4" data-aos="fade-in-up">
+        <div class="card shadow border-0">
+            <div class="card-body">
+
+                <div class="d-flex aling-items-start mb-4">
+                    <div class="my-auto">
+                        <i class="ti ti-history text-primary fw-medium fs-4 me-2"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark m-0">Ultimos Movimientos</h5>
+                        <small class="text-dark-emphasis fw-medium">Lista los 5 ultimos movimientos en
+                            ventas</small>
+                    </div>
+                </div>
+
+                <table class="table table-hover align-middle mb-0" id="tableUltTrgSale">
+                    <thead>
+                        <tr>
+                            <th class="text-dark text-nowrap fw-semibold">Accion</th>
+                            <th class="text-center text-dark text-nowrap fw-semibold">Fecha</th>
+                            <th class="text-dark text-nowrap fw-semibold">Cliente</th>
+                            <th class="text-center text-dark text-nowrap fw-semibold">Precio</th>
+                            <th class="text-center text-dark text-nowrap fw-semibold">Cuenta</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in UltSale %}
+                        <tr>
+                            <td class="text-nowrap text-dark-emphasis text-nowrap">{{data['trg_action']}}</td>
+                            <td class="text-center text-nowrap text-dark-emphasis text-nowrap">
+                                {{data['trg_date'].strftime('%d/%m/%Y %H:%M:%S')}}</td>
+                            <td class="text-nowrap text-dark-emphasis text-nowrap">{{data['cst_name']}}
+                                {{data['cst_lastname']}}</td>
+                            <td class="text-center text-nowrap text-dark-emphasis text-nowrap">
+                                <span class="badge bg-primary-subtle text-primary-emphasis">
+                                    $ {{"{:,.0f}".format(data['sal_price']).replace(",",".")}}
+                                </span>
+                            </td>
+                            <td class="text-nowrap text-dark-emphasis text-nowrap">
+                                {% if data['acc_email'] %}
+                                {{data['acc_email']}}
+                                {% elif data['acc_number_phone'] %}
+                                ({{data['acc_number_phone'][0:3]}})
+                                {{data['acc_number_phone'][3:6]}}-{{data['acc_number_phone'][6:]}}
+                                {% elif data['acc_user'] %}
+                                {{data['acc_user']}}
+                                {% else %}
+                                Sin cuenta
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{%block script%}
+<script src="{{ url_for('static', filename = 'javascript/dashboard.js') }}"></script>
+{%endblock%}

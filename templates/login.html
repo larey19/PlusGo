@@ -1,0 +1,140 @@
+{% extends 'layouts/layout_1.html' %}
+{% block body %}
+
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<script>
+    Swal.fire({
+        title: '{{ message }}',
+        icon: '{{ "error" if category=="error" else "success" if category=="success" else "info" }}',
+        timer: 3000,
+        showConfirmButton: false
+    });
+</script>
+{% endfor %}
+
+<div class="container-fluid  login-bg">
+    <div class="row">
+
+        <!-- ========= IZQUIERDA DESKTOP ========= -->
+        <div
+            class="col-sm-7 d-none d-sm-flex flex-column justify-content-center p-5 bg_plusgo_login shadow rounded-end-4 vh-100 z-2">
+
+            <img src="{{ url_for('static', filename='images/plusgo.png') }}" class="ms-3" alt="PlusGo"
+                style="width: 20vw; max-width: 300px;">
+
+            <h2 class="fw-bold fs-2 text-white m-0 text-wrap">
+                Todo en un solo lugar
+            </h2>
+
+            <p class="fs-5 fw-medium text-opacity-50 text-white text-truncate">
+                Lleva el control sin complicaciones<span class="d-none d-xl-flex">desde cualquier dispositivo.</span>
+            </p>
+        </div>
+
+
+
+
+        <!-- ========= DERECHA DESKTOP ========= -->
+        <div class="col-sm-5 d-none d-sm-flex align-items-center justify-content-center bg-white">
+
+            <form action="{{url_for('login.log')}}" method="POST" class="row g-3 formlogin" style="width: 90%; max-width: 430px;">
+                <div class="col-12 d-flex justify-content-center">
+                    <img src="{{url_for('static', filename='images/plusgo_letter_blue.png')}}" alt="..."
+                        style="width: 15vw; max-width: 180px;">
+                </div>
+                {{form.hidden_tag()}}
+                <div class="col-12">
+                    <div class="form-floating">
+                        {{form.user(class="form-control shadow-sm user", placeholder="usuario12")}}
+                        {{form.user.label(class="form-label fw-medium password")}}
+                    </div>
+
+                </div>
+
+                <div class="col-12">
+
+                    <div class="form-floating position-relative">
+                        {{form.password(class="form-control shadow-sm password",placeholder="****")}}
+                        {{form.password.label(class="form-label fw-medium")}}
+                        <i id="eyeIcon"
+                            class=" fs-4 ti ti-eye position-absolute top-50 button-50 end-0 translate-middle"
+                            onclick="password('{{form.password.id}}', this)" role="button">
+                        </i>
+                    </div>
+
+                </div>
+                <div class="col-12">
+                    {{form.btnSubmit(class="btn btn-lg disabled w-100 shadow btnsubmit btn_blue_plusgo")}}
+                </div>
+            </form>
+
+        </div>
+
+
+        <!-- ========= MOBILE ========= -->
+        <div class="col-12 d-sm-none d-flex flex-column px-0 min-vh-100 bg_plusgo_login_mobile">
+
+            <!-- HEADER -->
+            <div class="d-flex align-items-center gap-2 px-4 pt-4 pb-3">
+
+                <img src="{{ url_for('static', filename='images/plusgo.png') }}" alt="PlusGo" style="width: 20vw; max-width: 150px;">
+
+                <div>
+                    <h5 class="fw-bold fs-5 text-white m-0 text-nowrap">
+                        Todo en un solo lugar
+                    </h5>
+
+                    <small class="m-0 fw-medium text-white text-opacity-50 text-truncate">
+                        Lleva el control sin complicaciones.
+                    </small>
+                </div>
+
+            </div>
+
+            <!-- FORM MOBILE FULL -->
+            <div class="bg-white rounded-top-4 h-100">
+                <form action="{{url_for('login.log')}}" method="POST" class="row g-3 formlogin m-auto pt-2"
+                    style="width: 90%;" data-aos="zoom-in-up">
+                    <div class="col-12 d-flex justify-content-center">
+                        <img src="{{url_for('static', filename='images/plusgo_letter_blue.png')}}" alt="..."
+                            style="width: 26vw; max-width: 180px;">
+                    </div>
+                    {{form.hidden_tag()}}
+                    <div class="col-12">
+                        <div class="form-floating">
+                            {{form.user(class="form-control shadow-sm user", placeholder="usuario12")}}
+                            {{form.user.label(class="form-label fw-medium password")}}
+                        </div>
+
+                    </div>
+
+                    <div class="col-12">
+
+                        <div class="form-floating position-relative">
+                            {{form.password(class="form-control shadow-sm password",placeholder="****")}}
+                            {{form.password.label(class="form-label fw-medium")}}
+                            <i id="eyeIcon"
+                                class=" fs-4 ti ti-eye position-absolute top-50 button-50 end-0 translate-middle"
+                                onclick="password('{{form.password.id}}', this)" role="button">
+                            </i>
+                        </div>
+
+                    </div>
+                    <div class="col-12">
+                        {{form.btnSubmit(class="btn btn-lg disabled w-100 shadow btnsubmit btn_blue_plusgo")}}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+{% block script %}
+<script src="{{ url_for('static', filename = 'javascript/login.js') }}">
+
+
+</script>
+
+{% endblock %}
