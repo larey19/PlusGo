@@ -1,0 +1,330 @@
+{% extends 'layouts/layout_2.html'%}
+{% block body %}
+
+
+<!-- Header -->
+<div class="d-flex justify-content-between mb-4">
+    <div>
+        <h3 class="fw-bold text-dark m-0">Historial</h3>
+        <small class="text-dark-emphasis fw-medium">Gestión de cuentas de la plataforma</small>
+    </div>
+    <div>
+        <div class="overflow-auto list-group list-group-horizontal p-2 hidden-bar-overflow">
+            <a href="{{url_for('trigger.getTriggerSale')}}" class="p-1 text-decoration-none text-nowrap text-capitalize
+                {{ 'border-5 border-bottom border-primary text-primary fw-semibold'
+                if request.path == '/trigger/sale'
+                else 'text-dark-emphasis' }}">Ventas</a>
+            <a href="{{url_for('trigger.getTriggerAccount')}}" class="p-1 text-decoration-none text-nowrap text-capitalize
+                {{ 'border-5 border-bottom border-primary text-primary fw-semibold'
+                if request.path == '/trigger/account'
+                else 'text-dark-emphasis' }}">Cuentas</a>
+            <a href="{{url_for('trigger.getTriggerPlatform')}}" class="p-1 text-decoration-none text-nowrap text-capitalize
+                {{ 'border-5 border-bottom border-primary text-primary fw-semibold'
+                if request.path == '/trigger/platform'
+                else 'text-dark-emphasis' }}">Plataformas</a>
+            <a href="{{url_for('trigger.getTriggerProfile')}}" class="p-1 text-decoration-none text-nowrap text-capitalize
+                {{ 'border-5 border-bottom border-primary text-primary fw-semibold'
+                if request.path == '/trigger/profile'
+                else 'text-dark-emphasis' }}">Perfiles</a>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- ================= VENTAS ================= -->
+{% if sale %}
+<div class="card shadow card border-0 mb-4" data-aos="fade-in-up">
+    <div class="card-body">
+        <table class="table table-hover align-middle" id="table">
+            <thead>
+                <tr>
+                    <th class="text-dark text-nowrap fw-semibold">ID</th>
+                    <th class="text-dark text-nowrap fw-semibold">Acción</th>
+                    <th class="text-dark text-nowrap fw-semibold text-center">Fecha</th>
+                    <th class="text-dark text-nowrap fw-semibold text-center">Hora</th>
+                    <th class="text-dark text-nowrap fw-semibold">Cliente</th>
+                    <th class="text-dark text-nowrap fw-semibold">Precio</th>
+                    <th class="text-dark text-nowrap fw-semibold">Cuenta</th>
+                    <th class="text-center text-dark text-nowrap fw-semibold">Perfil</th>
+                    <th class="text-dark text-nowrap fw-semibold text-center">Ver</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in sale %}
+                <tr>
+                    <td class="text-center text-nowrap text-dark-emphasis ">{{data['trg_id']}}</td>
+                    <td class="text-nowrap text-dark-emphasis ">{{data['trg_action']}}</td>
+                    <td class="text-center text-nowrap text-dark-emphasis "
+                        data-order="{{data['trg_date'].strftime('%Y-%m-%d')}}">
+                        {{data['trg_date'].strftime('%d/%m/%Y')}}</td>
+                    <td class="text-center text-nowrap text-dark-emphasis "
+                        data-order="{{data['trg_date'].strftime('%HH:%MM:%SS')}}">
+                        {{data['trg_date'].strftime('%H:%M:%S')}}</td>
+                    <td class="text-nowrap text-dark-emphasis ">{{data['cst_name']}}
+                        {{data['cst_lastname']}}</td>
+                    <td class="text-center text-nowrap text-dark-emphasis ">
+                        <span class="badge bg-primary-subtle text-primary-emphasis">
+                            $ {{"{:,.0f}".format(data['sal_price']).replace(",",".")}}
+                        </span>
+                    </td>
+                    <td class="text-nowrap text-dark-emphasis">
+                        {% if data['acc_email'] %}
+                        {{data['acc_email']}}
+                        {% elif data['acc_number_phone'] %}
+                        ({{data['acc_number_phone'][0:3]}})
+                        {{data['acc_number_phone'][3:6]}}-{{data['acc_number_phone'][6:]}}
+                        {% elif data['acc_user'] %}
+                        {{data['acc_user']}}
+                        {% else %}
+                        Sin cuenta
+                        {% endif %}
+                    </td>
+                    <td class="text-nowrap text-dark-emphasis">
+                        Perfil {{data['pro_profile']}}
+                    </td>
+                    <td class="text-center text-nowrap">
+                        <button class="btn btn-sm btn-outline-secondary dataSaleDetails d-flex align-items-center"
+                            data-bs-toggle="modal" data-bs-target="#getTrigger"
+                            data-sal_date_start="{{data['sal_date_start'].strftime('%d/%m/%Y') }}"
+                            data-sal_date_end="{{data['sal_date_end'].strftime('%d/%m/%Y') }}"
+                            data-sal_price="{{ '{:,.0f}'.format(data['sal_price']).replace(',','.') }}"
+                            data-sal_description="{{data['sal_description'] if data['sal_description'] else 'Ninguna observación registrada.'}}"
+                            data-cst_name="{{data['cst_name']}}"
+                            data-cst_lastname="{{data['cst_lastname'] if data['cst_lastname'] else ''}}"
+                            data-acc_email="{% if data['acc_number_phone'] %} ({{data['acc_number_phone'][0:3]}}) {{data['acc_number_phone'][3:6]}}-{{data['acc_number_phone'][6:]}} {% elif data['acc_email'] %} {{data['acc_email']}} {% else %} {{data['acc_user'] if data['acc_user'] else 'Sin Cuenta'}} {% endif %}"
+                            data-pro_profile="{{data['pro_profile']}}" data-trg_action="{{data['trg_action']}}"
+                            data-trg_date="{{data['trg_date']}}">
+                            <i class="fs-5 ti ti-arrows-maximize"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ================= MODAL DETALLES VENTAS ================= -->
+
+<div class="modal fade" id="getTrigger" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold text-dark">Detalles de Venta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="d-flex align-items-center mb-4 gap-1 ms-2">
+                    <div
+                        class="rounded-circle shadow-sm p-2 d-flex justify-content-center align-items-center text-white bg-primary">
+                        <i class="bi bi-person-fill fs-4 px-2"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0 fw-semibold text-dark-emphasis" id="cst_fullname">
+                        </h5>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-3 rounded bg-light border-start border-5 shadow-sm border-primary">
+                            <small class="text-muted d-block text-uppercase fw-bold">Fecha
+                                Inicio</small>
+                            <span class="text-dark-emphasis text-nowrap d-flex align-items-center gap-2"
+                                id="sal_date_start">
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded bg-light border-start border-5 shadow-sm border-primary">
+                            <small class="text-muted d-block text-uppercase fw-bold">Fecha
+                                Fin</small>
+                            <span class="text-dark-emphasis text-nowrap d-flex align-items-center gap-2"
+                                id="sal_date_end"></span>
+                        </div>
+                    </div>
+
+                    <!-- Precio Destacado -->
+                    <div class="col-12">
+                        <div class="p-3 border rounded bg-opacity-10 d-flex justify-content-between align-items-center">
+                            <span class="fw-bold d-flex align-items-center gap-2"><i class="ti ti-cash fs-4"></i>PRECIO
+                                TOTAL</span>
+                            <h5 class="mb-0 fw-bold " id="sal_price">
+                            </h5>
+                        </div>
+                    </div>
+
+                    <!-- Cuenta -->
+                    <div class="col-12">
+                        <div class="p-3 rounded shadow-sm bg-light border-start border-5 border-primary">
+                            <small class="text-muted d-block text-uppercase fw-bold mb-1">Información de Cuenta</small>
+                            <div id="dataAcc" class="d-block gap-1">
+                                <span id="acc_email"
+                                    class="text-dark-emphasis text-truncate d-flex align-items-center gap-2"
+                                    style="max-width : 250px">
+                                </span>
+                                <span id="pro_profile"
+                                    class="text-dark-emphasis text-truncate d-flex align-items-center gap-2"
+                                    style="max-width : 150px">
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="col-12">
+                        <div class="p-3 rounded border">
+                            <small class="text-muted d-block text-uppercase fw-bold">Descripción</small>
+                            <span class="text-dark-emphasis text-nowrap d-flex align-items-center small gap-1   "
+                                id="sal_description">
+                            </span>
+                            <hr class="my-2">
+                            <small class="text-muted d-block text-uppercase fw-bold">Accion</small>
+                            <span class="text-dark-emphasis text-nowrap d-flex align-items-center small gap-1   "
+                                id="trg_action">
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- ================= CUENTAS ================= -->
+{% if account %}
+<div class="card shadow card border-0 mb-4" data-aos="fade-in-up">
+    <div class="card-body">
+        <table class="table table-hover align-middle" id="table">
+            <thead>
+                <tr>
+                    <th class="text-center text-nowrap text-dark-emphasis text-nowrap">ID</th>
+                    <th class="text-nowrap text-dark-emphasis text-nowrap">Acción</th>
+                    <th class="text-nowrap text-dark-emphasis text-nowrap">Fecha</th>
+                    <th class="text-nowrap text-dark-emphasis text-nowrap">Hora</th>
+                    <th class="text-nowrap text-dark-emphasis text-nowrap">Apodo</th>
+                    <th class="text-nowrap text-dark-emphasis text-nowrap">Cuenta</th>
+                    <th class=" text-nowrap text-dark-emphasis text-nowrap">Plataforma</th>
+                    <!-- <th class="text-nowrap text-dark-emphasis text-nowrap">Precio</th> -->
+                    <th class="text-nowrap text-dark-emphasis text-nowrap">Facturacion</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in account %}
+                <tr>
+                    <td class="text-center text-nowrap text-dark-emphasis">{{data['trg_id']}}</td>
+                    <td class="text-nowrap text-dark-emphasis ">
+                        {{data['trg_action']}}
+                    </td>
+                    <td class="text-center text-nowrap text-dark-emphasis "
+                        data-order="{{data['trg_date'].strftime('%Y-%m-%d')}}">
+                        {{data['trg_date'].strftime('%d/%m/%Y')}}</td>
+                    <td class="text-center text-nowrap text-dark-emphasis "
+                        data-order="{{data['trg_date'].strftime('%HH:%MM:%SS')}}">
+                        {{data['trg_date'].strftime('%H:%M:%S')}}</td>
+                    <td class="text-nowrap text-dark-emphasis ">{{data['acc_provider']}}</td>
+                    <td class="text-nowrap text-dark-emphasis ">
+                        {% if data['acc_email'] %}
+                        {{data['acc_email']}}
+                        {% elif data['acc_number_phone'] %}
+                        ({{data['acc_number_phone'][0:3]}})
+                        {{data['acc_number_phone'][3:6]}}-{{data['acc_number_phone'][6:]}}
+                        {% elif data['acc_user'] %}
+                        {{data['acc_user']}}
+                        {% else %}
+                        Sin cuenta
+                        {% endif %}
+                    </td>
+                    <td class="text-nowrap text-dark-emphasis ">{{data['pla_name']}}</td>
+                    <!-- <td class="text-nowrap text-center">
+                        <span class="badge bg-primary-subtle text-primary-emphasis">
+                            $ {{"{:,.0f}".format(23000).replace(",",".")}}
+                        </span>
+                    </td> -->
+                    <td class="text-nowrap text-dark-emphasis">{{data['acc_date_pay'].strftime('%d/%m/%Y') if
+                        data['acc_date_pay'] else 'Sin Fecha'}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- ================= PLATAFORMAS ================= -->
+{% if platform %}
+<div class="card shadow card border-0 mb-4" data-aos="fade-in-up">
+    <div class="card-body">
+        <table class="table table-hover align-middle" id="table">
+            <thead>
+                <tr>
+                    <th class="text-center text-nowrap text-dark-emphasis text-nowrap">ID</th>
+                    <th class="text-nowrap text-dark-emphasis text-nowrap">Acción</th>
+                    <th class="text-nowrap text-dark-emphasis text-nowrap">Fecha</th>
+                    <th class="text-nowrap text-dark-emphasis text-nowrap">Hora</th>
+                    <th class="text-nowrap text-dark-emphasis text-nowrap">Nombre</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in platform %}
+                <tr>
+                    <td class="text-center text-nowrap text-dark-emphasis text-nowrap">{{data['trg_id']}}</td>
+                    <td class="text-nowrap text-dark-emphasis text-nowrap">{{data['trg_action']}}</td>
+                    <td class="text-center text-nowrap text-dark-emphasis "
+                        data-order="{{data['trg_date'].strftime('%Y-%m-%d')}}">
+                        {{data['trg_date'].strftime('%d/%m/%Y')}}</td>
+                    <td class="text-center text-nowrap text-dark-emphasis "
+                        data-order="{{data['trg_date'].strftime('%HH:%MM:%SS')}}">
+                        {{data['trg_date'].strftime('%H:%M:%S')}}</td>
+                    <td class="text-nowrap text-dark-emphasis text-nowrap">{{data['pla_name']}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- ================= PERFILES ================= -->
+{% if profile %}
+<div class="card shadow card border-0 mb-4" data-aos="fade-in-up">
+    <div class="card-body">
+        <table class="table table-hover align-middle" id="table">
+            <thead>
+                <tr>
+                    <th class="text-center  text-dark-emphasis text-nowrap">ID</th>
+                    <th class=" text-dark-emphasis text-nowrap">Acción</th>
+                    <th class=" text-dark-emphasis text-nowrap">Fecha</th>
+                    <th class=" text-dark-emphasis text-nowrap">Hora</th>
+                    <th class="text-dark-emphasis text-nowrap">Perfil</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in profile %}
+                <tr>
+                    <td class="text-center text-dark-emphasis text-nowrap">{{data['trg_id']}}</td>
+                    <td class="text-dark-emphasis text-nowrap">{{data['trg_action']}}</td>
+                    <td class="text-center text-nowrap text-dark-emphasis "
+                        data-order="{{data['trg_date'].strftime('%Y-%m-%d')}}">
+                        {{data['trg_date'].strftime('%d/%m/%Y')}}</td>
+                    <td class="text-center text-nowrap text-dark-emphasis "
+                        data-order="{{data['trg_date'].strftime('%HH:%MM:%SS')}}">
+                        {{data['trg_date'].strftime('%H:%M:%S')}}</td>
+                    <td class="text-dark-emphasis text-nowrap">Perfil {{data['pro_profile']}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+
+{% endblock %}
+
+{%block script%}
+<script src="{{ url_for('static', filename = 'javascript/trigger.js') }}"></script>
+{%endblock%}

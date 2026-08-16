@@ -1,0 +1,153 @@
+{% extends 'layouts/layout_2.html'%}
+{% block body %}
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold text-dark m-0">Clientes</h3>
+        <small class="text-dark-emphasis fw-medium">Gestion de Clientes de PlusGo</small>
+    </div>
+    <div class="d-flex">
+        {% if 'customers.create' in session['permissionData'] %}
+        <button class="btn d-none d-lg-flex btn_blue_plusgo cstCrt" data-bs-toggle="modal"
+            data-bs-target="#createModal">
+            <i class="ti ti-users-plus fs-5 me-1"></i> Nueva Cliente
+        </button>
+        <button class="btn d-lg-none btn_blue_plusgo cstCrt" data-bs-toggle="modal" data-bs-target="#createModal">
+            <i class="ti ti-users-plus fs-5"></i>
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+<!-- TABLA DE CLIENTES -->
+<div class="card shadow border-0" data-aos="fade-in-up">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle" id="table">
+                <thead>
+                    <tr>
+                        <th class="text-dark text-nowrap fw-semibold">Nombre</th>
+                        <th class="text-dark text-nowrap fw-semibold">Apellido</th>
+                        <th class=" text-center text-dark text-nowrap fw-semibold">Teléfono</th>
+                        {% if 'customers.edit' in session['permissionData']%}
+                        <th class=" text-center text-dark text-nowrap fw-semibold">Acciones</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in customer %}
+                    <tr>
+                        <td class=" text-dark-emphasis text-nowrap text-nowrap fw-semibold">{{ c[1] if c[1] else 'Sin
+                            Nombre'}}</td>
+                        <td class="text-dark-emphasis text-nowrap">{{ c[2] if c[2] else 'Sin Apellido' }}</td>
+                        <td class="text-center text-dark-emphasis text-nowrap">
+                            {% if c[3] %}
+                            ({{c[3][0:3]}}) {{c[3][3:6]}}-{{c[3][6:]}}
+                            {% else %}
+                            Sin Numero
+                            {%endif%}
+                        </td>
+                        {% if 'customers.edit' in session['permissionData']%}
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-primary dataCustomer" data-bs-toggle="modal"
+                                data-bs-target="#editModal" data-cst_id="{{c[0]}}" data-cst_name="{{c[1]}}"
+                                data-cst_lastname="{{c[2]}}" data-cst_phone_number="{{c[3]}}">
+                                <i class="ti ti-edit fs-5"></i>
+                            </button>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- MODAL PARA EDITAR -->
+<div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header  bg-light">
+                <h5 class="modal-title fw-bold text-dark">Editar Cliente</h5>
+                <button type="button" class="btn-close"></button>
+            </div>
+
+            <form method="post" id="form_upd">
+                <div class="modal-body row g-3">
+                    {{ form.hidden_tag() }}
+                    <div class="col-6">
+                        {{form.cstname.label(class="text-dark-emphasis")}}*
+                        {{ form.cstname(class="form-control",
+                        placeholder="Juanchito") }}
+                    </div>
+                    <div class="col-6">
+                        {{form.cstlastname.label(class="text-dark-emphasis")}}
+                        {{ form.cstlastname(class="form-control",
+                        placeholder="Perez") }}
+                    </div>
+                    <div class="col-12">
+                        {{form.cstphonenumber.label(class="text-dark-emphasis")}}
+                        {{ form.cstphonenumber(class="form-control",
+                        placeholder="300 333 3333") }}
+                    </div>
+                </div>
+                <div class="modal-footer bg-light d-none">
+                    {{form.btnSubmit(class="btn w-100 btn_blue_plusgo")}}
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PARA CREAR -->
+<div class="modal fade" id="createModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header  bg-light">
+                <h5 class="modal-title fw-bold text-dark">Nuevo Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="{{url_for('customer.crtCustomer')}}" method="post" id="form_crt">
+                <div class="modal-body row g-3">
+                    {{ form.hidden_tag() }}
+                    <div class="col-6">
+                        {{form.cstname.label(class="text-dark-emphasis")}}*
+                        {{ form.cstname(class="form-control",
+                        placeholder="Juanchito")}}
+                    </div>
+                    <div class="col-6">
+                        {{form.cstlastname.label(class="text-dark-emphasis")}}
+                        {{ form.cstlastname(class="form-control",
+                        placeholder="Perez") }}
+                    </div>
+                    <div class="col-12">
+                        {{form.cstphonenumber.label(class="text-dark-emphasis")}}
+                        {{ form.cstphonenumber(class="form-control",
+                        placeholder="3008000333") }}
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-light d-none">
+                    {{form.btnSubmit(class="btn w-100 btn_blue_plusgo")}}
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block script %}
+
+<script src="{{url_for('static', filename='javascript/customer.js')}}">
+
+</script>
+
+{% endblock %}

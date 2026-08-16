@@ -1,0 +1,17 @@
+Flask
+flask-mysqldb
+gunicorn 
+# variables sensibles
+python-dotenv
+# token
+pyjwt
+# zona horaria
+pytz
+# validador de correos
+email_validator
+# validador de telefono
+phonenumbers
+# validacio de formularios
+flask-wtf
+# Reescribir los links del correo (server-side, con BeautifulSoup)
+beautifulsoup4
