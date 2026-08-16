@@ -69,7 +69,13 @@ def getRbac():
                             AND rp.per_id = p.per_id
                         
                         GROUP BY
-                            u.user_id
+                            u.user_id,
+                            u.user_name,
+                            u.user_lastname,
+                            u.user_user,
+                            u.user_number_phone,
+                            r.rol_name,
+                            r.rol_id
 
                         ORDER BY
                             u.user_name ASC
