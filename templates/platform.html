@@ -1,0 +1,165 @@
+{% extends 'layouts/layout_2.html'%}
+{% block body %}
+
+
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h3 class="fw-bold text-dark m-0">Plataformas</h3>
+        <small class="text-dark-emphasis fw-medium">Gestion de plataformas de PlusGo</small>
+    </div>
+    {% if 'platforms.create' in session['permissionData'] %}
+    <div>
+        <button class="btn d-none d-lg-flex btn_blue_plusgo shadow-sm plaCrt" data-bs-toggle="modal"
+            data-bs-target="#createModal">
+            <i class="ti ti-stack-push fs-4 me-2"></i> Nueva Plataforma
+        </button>
+        <button class="btn d-lg-none btn_blue_plusgo shadow-sm plaCrt" data-bs-toggle="modal"
+            data-bs-target="#createModal">
+            <i class="ti ti-stack-push fs-4"></i>
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Tabla -->
+<div class="card shadow border-0" data-aos="fade-in-up">
+    <div class="card-body">
+        <table class="table table-hover align-middle" id="table">
+            <thead>
+                <tr>
+                    <th class="text-dark text-nowrap fw-semibold ">Nombre</th>
+                    <th class="text-dark text-nowrap fw-semibold ">Max. Perfiles</th>
+                    <th class="text-dark text-nowrap fw-semibold    text-center">Mensaje</th>
+                    {% if 'accounts.view' in session['permissionData'] or 'platforms.edit' in session['permissionData']
+                    %}
+                    <th class="text-dark text-nowrap fw-semibold text-center">Acciones</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in platform %}
+                <tr>
+                    <td class="fw-semibold text-dark-emphasis text-nowrap">
+                        <a href="{{url_for('account.getAccount', pla_id = p[0])}}"
+                            class="text-decoration-none  text-dark-emphasis">
+                            {{ p[1] }}
+                        </a>
+                    </td>
+                    <td class="text-dark-emphasis text-nowrap">
+                        {{ p[2] }} perfiles
+                    </td>
+
+                    <td class="text-white text-nowrap text-center">
+                        <i
+                            class="ti p-2 rounded-circle  {{'ti-check text-primary-emphasis  bg-primary-subtle' if p[3] else 'ti-x bg-dark-subtle text-dark-emphasis' }} fs-5"></i>
+                        <!-- </div> -->
+                    </td>
+                    {% if 'accounts.view' in session['permissionData'] or 'platforms.edit' in
+                    session['permissionData'] %}
+                    <td class="text-center text-dark-emphasis text-nowrap">
+                        {% if 'accounts.view' in session['permissionData'] %}
+                        <!-- Ver cuentas -->
+                        <a href="{{url_for('account.getAccount', pla_id = p[0])}}"
+                            class="btn btn-sm btn-outline-secondary ">
+                            <i class="ti ti-mail fs-5"></i>
+                        </a>
+                        {% endif %}
+                        {% if 'platforms.edit' in session['permissionData'] %}
+                        <!-- Editar -->
+                        <button class="btn btn-sm btn-outline-primary plaUpd" data-bs-toggle="modal"
+                            data-bs-target="#editModal" data-pla_name="{{p[1]}}" data-pla_profiles="{{p[2]}}"
+                            data-pla_id="{{p[0]}}" data-pla_message="{{p[3]}}">
+                            <i class="ti ti-edit fs-5"></i>
+                        </button>
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                </tr>
+
+
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Editar -->
+<div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold text-dark">Editar Plataforma</h5>
+                <button type="button" class="btn-close"></button>
+            </div>
+
+            <form method="post" id="form_upd">
+                <div class="modal-body row g-2">
+                    {{form.hidden_tag()}}
+                    <div class="col-6">
+                        {{ form.planame.label(class="form-label text-dark-emphasis") }}*
+                        {{ form.planame(class="form-control", placeholder="Netflix") }}
+                    </div>
+                    <div class="col-6">
+                        {{ form.plaprofiles.label(class="form-label text-dark-emphasis") }}*
+                        {{ form.plaprofiles(class="form-control", placeholder="5") }}
+                    </div>
+                    <div class="col-12 ">
+                        {{ form.plamessage.label(class="form-label text-dark-emphasis") }}
+                        {{ form.plamessage(class="form-control auto-expand", placeholder="Mensaje para el usuario",
+                        style="field-sizing: content;") }}
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-light d-none">
+                    {{form.btnSubmit(class="btn w-100 btn_blue_plusgo")}}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Crear -->
+<div class="modal fade" id="createModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold text-dark">Nueva Plataforma</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form method="post" id="form_crt">
+                <div class="modal-body row g-2">
+                    {{ form.hidden_tag() }}
+                    <div class="col-6">
+                        {{ form.planame.label(class="form-label text-dark-emphasis") }}*
+                        {{ form.planame(class="form-control", placeholder="Netflix") }}
+                    </div>
+                    <div class="col-6">
+                        {{ form.plaprofiles.label(class="form-label text-dark-emphasis") }}*
+                        {{ form.plaprofiles(class="form-control", placeholder="5") }}
+                    </div>
+                    <div class="col-12 ">
+                        {{ form.plamessage.label(class="form-label text-dark-emphasis") }}
+                        {{ form.plamessage(class="form-control plamessage", placeholder="Mensaje para el usuario",
+                        style="field-sizing: content;") }}
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-light d-none">
+                    {{form.btnSubmit(class="btn w-100 btn_blue_plusgo")}}
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{{url_for('static', filename = 'javascript/platform.js')}}"></script>
+{% endblock %}

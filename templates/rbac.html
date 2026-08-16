@@ -1,0 +1,2203 @@
+{% extends 'layouts/layout_2.html'%}
+{% block body %}
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold text-dark m-0">Permisos Plusgo</h3>
+        <small class="text-dark-emphasis fw-medium">Gestion de usuarios y asignacion de Roles</small>
+    </div>
+
+    {% if request.path == '/rbac/roles/permissions' and rolesPermissionsData %}
+    <div>
+        <button class="btn d-none d-lg-flex createRolPermissions btn_blue_plusgo" data-bs-toggle="modal"
+            data-bs-target="#createRolPermissionsModal">
+            <i class="ti ti-user-plus fs-5 me-2"></i> Nuevo Rol
+        </button>
+        <button class="btn d-lg-none createRolPermissions btn_blue_plusgo" data-bs-toggle="modal"
+            data-bs-target="#createRolPermissionsModal">
+            <i class="ti ti-user-plus fs-5"></i>
+        </button>
+    </div>
+    {% elif request.path == '/rbac/permission' and permission %}
+    {% elif request.path == '/rbac/users' and users %}
+    <div>
+        <button class="btn d-none d-lg-flex createUser btn_blue_plusgo" data-bs-toggle="modal"
+            data-bs-target="#createUserModal">
+            <i class="ti ti-user-plus fs-5 me-2"></i> Nuevo Usuario
+        </button>
+        <button class="btn d-lg-none createUser btn_blue_plusgo" data-bs-toggle="modal"
+            data-bs-target="#createUserModal">
+            <i class="ti ti-user-plus fs-5"></i>
+        </button>
+    </div>
+
+    {% endif %}
+</div>
+
+<!-- Secciones -->
+<div class="mb-3 overflow-auto list-group list-group-horizontal gap-2 rounded-0 hidden-bar-overflow">
+    <a href="{{url_for('rbacuserrole.getRbac')}}"
+        class="p-1 text-decoration-none text-nowrap text-capitalize {{'border-5 border-bottom border-primary text-primary fw-semibold' if request.path == '/rbac/users' else 'text-dark-emphasis'}}">
+        Usuarios
+    </a>
+
+    <a href="{{url_for('rbacrolepermission.getRbac')}}"
+        class="p-1 text-decoration-none text-nowrap text-capitalize {{'border-5 border-bottom border-primary text-primary fw-semibold' if request.path == '/rbac/roles/permissions' else 'text-dark-emphasis'}}">
+        Roles
+    </a>
+
+    <a href="{{url_for('rbacpermission.getRbac')}}"
+        class="p-1 text-decoration-none text-nowrap text-capitalize {{'border-5 border-bottom border-primary text-primary fw-semibold' if request.path == '/rbac/permission' else 'text-dark-emphasis'}}">
+        Permisos
+    </a>
+</div>
+
+{% if request.path == '/rbac/roles/permissions' and rolesPermissionsData %}
+<div class="card border-0 shadow" data-aos="fade-in-up">
+    <!-- Tabla -->
+    <div class="card-body">
+        <table class="table table-hover align-middle" id="table">
+            <thead>
+                <tr>
+                    <th class="text-nowrap text-dark-emphasis fw-semibold ">Nombres</th>
+                    <th class="text-nowrap text-dark-emphasis fw-semibold text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="">
+                {% for rp in rolesPermissionsData %}
+                <tr>
+
+
+                    <td>
+                        <p class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                            {{rp["rol_name"]}}
+                        </p>
+                    </td>
+
+
+                    <td class="text-center">
+                        <!-- Ver permisos del rol -->
+                        <button class="btn btn-sm btn-outline-secondary permissionsuserrol" data-bs-toggle="modal"
+                            data-bs-target="#datarolpermissions" data-rol_name="{{rp['rol_name']}}"
+                            data-permission='{{rp["rol_permissions"] | tojson }}' onclick="rolpermissions(this)">
+                            <i class="ti ti-license fs-5"></i>
+                        </button>
+
+                        <!-- Editar -->
+                        <button class="btn btn-sm btn-outline-primary datarolper" data-bs-toggle="modal"
+                            data-bs-target="#updateRolPermissionsModal" data-rol_id="{{rp['rol_id']}}"
+                            data-rol_name="{{rp['rol_name']}}" data-permission='{{rp["rol_permissions"] | tojson }}'>
+                            <i class="ti ti-edit fs-5"></i>
+                        </button>
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<div class="modal fade" id="createRolPermissionsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold text-nowrap text-truncate">Registrar Rol</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post">
+                <div class="d-flex justify-content-center gap-1 mt-2">
+                    <i class="bi bi-circle-fill text-primary-emphasis back" id="progress1" role="button"></i>
+                    <i class="bi bi-circle text-primary-emphasis next" id="progress2" role="button"></i>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2">
+                        <div class="col-12">
+                            {{rbacRolPerForm.csrf_token()}}
+                            {{rbacRolPerForm.rolename.label(class="form-label text-dark-emphasis")}}*
+                            {{rbacRolPerForm.rolename(class="form-control rolename", placeholder="Administador")}}
+                        </div>
+                        <div class="col-12 d-flex justify-content-end">
+                            <button class="btn next btn_blue_plusgo" type="button">
+                                Continuar <i class="bi bi-arrow-right text-light my-auto"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body table-responsive d-none">
+                        <table class="table table-hover align-middle m-0" id="table">
+                            <thead>
+                                <tr>
+                                    <th class="text-nowrap text-dark-emphasis fw-semibold ">Permisos</th>
+                                    <th class="text-nowrap text-dark-emphasis fw-semibold text-center">Ver
+                                    </th>
+                                    <th class="text-nowrap text-dark-emphasis fw-semibold text-center">Crear
+                                    </th>
+                                    <th class="text-nowrap text-dark-emphasis fw-semibold text-center">
+                                        Editar
+                                    </th>
+                                    <th class="text-nowrap text-dark-emphasis fw-semibold text-center">
+                                        Eliminar
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- PLATAFORMAS -->
+                                <tr>
+                                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                        Gst. Plataformas
+                                    </td>
+
+                                    <!-- platforms.view -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-platforms.view" value="platforms.view" {{ 'checked'
+                                                if 'platforms.view' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- platforms.create -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-platforms.create" value="platforms.create" {{ 'checked'
+                                                if 'platforms.create' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- platforms.edit -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-platforms.edit" value="platforms.edit" {{ 'checked'
+                                                if 'platforms.edit' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- platforms.delete -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-platforms.delete" value="platforms.delete" {{ 'checked'
+                                                if 'platforms.delete' in rbacPermissionBackup }} disabled>
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <!-- CUENTAS -->
+                                <tr>
+                                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                        Gst. Cuentas
+                                    </td>
+
+                                    <!-- accounts.view -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-accounts.view" value="accounts.view" {{ 'checked'
+                                                if 'accounts.view' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- accounts.create -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-accounts.create" value="accounts.create" {{ 'checked'
+                                                if 'accounts.create' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- accounts.edit -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-accounts.edit" value="accounts.edit" {{ 'checked'
+                                                if 'accounts.edit' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- accounts.state -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-accounts.state" value="accounts.state" {{ 'checked'
+                                                if 'accounts.state' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <!-- PERFILES -->
+                                <tr>
+                                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                        Gst. Perfiles
+                                    </td>
+
+                                    <!-- profiles.view -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-profiles.view" value="profiles.view" {{ 'checked'
+                                                if 'profiles.view' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- profiles.create -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-profiles.create" value="profiles.create" {{ 'checked'
+                                                if 'profiles.create' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- profiles.edit -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-profiles.edit" value="profiles.edit" {{ 'checked'
+                                                if 'profiles.edit' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- profiles.delete -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-profiles.delete" value="profiles.delete" {{ 'checked'
+                                                if 'profiles.delete' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <!-- CLIENTES -->
+                                <tr>
+                                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                        Gst. Clientes
+                                    </td>
+
+                                    <!-- customers.view -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-customers.view" value="customers.view" {{ 'checked'
+                                                if 'customers.view' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- customers.create -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-customers.create" value="customers.create" {{ 'checked'
+                                                if 'customers.create' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- customers.edit -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-customers.edit" value="customers.edit" {{ 'checked'
+                                                if 'customers.edit' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- customers.delete -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-customers.delete" value="customers.delete" {{ 'checked'
+                                                if 'customers.delete' in rbacPermissionBackup }} disabled>
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <!-- VENTAS -->
+                                <tr>
+                                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                        Gst. Ventas
+                                    </td>
+
+                                    <!-- sales.view -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-sales.view" value="sales.view" {{ 'checked'
+                                                if 'sales.view' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- sales.create -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-sales.create" value="sales.create" {{ 'checked'
+                                                if 'sales.create' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- sales.edit -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-sales.edit" value="sales.edit" {{ 'checked'
+                                                if 'sales.edit' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- sales.delete -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-sales.delete" value="sales.delete" {{ 'checked'
+                                                if 'sales.delete' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <!-- RBAC -->
+                                <tr>
+                                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                        Gst. Roles y Permisos
+                                    </td>
+
+                                    <!-- rbacs.view -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-rbacs.view" value="rbacs.view" {{ 'checked'
+                                                if 'rbacs.view' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- rbacs.create -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-rbacs.create" value="rbacs.create" {{ 'checked'
+                                                if 'rbacs.create' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- rbacs.edit -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-rbacs.edit" value="rbacs.edit" {{ 'checked'
+                                                if 'rbacs.edit' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- rbacs.delete -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-rbacs.delete" value="rbacs.delete" {{ 'checked'
+                                                if 'rbacs.delete' in rbacPermissionBackup }} disabled>
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <!-- MANAGEMENT -->
+                                <tr>
+                                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                        Gst. de códigos
+                                    </td>
+
+                                    <!-- management.view -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-management.view" value="management.view" {{ 'checked'
+                                                if 'management.view' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- management.create -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-management.create" value="management.create" {{ 'checked'
+                                                if 'management.create' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- management.edit -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-management.edit" value="management.edit" {{ 'checked'
+                                                if 'management.edit' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- management.state -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-management.state" value="management.state" {{ 'checked'
+                                                if 'management.state' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <!-- CÓDIGOS -->
+                                <tr>
+                                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                        Consulta de Códigos
+                                    </td>
+
+                                    <!-- codes.consult -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-codes.consult" value="codes.consult" {{ 'checked'
+                                                if 'codes.consult' in rbacPermissionBackup }}>
+                                        </div>
+                                    </td>
+
+                                    <!-- codes.create -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-codes.create" value="codes.create" {{ 'checked'
+                                                if 'codes.create' in rbacPermissionBackup }} disabled>
+                                        </div>
+                                    </td>
+
+                                    <!-- codes.edit -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-codes.edit" value="codes.edit" {{ 'checked'
+                                                if 'codes.edit' in rbacPermissionBackup }} disabled>
+                                        </div>
+                                    </td>
+
+                                    <!-- codes.delete -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-codes.delete" value="codes.delete" {{ 'checked'
+                                                if 'codes.delete' in rbacPermissionBackup }} disabled>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light w-100 d-none btnRolPer">
+                    {{rbacRolPerForm.btnSubmit(class="btn w-100 validateRolPer btn_blue_plusgo")}}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="updateRolPermissionsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold text-nowrap text-truncate"></h5>
+                <button type="button" class="btn-close"></button>
+            </div>
+            <form method="post">
+                <div class="d-flex justify-content-center gap-1 mt-2">
+                    <i class="bi bi-circle-fill text-primary-emphasis back" id="progress1" role="button"></i>
+                    <i class="bi bi-circle text-primary-emphasis next" id="progress2" role="button"></i>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2">
+                        <div class="col-12">
+                            {{rbacRolPerForm.csrf_token()}}
+                            {{rbacRolPerForm.rolename.label(class="form-label text-dark-emphasis")}}*
+                            {{rbacRolPerForm.rolename(class="form-control rolename", placeholder="Administador")}}
+                        </div>
+                        <div class="col-12 d-flex justify-content-end">
+                            <button class="btn next btn_blue_plusgo" type="button">
+                                Continuar <i class="bi bi-arrow-right text-light my-auto"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body table-responsive d-none">
+                        <table class="table table-hover align-middle m-0" id="table">
+                            <thead>
+                                <tr>
+                                    <th class="text-nowrap text-dark-emphasis fw-semibold ">Permisos</th>
+                                    <th class="text-nowrap text-dark-emphasis fw-semibold text-center">Ver
+                                    </th>
+                                    <th class="text-nowrap text-dark-emphasis fw-semibold text-center">Crear
+                                    </th>
+                                    <th class="text-nowrap text-dark-emphasis fw-semibold text-center">
+                                        Editar
+                                    </th>
+                                    <th class="text-nowrap text-dark-emphasis fw-semibold text-center">
+                                        Eliminar
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- PLATAFORMAS -->
+                                <tr>
+                                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                        Gst. Plataformas
+                                    </td>
+
+                                    <!-- platforms.view -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-platforms.view" value="platforms.view">
+                                        </div>
+                                    </td>
+
+                                    <!-- platforms.create -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-platforms.create" value="platforms.create">
+                                        </div>
+                                    </td>
+
+                                    <!-- platforms.edit -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-platforms.edit" value="platforms.edit">
+                                        </div>
+                                    </td>
+
+                                    <!-- platforms.delete -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-platforms.delete" value="platforms.delete" disabled>
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <!-- CUENTAS -->
+                                <tr>
+                                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                        Gst. Cuentas
+                                    </td>
+
+                                    <!-- accounts.view -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-accounts.view" value="accounts.view">
+                                        </div>
+                                    </td>
+
+                                    <!-- accounts.create -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-accounts.create" value="accounts.create">
+                                        </div>
+                                    </td>
+
+                                    <!-- accounts.edit -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-accounts.edit" value="accounts.edit">
+                                        </div>
+                                    </td>
+
+                                    <!-- accounts.state -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-accounts.state" value="accounts.state">
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <!-- PERFILES -->
+                                <tr>
+                                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                        Gst. Perfiles
+                                    </td>
+
+                                    <!-- profiles.view -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-profiles.view" value="profiles.view">
+                                        </div>
+                                    </td>
+
+                                    <!-- profiles.create -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-profiles.create" value="profiles.create">
+                                        </div>
+                                    </td>
+
+                                    <!-- profiles.edit -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-profiles.edit" value="profiles.edit">
+                                        </div>
+                                    </td>
+
+                                    <!-- profiles.delete -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-profiles.delete" value="profiles.delete">
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <!-- CLIENTES -->
+                                <tr>
+                                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                        Gst. Clientes
+                                    </td>
+
+                                    <!-- customers.view -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-customers.view" value="customers.view">
+                                        </div>
+                                    </td>
+
+                                    <!-- customers.create -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-customers.create" value="customers.create">
+                                        </div>
+                                    </td>
+
+                                    <!-- customers.edit -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-customers.edit" value="customers.edit">
+                                        </div>
+                                    </td>
+
+                                    <!-- customers.delete -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-customers.delete" value="customers.delete" disabled>
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <!-- VENTAS -->
+                                <tr>
+                                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                        Gst. Ventas
+                                    </td>
+
+                                    <!-- sales.view -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-sales.view" value="sales.view">
+                                        </div>
+                                    </td>
+
+                                    <!-- sales.create -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-sales.create" value="sales.create">
+                                        </div>
+                                    </td>
+
+                                    <!-- sales.edit -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-sales.edit" value="sales.edit">
+                                        </div>
+                                    </td>
+
+                                    <!-- sales.delete -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-sales.delete" value="sales.delete">
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <!-- RBAC -->
+                                <tr>
+                                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                        Gst. Roles y Permisos
+                                    </td>
+
+                                    <!-- rbacs.view -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-rbacs.view" value="rbacs.view">
+                                        </div>
+                                    </td>
+
+                                    <!-- rbacs.create -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-rbacs.create" value="rbacs.create">
+                                        </div>
+                                    </td>
+
+                                    <!-- rbacs.edit -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-rbacs.edit" value="rbacs.edit">
+                                        </div>
+                                    </td>
+
+                                    <!-- rbacs.delete -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-rbacs.delete" value="rbacs.delete" disabled>
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <!-- MANAGEMENT -->
+                                <tr>
+                                    <td class=" text-nowrap fw-semibold text-decoration-none text-dark
+                                                    text-opacity-75">
+                                        Gst. de códigos
+                                    </td>
+
+                                    <!-- management.view -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-management.view" value="management.view">
+                                        </div>
+                                    </td>
+
+                                    <!-- management.create -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-management.create" value="management.create">
+                                        </div>
+                                    </td>
+
+                                    <!-- management.edit -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-management.edit" value="management.edit">
+                                        </div>
+                                    </td>
+
+                                    <!-- management.state -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-management.state" value="management.state">
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <!-- CÓDIGOS -->
+                                <tr>
+                                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                        Consulta de Códigos
+                                    </td>
+
+                                    <!-- codes.consult -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-codes.consult" value="codes.consult">
+                                        </div>
+                                    </td>
+
+                                    <!-- codes.create -->
+                                    <td class="text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-codes.create" value="codes.create" disabled>
+                                        </div>
+                                    </td>
+
+                                    <!-- codes.edit -->
+                                    <td class=" text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-codes.edit" value="codes.edit" disabled>
+                                        </div>
+                                    </td>
+
+                                    <!-- codes.delete -->
+                                    <td class=" text-white shadows-sm fs-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input m-auto" name="per_name" type="checkbox"
+                                                id="permission-codes.delete" value="codes.delete" disabled>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class=" modal-footer bg-light w-100 d-none btnRolPer">
+                    {{rbacRolPerForm.btnSubmit(class="btn w-100 validateRolPer btn_blue_plusgo")}}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="datarolpermissions" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold text-nowrap text-truncate"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body p-4">
+                <div class=" card-body table-responsive">
+                    <table class="table table-hover align-middle" id="table">
+                        <thead>
+                            <tr>
+                                <th class="text-nowrap text-dark-emphasis fw-semibold ">Permisos</th>
+                                <th class="text-nowrap text-dark-emphasis fw-semibold text-center">Ver</th>
+                                <th class="text-nowrap text-dark-emphasis fw-semibold text-center">Crear
+                                </th>
+                                <th class="text-nowrap text-dark-emphasis fw-semibold text-center">Editar
+                                </th>
+                                <th class="text-nowrap text-dark-emphasis fw-semibold text-center">Eliminar
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- PLATAFORMAS -->
+                            <tr>
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                    Gst. Plataformas
+                                </td>
+
+                                <!-- platforms.view -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-platforms.view" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- platforms.create -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-platforms.create" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- platforms.edit -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-platforms.edit" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- platforms.delete -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-platforms.delete" disabled>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <!-- CUENTAS -->
+                            <tr>
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">
+                                    Gst. Cuentas
+                                </td>
+
+                                <!-- accounts.view -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-accounts.view" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- accounts.create -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-accounts.create" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- accounts.edit -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-accounts.edit" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- accounts.state -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-accounts.state" disabled>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <!-- PERFILES -->
+                            <tr>
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">
+                                    Gst. Perfiles
+                                </td>
+
+                                <!-- profiles.view -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-profiles.view" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- profiles.create -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-profiles.create" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- profiles.edit -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-profiles.edit" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- profiles.delete -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-profiles.delete" disabled>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <!-- CLIENTES -->
+                            <tr>
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">
+                                    Gst. Clientes
+                                </td>
+
+                                <!-- customers.view -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-customers.view" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- customers.create -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-customers.create" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- customers.edit -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-customers.edit" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- No existe customers.delete -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox" disabled>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <!-- VENTAS -->
+                            <tr>
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">
+                                    Gst. Ventas
+                                </td>
+
+                                <!-- sales.view -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-sales.view" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- sales.create -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-sales.create" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- sales.edit -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-sales.edit" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- sales.delete -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-sales.delete" disabled>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <!-- RBAC -->
+                            <tr>
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">
+                                    Gst. Roles y Permisos
+                                </td>
+
+                                <!-- rbacs.view -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-rbacs.view" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- rbacs.create -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-rbacs.create" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- rbacs.edit -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-rbacs.edit" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- rbacs.delete -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-rbacs.delete" disabled>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <!-- MANAGEMENT -->
+                            <tr>
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">
+                                    Gst. de códigos
+                                </td>
+
+                                <!-- management.view -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-management.view" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- management.create -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-management.create" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- management.edit -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-management.edit" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- management.state -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-management.state" disabled>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <!-- CÓDIGOS -->
+                            <tr>
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">
+                                    Consulta de Códigos
+                                </td>
+
+                                <!-- codes.consult -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-codes.consult" disabled>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+{% elif request.path == '/rbac/permission' and permission %}
+<div class="card border-0 shadow" data-aos="fade-in-up">
+    <!-- Tabla -->
+    <div class="card-body">
+        <table class="table table-hover align-middle" id="table">
+            <thead>
+                <tr>
+                    <th class="text-nowrap text-dark-emphasis fw-semibold ">Permisos</th>
+                    <th class="text-nowrap text-dark-emphasis fw-semibold text-center">Ver</th>
+                    <th class="text-nowrap text-dark-emphasis fw-semibold text-center">Crear</th>
+                    <th class="text-nowrap text-dark-emphasis fw-semibold text-center">Editar</th>
+                    <th class="text-nowrap text-dark-emphasis fw-semibold text-center">Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- PLATAFORMAS -->
+                <tr>
+                    <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">Gst.
+                        Plataformas</td>
+
+                    <!-- VIEW -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'platforms.view' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- CREATE -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'platforms.create' in
+                                permission %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- EDIT -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'platforms.edit' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- DELETE -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'platforms.delete' in
+                                permission %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+                </tr>
+
+
+                <!-- CUENTAS -->
+                <tr>
+                    <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">Gst. Cuentas
+                    </td>
+
+                    <!-- VIEW -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'accounts.view' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- CREATE -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'accounts.create' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- EDIT -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'accounts.edit' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- DELETE / STATE -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'accounts.state' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+                </tr>
+
+
+                <!-- PERFILES -->
+                <tr>
+                    <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">Gst. Perfiles
+                    </td>
+
+                    <!-- VIEW -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'profiles.view' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- CREATE -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'profiles.create' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- EDIT -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'profiles.edit' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- DELETE -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'profiles.delete' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+                </tr>
+
+
+                <!-- CLIENTES -->
+                <tr>
+                    <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">Gst. Clientes
+                    </td>
+
+                    <!-- VIEW -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'customers.view' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- CREATE -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'customers.create' in
+                                permission %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- EDIT -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'customers.edit' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- SIN DELETE -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" disabled>
+                        </div>
+                    </td>
+                </tr>
+
+
+                <!-- VENTAS -->
+                <tr>
+                    <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">Gst. Ventas
+                    </td>
+
+                    <!-- VIEW -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'sales.view' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- CREATE -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'sales.create' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- EDIT -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'sales.edit' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- DELETE -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'sales.delete' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+                </tr>
+
+
+                <!-- RBAC -->
+                <tr>
+                    <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">Gst. Roles y
+                        Permisos</td>
+
+                    <!-- VIEW -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'rbacs.view' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- CREATE -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'rbacs.create' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- EDIT -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'rbacs.edit' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- DELETE -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'rbacs.delete' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+                </tr>
+
+
+                <!-- MANAGEMENT -->
+                <tr>
+                    <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">Gst. de
+                        codigos</td>
+
+                    <!-- VIEW -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'management.view' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- CREATE -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'management.create' in
+                                permission %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- EDIT -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'management.edit' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <!-- STATE -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'management.state' in
+                                permission %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+                </tr>
+
+
+                <!-- CÓDIGOS -->
+                <tr>
+                    <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">Consulta de
+                        Códigos</td>
+
+                    <!-- CONSULT -->
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" {% if 'codes.consult' in permission
+                                %}checked{% endif %} disabled>
+                        </div>
+                    </td>
+
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" disabled>
+                        </div>
+                    </td>
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" disabled>
+                        </div>
+                    </td>
+                    <td class="text-white shadows-sm fs-3">
+                        <div class="form-check">
+                            <input class="form-check-input m-auto" type="checkbox" disabled>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+
+
+
+{% elif request.path == '/rbac/users' and users %}
+<div class="card border-0 shadow" data-aos="fade-in-up">
+    <!-- Tabla -->
+    <div class=" card-body">
+        <table class="table table-hover align-middle" id="table">
+            <thead>
+                <tr>
+                    <th class="text-dark text-nowrap fw-semibold ">Nombres</th>
+                    <th class="text-dark text-nowrap fw-semibold ">Usuario</th>
+                    <th class="text-dark text-nowrap fw-semibold ">Num. Telefono</th>
+                    <th class="text-dark text-nowrap fw-semibold ">Rol</th>
+                    <th class="text-dark text-nowrap fw-semibold text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis popover-dismiss text-truncate" role="button" data-user_name="{{u[1]}}" data-user_name="{{u[1]}}" data-user_lastname="{{u[2]}}"
+                        data-user_id="{{u[0]}}" data-user_user="{{u[3]}}" data-user_phone_number="{{u[4]}}"
+                        data-rol_name="{{u[5]}}" data-rol_id="{{u[7]}}">
+                        {{ u[1] }} {{ u[2] if u[2] else ''}}
+                    </td>
+                    <td class="text-nowrap text-dark-emphasis">
+                        {{ u[3] if u[3] else 'Sin Usuario'}}
+                    </td>
+                    <td class="text-nowrap text-dark-emphasis">
+
+                        {% if u[4] | length == 10 %}
+                        ({{ u[4][0:3] }}) {{ u[4][3:6] }}-{{ u[4][6:] }}
+                        {% else %}
+                        Sin Numero
+                        {% endif %}
+                    </td>
+                    <td class="text-nowrap text-dark-emphasis">
+
+                        {{ u[5] }}
+                    </td>
+
+                    <td class=" text-nowrap text-center">
+
+                        <!-- ver permisos -->
+                        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
+                            data-bs-target="#datapermissionsuserrol" data-user_name="{{u[1]}}"
+                            data-user_lastname="{{u[2]}}" data-rol_name="{{u[5]}}" data-permission='{{u[6]}}'
+                            onclick="userrolpermissions(this)">
+                            <i class="ti ti-license fs-5"></i>
+                        </button>
+                        <!-- Editar -->
+                        <button class="btn btn-sm btn-outline-primary datauser" data-bs-toggle="modal"
+                            data-bs-target="#editUserModal" data-user_name="{{u[1]}}" data-user_lastname="{{u[2]}}"
+                            data-user_id="{{u[0]}}" data-user_user="{{u[3]}}" data-user_phone_number="{{u[4]}}"
+                            data-rol_name="{{u[5]}}" data-rol_id="{{u[7]}}">
+                            <i class="ti ti-edit fs-5"></i>
+                        </button>
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="createUserModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold">Registrar Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" id="formUserCreate">
+                <div class="modal-body p-4">
+                    <div class="d-flex flex-column align-items-center mb-3">
+                        <div class="rounded-circle shadow-sm d-flex justify-content-center align-items-center"
+                            style="height: 150px; width: 150px;" id="bgUser">
+                            <i class="bi bi-person-fill " id="iconUser" style="font-size: 80px"></i>
+                        </div>
+                        <small class=" text-opacity-50 fw-semibold text-uppercase mt-1 leyendRole"></small>
+                    </div>
+                    {{ rbacUserRoleForm.csrf_token() }}
+                    <div class="border border-1 border-seccondary shadow-sm rounded bg-light bg-opacity-50">
+
+                        <div class="p-3 usernamedata d-flex justify-content-between align-items-center d-none"
+                            role="button">
+                            <span class="fw-semibold">{{ rbacUserRoleForm.username.label() }}.</span>
+                            <div class="text-nowrap  text-truncate">
+                                <span class="text-seccondary" id="usernametext">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 usernameinput " role="button">
+                            <div class="d-flex justify-content-between align-items-center text-muted">
+                                {{ rbacUserRoleForm.username.label(class="form-label text-dark-emphasis") }}
+                                <i class="bi bi-chevron-up usernameinputclose"></i>
+                            </div>
+                            {{ rbacUserRoleForm.username(class="form-control", placeholder="Noel") }}
+                        </div>
+
+
+                        <hr class="my-0">
+
+
+                        <div class="p-3 userlastnamedata d-flex justify-content-between align-items-center d-none"
+                            role="button">
+                            <span class="fw-semibold">{{ rbacUserRoleForm.userlastname.label() }}.</span>
+                            <div class="text-nowrap  text-truncate">
+                                <span class="text-seccondary" id="userlastnametext">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 userlastnameinput" role="button">
+                            <div class="d-flex justify-content-between align-items-center text-muted">
+                                {{ rbacUserRoleForm.userlastname.label(class="form-label text-dark-emphasis") }}
+                                <i class="bi bi-chevron-up userlastnameinputclose"></i>
+                            </div>
+                            {{ rbacUserRoleForm.userlastname(class="form-control", placeholder="Rey") }}
+                        </div>
+
+
+                        <hr class="my-0">
+
+
+                        <div class="p-3  useruserdata d-flex justify-content-between align-items-center d-none"
+                            role="button">
+                            <span class="fw-semibold">{{ rbacUserRoleForm.useruser.label() }}.</span>
+                            <div class="text-nowrap  text-truncate">
+                                <span class="text-seccondary" id="userusertext">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 useruserinput" role="button">
+                            <div class="d-flex justify-content-between align-items-center text-muted">
+                                {{ rbacUserRoleForm.useruser.label(class="form-label text-dark-emphasis") }}
+                                <i class="bi bi-chevron-up useruserinputclose"></i>
+                            </div>
+                            {{ rbacUserRoleForm.useruser(class="form-control", placeholder="patricio12") }}
+                        </div>
+
+                        <hr class="my-0">
+
+
+                        <div class="p-3  usernumberphonedata d-flex justify-content-between align-items-center d-none"
+                            role="button">
+                            <span class="fw-semibold">{{ rbacUserRoleForm.usernumberphone.label() }}.</span>
+                            <div class="text-nowrap  text-truncate">
+                                <span class="text-seccondary" id="usernumberphonetext">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 usernumberphoneinput" role="button">
+                            <div class="d-flex justify-content-between align-items-center text-muted">
+                                {{ rbacUserRoleForm.usernumberphone.label(class="form-label text-dark-emphasis") }}
+                                <i class="bi bi-chevron-up usernumberphoneinputclose"></i>
+                            </div>
+                            {{ rbacUserRoleForm.usernumberphone(class="form-control", placeholder="Num. de celular")
+                            }}
+                        </div>
+
+
+                        <hr class="my-0">
+
+
+                        <div class="p-3  rolnamedata d-flex justify-content-between align-items-center d-none">
+                            <span class="fw-semibold">{{ rbacUserRoleForm.rolid.label() }}.</span>
+                            <div class="text-nowrap  text-truncate">
+                                <span class="text-seccondary" id="rolnametext">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 rolnameinput ">
+                            <div class="d-flex justify-content-between align-items-center text-muted">
+                                {{ rbacUserRoleForm.rolid.label(class="form-label text-dark-emphasis ") }}
+                                <i class="bi bi-chevron-up rolnameinputclose" role="button"></i>
+                            </div>
+                            {{ rbacUserRoleForm.rolid(class="select-responsive form-select ", placeholder="Rol")
+                            }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light w-100 d-none btnuser">
+                    {{rbacUserRoleForm.btnSubmit(class="btn w-100 validateUser", style="background-color:
+                    rgba(4,17,43,0.92);
+                    color:
+                    white;")}}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editUserModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold">Administrar Usuario</h5>
+                <button type="button" class="btn-close"></button>
+            </div>
+            <form method="post" id="formuserupdate">
+                <div class="modal-body p-4">
+                    <div class="d-flex flex-column align-items-center mb-3">
+                        <div class="rounded-circle shadow-sm d-flex justify-content-center align-items-center"
+                            style="height: 150px; width: 150px;" id="bgUser">
+                            <i class="bi bi-person-fill " id="iconUser" style="font-size: 80px"></i>
+                        </div>
+                        <small class=" text-opacity-50 fw-semibold text-uppercase mt-1 leyendRole"></small>
+                    </div>
+                    {{ rbacUserRoleForm.csrf_token() }}
+                    <div class="border border-1 border-seccondary shadow-sm rounded bg-light bg-opacity-50">
+
+                        <div class="p-3 usernamedata d-flex justify-content-between align-items-center" role="button">
+                            <span class="fw-semibold">{{ rbacUserRoleForm.username.label() }}.</span>
+                            <div class="text-nowrap  text-truncate">
+                                <span class="text-seccondary" id="usernametext">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 usernameinput d-none" role="button">
+                            <div class="d-flex justify-content-between align-items-center text-muted">
+                                {{ rbacUserRoleForm.username.label(class="form-label text-dark-emphasis") }}
+                                <i class="bi bi-chevron-up usernameinputclose"></i>
+                            </div>
+                            {{ rbacUserRoleForm.username(class="form-control", placeholder="Noel") }}
+                        </div>
+
+
+                        <hr class="my-0">
+
+
+                        <div class="p-3 userlastnamedata d-flex justify-content-between align-items-center"
+                            role="button">
+                            <span class="fw-semibold">{{ rbacUserRoleForm.userlastname.label() }}.</span>
+                            <div class="text-nowrap  text-truncate">
+                                <span class="text-seccondary" id="userlastnametext">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 userlastnameinput d-none" role="button">
+                            <div class="d-flex justify-content-between align-items-center text-muted">
+                                {{ rbacUserRoleForm.userlastname.label(class="form-label text-dark-emphasis") }}
+                                <i class="bi bi-chevron-up userlastnameinputclose"></i>
+                            </div>
+                            {{ rbacUserRoleForm.userlastname(class="form-control", placeholder="Rey") }}
+                        </div>
+
+
+                        <hr class="my-0">
+
+
+                        <div class="p-3  useruserdata d-flex justify-content-between align-items-center" role="button">
+                            <span class="fw-semibold">{{ rbacUserRoleForm.useruser.label() }}.</span>
+                            <div class="text-nowrap  text-truncate">
+                                <span class="text-seccondary" id="userusertext">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 useruserinput d-none" role="button">
+                            <div class="d-flex justify-content-between align-items-center text-muted">
+                                {{ rbacUserRoleForm.useruser.label(class="form-label text-dark-emphasis") }}
+                                <i class="bi bi-chevron-up useruserinputclose"></i>
+                            </div>
+                            {{ rbacUserRoleForm.useruser(class="form-control", placeholder="patricio12") }}
+                        </div>
+
+                        <hr class="my-0">
+
+
+                        <div class="p-3  usernumberphonedata d-flex justify-content-between align-items-center"
+                            role="button">
+                            <span class="fw-semibold">{{ rbacUserRoleForm.usernumberphone.label() }}.</span>
+                            <div class="text-nowrap  text-truncate">
+                                <span class="text-seccondary" id="usernumberphonetext">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 usernumberphoneinput d-none" role="button">
+                            <div class="d-flex justify-content-between align-items-center text-muted">
+                                {{ rbacUserRoleForm.usernumberphone.label(class="form-label text-dark-emphasis") }}
+                                <i class="bi bi-chevron-up usernumberphoneinputclose"></i>
+                            </div>
+                            {{ rbacUserRoleForm.usernumberphone(class="form-control", placeholder="Num. de celular")
+                            }}
+                        </div>
+
+
+                        <hr class="my-0">
+
+
+                        <div class="p-3  rolnamedata d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold">{{ rbacUserRoleForm.rolid.label() }}.</span>
+                            <div class="text-nowrap  text-truncate">
+                                <span class="text-seccondary" id="rolnametext">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 rolnameinput d-none">
+                            <div class="d-flex justify-content-between align-items-center text-muted">
+                                {{ rbacUserRoleForm.rolid.label(class="form-label text-dark-emphasis ") }}
+                                <i class="bi bi-chevron-up rolnameinputclose" role="button"></i>
+                            </div>
+                            {{ rbacUserRoleForm.rolid(class="select-responsive form-select ", placeholder="Rol")
+                            }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light w-100 d-none btnuser">
+                    {{rbacUserRoleForm.btnSubmit(class="btn w-100 validateUser", style="background-color:
+                    rgba(4,17,43,0.92);
+                    color:
+                    white;")}}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="datapermissionsuserrol" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold text-nowrap text-truncate"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body p-4">
+                <div class=" card-body table-responsive">
+                    <table class="table table-hover align-middle" id="table">
+                        <thead>
+                            <tr>
+                                <th class="text-nowrap text-dark fw-semibold ">Permisos</th>
+                                <th class="text-nowrap text-dark fw-semibold text-center">Ver</th>
+                                <th class="text-nowrap text-dark fw-semibold text-center">Crear
+                                </th>
+                                <th class="text-nowrap text-dark fw-semibold text-center">Editar
+                                </th>
+                                <th class="text-nowrap text-dark fw-semibold text-center">Eliminar
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="permission">
+                            <!-- PLATAFORMAS -->
+                            <tr>
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                    Gst. Plataformas
+                                </td>
+
+                                <!-- platforms.view -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-platforms.view" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- platforms.create -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-platforms.create" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- platforms.edit -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-platforms.edit" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- platforms.delete -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-platforms.delete" disabled>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <!-- CUENTAS -->
+                            <tr>
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                    Gst. Cuentas
+                                </td>
+
+                                <!-- accounts.view -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-accounts.view" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- accounts.create -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-accounts.create" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- accounts.edit -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-accounts.edit" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- accounts.state -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-accounts.state" disabled>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <!-- PERFILES -->
+                            <tr>
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                    Gst. Perfiles
+                                </td>
+
+                                <!-- profiles.view -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-profiles.view" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- profiles.create -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-profiles.create" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- profiles.edit -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-profiles.edit" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- profiles.delete -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-profiles.delete" disabled>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <!-- CLIENTES -->
+                            <tr>
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                    Gst. Clientes
+                                </td>
+
+                                <!-- customers.view -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-customers.view" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- customers.create -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-customers.create" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- customers.edit -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-customers.edit" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- No existe customers.delete -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox" disabled>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <!-- VENTAS -->
+                            <tr>
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                    Gst. Ventas
+                                </td>
+
+                                <!-- sales.view -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-sales.view" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- sales.create -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-sales.create" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- sales.edit -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-sales.edit" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- sales.delete -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-sales.delete" disabled>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <!-- RBAC -->
+                            <tr>
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                    Gst. Roles y Permisos
+                                </td>
+
+                                <!-- rbacs.view -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-rbacs.view" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- rbacs.create -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-rbacs.create" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- rbacs.edit -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-rbacs.edit" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- rbacs.delete -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-rbacs.delete" disabled>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <!-- MANAGEMENT -->
+                            <tr>
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                    Gst. de códigos
+                                </td>
+
+                                <!-- management.view -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-management.view" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- management.create -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-management.create" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- management.edit -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-management.edit" disabled>
+                                    </div>
+                                </td>
+
+                                <!-- management.state -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-management.state" disabled>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <!-- CÓDIGOS -->
+                            <tr>
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                                    Consulta de Códigos
+                                </td>
+
+                                <!-- codes.consult -->
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox"
+                                            id="permission-codes.consult" disabled>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endif %}
+
+
+{% endblock %}
+
+{% block script %}
+<script src="{{url_for('static', filename = 'javascript/rbac.js')}}"></script>
+{% endblock %}
