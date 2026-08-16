@@ -91,7 +91,7 @@ def putPlatform(pla_id):
                             WHERE a.pla_id = %s""", 
                             (pla_id,)
                         )
-            for p in cursor.fetchall():
+            for p in cursor.fetchall()[0]:
                 if plaprofiles < p:
                     flash("Una o mas cuentas superan el limite de perfiles permitidos", "error")  
                     return redirect("/platform")
