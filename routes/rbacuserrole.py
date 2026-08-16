@@ -23,7 +23,7 @@ def getRbac():
         cursor.execute(""" 
                         SELECT * 
                         FROM t_role
-                        WHERE rol_name != "gerente"
+                        WHERE rol_name != 'gerente'
                         """)
         roles = cursor.fetchall()
         rbacUserRoleForm.rolid.choices = [(rol[0], rol[1]) for rol in roles]
