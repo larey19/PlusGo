@@ -53,6 +53,8 @@ def getConsult():
                         rst = code(mng[1].strip(), mng[2].strip(), mng[3].strip(), From)
                         result.extend(rst)
                     except Exception as e:
+                        print("error en consult: ", e)
+                        session["csltBackup"] = form.data
                         flash("No se pudo conectar, revisar las credenciales", "error")
                         return redirect(url_for("consult.consult"))
             if result:

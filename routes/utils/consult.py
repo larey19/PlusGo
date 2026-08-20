@@ -29,8 +29,8 @@ def code(account, imap, password, de):
 
     today = datetime.now(pytz.timezone("America/Bogota")).strftime("%d-%b-%Y")
     limite = datetime.now(pytz.timezone("America/Bogota")) - timedelta(minutes=30)
-
-    _, data = mail.search(None, "FROM", de, "SINCE", today)
+    From = f'(FROM "{de}" SINCE "{today}")'
+    _, data = mail.search(None, From)
 
     correo = []
     for num in data[0].split():

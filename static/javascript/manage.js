@@ -109,6 +109,7 @@ document.querySelectorAll(".updPassword").forEach((button) => {
     const mngpassword = modal.querySelector("#mngpassword");
     const mng_password = this.getAttribute("data-mng_password");
     const mng_id = this.getAttribute("data-mng_id");
+    const mng_email = this.getAttribute("data-mng_email");
 
     mngpassword.value = mng_password;
     mngpassword.onchange = function () {
