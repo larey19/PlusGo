@@ -31,7 +31,6 @@ def code(account, imap, password, de):
     limite = datetime.now(pytz.timezone("America/Bogota")) - timedelta(minutes=30)
     From = f'(FROM "{de}" SINCE "{today}")'
     _, data = mail.search(None, From)
-
     correo = []
     for num in data[0].split():
         _, msg_data = mail.fetch(num, "(BODY.PEEK[])")

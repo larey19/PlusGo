@@ -127,7 +127,6 @@ def putManage(mng_id):
             if cursor.fetchone():
                 flash("Correo Duplicado", "error")
                 return redirect(url_for("manage.getManage"))
-            print(", ".join(mngfrom), mngfrom)
             cursor.execute("""
                             UPDATE t_manage SET mng_email = %s, mng_imap = %s, mng_from = %s WHERE mng_id = %s
                             """,(mngemail, mngimap, ", ".join(mngfrom), mng_id))

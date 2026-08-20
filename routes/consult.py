@@ -35,7 +35,6 @@ def getConsult():
         cursor.execute("SELECT mng_email FROM t_manage WHERE mng_state = 'active' ORDER BY mng_email ASC")
         manage = cursor.fetchall()
         form.csltemail.choices = [(mng[0], mng[0]) for mng in manage]
-
         if form.validate_on_submit():
             csltemail = form.csltemail.data
             cursor.execute("""

@@ -104,7 +104,6 @@ document.querySelectorAll(".accCrt").forEach((button) => {
 document.querySelectorAll(".updPassword").forEach((button) => {
   button.onclick = function (e) {
     const modal = document.getElementById("putPassword");
-
     const form = modal.querySelector("form");
     const mngpassword = modal.querySelector("#mngpassword");
     const mng_password = this.getAttribute("data-mng_password");
