@@ -103,6 +103,8 @@ document.querySelectorAll(".plaUpd").forEach((pla) => {
           icon: "info",
           showCancelButton: true,
           confirmButtonColor: "rgba(4,17,43,0.92)",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
           confirmButtonText: "Quedarme",
           cancelButtonText: "Salir",
         }).then((result) => {

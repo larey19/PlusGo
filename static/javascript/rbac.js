@@ -268,6 +268,8 @@ document.querySelectorAll(".datarolper").forEach((rp) => {
           icon: "info",
           showCancelButton: true,
           confirmButtonColor: "rgba(4,17,43,0.92)",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
           confirmButtonText: "Quedarme",
           cancelButtonText: "Salir",
         }).then((result) => {
@@ -744,6 +746,8 @@ document.querySelectorAll(".datauser").forEach((user) => {
           icon: "info",
           showCancelButton: true,
           confirmButtonColor: "rgba(4,17,43,0.92)",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
           confirmButtonText: "Quedarme",
           cancelButtonText: "Salir",
         }).then((result) => {

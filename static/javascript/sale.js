@@ -60,12 +60,12 @@ function validatechanges(inputValue, input, action, value) {
     }
   }
 
-  // console.log("cstid:", cstid);
-  // console.log("saldate:", saldate);
-  // console.log("salprice:", salprice);
-  // console.log("propin:", propin);
-  // console.log("saldDescription:", saldescription);
-  // console.log("input:", inputValue, "val:" , value);
+  console.log("cstid:", cstid);
+  console.log("saldate:", saldate);
+  console.log("salprice:", salprice);
+  console.log("propin:", propin);
+  console.log("saldDescription:", saldescription);
+  console.log("input:", inputValue, "val:", value);
   if (
     cstid === false &&
     saldate === false &&
@@ -122,6 +122,7 @@ document.querySelectorAll("#copySale").forEach((sl) => {
       });
       salstate.value = sal_state;
       propin.value = pro_pin_profile;
+      propin.disabled = false;
       saldescription.textContent = sal_description;
       copySale("copy");
     } else {
@@ -137,6 +138,7 @@ document.querySelectorAll("#copySale").forEach((sl) => {
       saldescription.value = "";
       salstate.value = "";
       propin.value = "";
+      propin.disabled = true;
       clrDescription.classList.add("d-none");
       copySale("cut");
     }
@@ -258,9 +260,8 @@ document.querySelectorAll(".dataSaleCreate").forEach((sale) => {
     const pro_id = this.getAttribute("data-pro_id");
 
     proid.value = pro_id;
-    propin.disabled = propin.value ? false : true;
 
-    if (pro_pin_profile) {
+    if (pro_pin_profile && !propin.value) {
       propin.value = pro_pin_profile;
     }
 
@@ -273,20 +274,28 @@ document.querySelectorAll(".dataSaleCreate").forEach((sale) => {
     cstid.onchange = function () {
       validatechanges(this.value, "cstid", "create");
     };
+
+    buttonDates.onclick = () => {
+      setinputdate(saldate, "default");
+    };
+    saldate.onchange = function () {
+      validatechanges(this.value, "saldate", "create");
+    };
     $(saldate).on("apply.daterangepicker", function () {
       validatechanges(this.value, "saldate", "create");
     });
     $(saldate).on("cancel.daterangepicker", function () {
       validatechanges(this.value, "saldate", "create");
     });
-    // $(document).on("click", ".daterangepicker td.available", function () {
-    //     console.log("Fecha seleccionada");
-    // });
     ["keydown", "paste", "drop"].forEach((event) =>
       saldate.addEventListener(event, (e) => e.preventDefault()),
     );
     salprice.onchange = function () {
       validatechanges(this.value, "salprice", "create");
+    };
+    // cambio de propin
+    buttonPin.onclick = () => {
+      buttonpin(buttonPin, propin, modal);
     };
     propin.onchange = function () {
       validatechanges(this.value, "propin", "create");
@@ -307,15 +316,6 @@ document.querySelectorAll(".dataSaleCreate").forEach((sale) => {
       saldescription.value = "";
       clrDescription.classList.add("d-none");
       validatechanges(saldescription.value, "saldescription", "create");
-    };
-
-    // cambio de propin
-    buttonPin.onclick = () => {
-      buttonpin(buttonPin, propin, modal);
-    };
-
-    buttonDates.onclick = () => {
-      inputdate(saldate);
     };
 
     modal.querySelector("#btnSubmit").onclick = function (clv) {
@@ -344,7 +344,6 @@ document.querySelectorAll(".dataSaleUpdate").forEach((sale) => {
   sale.onclick = function (c) {
     const modal = document.getElementById("editSale");
     const form = modal.querySelector("form");
-
     const pro_id = this.getAttribute("data-pro_id");
     const cst_id = this.getAttribute("data-cst_id");
     const sal_id = this.getAttribute("data-sal_id");
@@ -390,6 +389,21 @@ document.querySelectorAll(".dataSaleUpdate").forEach((sale) => {
     cstid.onchange = function () {
       validatechanges(this.value, "cstid", "update", cst_id);
     };
+    // button de fechas dinamicas
+    buttonDates.onclick = () => {
+      const saldates = saldate.value.split(" - ");
+      saldate.value
+        ? setinputdate(saldate, "renew", saldates[0], saldates[1])
+        : setinputdate(saldate, "default");
+    };
+    saldate.onchange = function () {
+      validatechanges(
+        this.value,
+        "saldate",
+        "update",
+        `${sal_date_start} - ${sal_date_end}`,
+      );
+    };
     $(saldate).on("apply.daterangepicker", function () {
       validatechanges(
         this.value,
@@ -415,6 +429,10 @@ document.querySelectorAll(".dataSaleUpdate").forEach((sale) => {
     salstate.onchange = function () {
       validatechanges(this.value, "salstate", "update", sal_state);
     };
+    // cambio de propin
+    buttonPin.onclick = () => {
+      buttonpin(buttonPin, propin, modal);
+    };
     propin.onchange = function () {
       validatechanges(this.value, "propin", "update", pro_pin_profile);
     };
@@ -425,15 +443,6 @@ document.querySelectorAll(".dataSaleUpdate").forEach((sale) => {
       } else {
         clrDescription.classList.add("d-none");
       }
-    };
-
-    // cambio de propin
-    buttonPin.onclick = () => {
-      buttonpin(buttonPin, propin, modal);
-    };
-
-    buttonDates.onclick = () => {
-      inputdate(saldate);
     };
 
     clrDescription.onclick = () => {
@@ -461,6 +470,8 @@ document.querySelectorAll(".dataSaleUpdate").forEach((sale) => {
           icon: "info",
           showCancelButton: true,
           confirmButtonColor: "rgba(4,17,43,0.92)",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
           confirmButtonText: "Quedarme",
           cancelButtonText: "Salir",
         }).then((result) => {
@@ -689,9 +700,29 @@ buttonpin = (icon, input, modal) => {
   }
 };
 
+setinputdate = (input, action, date_start, date_end) => {
+  // console.log(
+  //   $(input).data("daterangepicker"),
+  //   input,
+  //   action,
+  //   date_start,
+  //   date_end,
+  // );
+  if (action === "default") {
+    $(input).data("daterangepicker").setStartDate(moment().startOf("day"));
+    $(input).data("daterangepicker").setEndDate(moment().add(30, "days"));
+  } else {
+    $(input)
+      .data("daterangepicker")
+      .setStartDate(moment(date_end, "DD/MM/YYYY"));
+    $(input)
+      .data("daterangepicker")
+      .setEndDate(moment(date_end, "DD/MM/YYYY").add(30, "days"));
+  }
+};
 inputdate = (input, date_start, date_end) => {
   $(input).daterangepicker({
-    autoUpdateInput: date_start && date_end ? true : false,
+    autoUpdateInput: true,
     opens: "center",
     startDate: date_start
       ? moment(date_start, "DD/MM/YYYY")
@@ -732,14 +763,12 @@ inputdate = (input, date_start, date_end) => {
         hoy.clone().add(60, "days"),
         hoy.clone().add(90, "days"),
       ];
-
       if (especiales.some((d) => d.isSame(date, "day"))) {
         return "dia-especial";
       }
       return false;
     },
   });
-
   $(input).on("apply.daterangepicker", function (ev, picker) {
     $(this).val(
       picker.startDate.format("DD/MM/YYYY") +
@@ -747,9 +776,6 @@ inputdate = (input, date_start, date_end) => {
         picker.endDate.format("DD/MM/YYYY"),
     );
   });
-  // $(input).on("apply.daterangepicker", function (ev, picker) {
-  //   $(this).val(picker.startDate.format("DD/MM/YYYY"));
-  // });
   $(input).on("cancel.daterangepicker", function () {
     $(this).val("");
   });

@@ -114,6 +114,7 @@ document.querySelectorAll(".accCrt").forEach((button) => {
     const accnumberphone = modal.querySelector("#accnumberphone");
     const accuser = modal.querySelector("#accuser");
     const accpassword = modal.querySelector("#accpassword");
+    const buttonDates = modal.querySelector(".buttonDates");
     const crtPros = modal.querySelector("#crtPros");
     inputdate(accdatepay);
     accnickname.onchange = function () {
@@ -121,6 +122,12 @@ document.querySelectorAll(".accCrt").forEach((button) => {
     };
     accprovider.onchange = function () {
       validatechanges(this.value, "accprovider", "create");
+    };
+    buttonDates.onclick = function () {
+      setinputdate(accdatepay, "default");
+    };
+    accdatepay.onchange = function () {
+      validatechanges(this.value, "accdatepay", "create");
     };
     $(accdatepay).on("apply.daterangepicker", function () {
       validatechanges(this.value, "accdatepay", "create");
@@ -209,6 +216,16 @@ document.querySelectorAll(".accEdit").forEach((button) => {
     accprovider.onchange = function () {
       validatechanges(this.value, "accprovider", "update", acc_provider);
     };
+    buttonDates.onclick = function () {
+      if (accdatepay.value) {
+        setinputdate(accdatepay, "renew", accdatepay.value);
+      } else {
+        setinputdate(accdatepay, "default", acc_date_pay);
+      }
+    };
+    accdatepay.onchange = function () {
+      validatechanges(this.value, "accdatepay", "update", acc_date_pay);
+    };
     $(accdatepay).on("apply.daterangepicker", function () {
       validatechanges(this.value, "accdatepay", "update", acc_date_pay);
     });
@@ -230,9 +247,6 @@ document.querySelectorAll(".accEdit").forEach((button) => {
     accpassword.onchange = function () {
       validatechanges(this.value, "accpassword", "update", acc_password);
     };
-    buttonDates.onclick = function () {
-      inputdate(accdatepay);
-    };
 
     modal.querySelector(".btn-close").onclick = function (event) {
       event.preventDefault();
@@ -250,6 +264,8 @@ document.querySelectorAll(".accEdit").forEach((button) => {
           icon: "info",
           showCancelButton: true,
           confirmButtonColor: "rgba(4,17,43,0.92)",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
           confirmButtonText: "Quedarme",
           cancelButtonText: "Salir",
         }).then((result) => {
@@ -411,10 +427,22 @@ document.querySelectorAll(".accphonenumber").forEach((tel) => {
   });
 });
 
+setinputdate = (input, action, value) => {
+  console.log($(input).data("daterangepicker"), input, action, value);
+  if (action === "default" && value) {
+    $(input).data("daterangepicker").setStartDate(moment(value, "DD/MM/YYYY"));
+  } else if (action === "default") {
+    $(input).data("daterangepicker").setStartDate(moment());
+  } else {
+    $(input)
+      .data("daterangepicker")
+      .setStartDate(moment(value, "DD/MM/YYYY").add(30, "days"));
+  }
+};
 inputdate = (input, value) => {
   $(input).daterangepicker({
     singleDatePicker: true,
-    autoUpdateInput: value ? true : false,
+    autoUpdateInput: true,
     opens: "center",
     startDate: value ? moment(value, "DD/MM/YYYY") : moment().startOf("day"),
     locale: {
@@ -458,14 +486,6 @@ inputdate = (input, value) => {
       return false;
     },
   });
-
-  // $ (input).on("apply.daterangepicker", function (ev, picker) {
-  //   $(this).val(
-  //     picker.startDate.format("DD/MM/YYYY") +
-  //       " - " +
-  //       picker.endDate.format("DD/MM/YYYY"),
-  //   );
-  // });
   $(input).on("apply.daterangepicker", function (ev, picker) {
     $(this).val(picker.startDate.format("DD/MM/YYYY"));
   });
