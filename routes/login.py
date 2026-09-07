@@ -65,7 +65,7 @@ def log():
             session["user_id"] = user[0]
             flash (f"Bienvenido {user[1] if user[1] else ''}", "success")
             return response
-        
+        print(form.errors)
         session["loginBackup"] = form.data
         flash ("Ingrese sus datos para iniciar sesion", "error")
         return redirect("/login")

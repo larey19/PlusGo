@@ -56,9 +56,9 @@ def permission(permission_required):
         @wraps(f)
         def decorated(*args, **kwargs): 
             try:
-                # print("CON PERMISO", permission_required, g.permissions)
+                print("CON PERMISO", permission_required, g.permissions)
                 if permission_required not in g.permissions:
-                    # print("SIN PERMISO")
+                    print("SIN PERMISO")
                     return abort(403)     
             except Exception as e:
                 response = make_response(redirect("/login"))
