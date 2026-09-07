@@ -312,22 +312,37 @@
                                 role="button" id="copyButton2"></i>
 
                             <div id="dataAcc" class="d-flex justify-content-between gap-1">
-                                <span id="acc_email"
-                                    class="text-dark-emphasis text-truncate d-flex align-items-center gap-2"
-                                    style="max-width : 150px">
+                                <div class="text-dark-emphasis text-truncate d-flex align-items-center gap-2">
+                                    <i class="ti ti-mail fs-5"></i>
+                                    <span id="acc_email"
+                                        class="text-dark-emphasis text-truncate"
+                                        style="min-width: 0;max-width : 150px">
+                                    </span>
+                                </div>
+
+                                <div class="text-dark-emphasis text-truncate d-flex align-items-center gap-2">
+                                    <i class="ti ti-lock fs-5"></i> 
+                                    <span id="acc_password"
+                                    class="text-dark-emphasis text-truncate"
+                                    style="min-width: 0;max-width : 150px">
+                                    </span>
+                                </div>
+
+                                <div class="text-dark-emphasis text-truncate d-flex align-items-center gap-2">
+                                    <i class="ti ti-tag fs-5"></i>
+                                    <span id="pro_profile"
+                                    class="text-dark-emphasis text-truncate"
+                                    style="min-width: 0;max-width : 150px">
+                                    </span>
+                                </div>
+
+                                <div class="text-dark-emphasis text-truncate d-flex align-items-center gap-2 d-none" id="content-pro_pin_profile"> 
+                                    <i class="ti ti-password-user fs-5"></i>
+                                    <span id="pro_pin_profile"
+                                    class="text-dark-emphasis text-truncate"
+                                    style="min-width: 0;max-width : 150px">
                                 </span>
-                                <span id="acc_password"
-                                    class="text-dark-emphasis text-truncate d-flex align-items-center gap-2"
-                                    style="max-width : 150px">
-                                </span>
-                                <span id="pro_profile"
-                                    class="text-dark-emphasis text-truncate d-flex align-items-center gap-2"
-                                    style="max-width : 150px">
-                                </span>
-                                <span id="pro_pin_profile"
-                                    class="text-dark-emphasis text-truncate d-flex align-items-center gap-2 d-none"
-                                    style="max-width : 150px">
-                                </span>
+                                </div>
                             </div>
 
                             <i class="ti ti-copy d-none position-absolute bottom-0 end-0 p-2 text-dark-emphasis fs-5"
@@ -339,8 +354,7 @@
                     <div class="col-12">
                         <div class="p-3 rounded border">
                             <small class="text-muted d-block text-uppercase fw-bold">Descripción</small>
-                            <span class="text-dark-emphasis text-nowrap d-flex align-items-center small gap-1   "
-                                id="sal_description">
+                            <span class="text-dark-emphasis text-wrap small" id="sal_description">
                             </span>
                         </div>
                     </div>

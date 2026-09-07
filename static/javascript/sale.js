@@ -174,6 +174,7 @@ document.querySelectorAll(".dataSaleDetails").forEach((sale) => {
 
     const proProfile = document.getElementById("pro_profile");
     const proPinProfile = document.getElementById("pro_pin_profile");
+    const contentProPinProfile = document.getElementById("content-pro_pin_profile");
 
     const dataAcc = document.getElementById("dataAcc");
     const copyButton = document.getElementById("copyButton");
@@ -185,10 +186,10 @@ document.querySelectorAll(".dataSaleDetails").forEach((sale) => {
     salDateStart.innerHTML = `<i class="ti ti-calendar-event fs-5"></i> ${sal_date_start}`;
     salDateEnd.innerHTML = `<i class="ti ti-calendar-event fs-5"></i> ${sal_date_end}`;
     salPrice.innerHTML = `$ ${sal_price}`;
-    accEmail.innerHTML = `<i class="ti ti-mail fs-5"></i> ${acc_email}`;
-    accPassword.innerHTML = `<i class="ti ti-lock fs-5"></i> ${acc_password}`;
-    proProfile.innerHTML = `<i class="ti ti-tag fs-5"></i> Perfil ${pro_profile}`;
-    proPinProfile.innerHTML = `<i class="ti ti-password-user fs-5"></i> ${pro_pin_profile}`;
+    accEmail.innerHTML = `${acc_email}`;
+    accPassword.innerHTML = `${acc_password}`;
+    proProfile.innerHTML = `Perfil ${pro_profile}`;
+    proPinProfile.innerHTML = `${pro_pin_profile}`;
     salDescription.innerHTML = `<i class="ti ti-info-circle"></i> ${sal_description}`;
     // informacion de la cuenta modal detalles
     dataAcc.onclick = function () {
@@ -199,7 +200,7 @@ document.querySelectorAll(".dataSaleDetails").forEach((sale) => {
         accPassword.style.maxWidth = "100%";
         proProfile.style.maxWidth = "100%";
 
-        proPinProfile.classList.remove("d-none");
+        contentProPinProfile.classList.remove("d-none");
         copyButton.classList.remove("d-none");
         copyButton2.classList.remove("d-none");
       }
@@ -211,7 +212,7 @@ document.querySelectorAll(".dataSaleDetails").forEach((sale) => {
       accPassword.style.maxWidth = "150px";
       proProfile.style.maxWidth = "150px";
 
-      proPinProfile.classList.add("d-none");
+      contentProPinProfile.classList.add("d-none");
       copyButton.classList.add("d-none");
       copyButton2.classList.add("d-none");
     };
