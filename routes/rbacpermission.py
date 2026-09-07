@@ -7,8 +7,8 @@ rbacpermission_bp = Blueprint("rbacpermission", __name__, template_folder= "../t
 
 # Ruta entrar a la RBAC USUARIOS
 @rbacpermission_bp.route("/rbac/permission") 
-# @permission("rbacs.view")
 @token
+@permission("rbacs.view")
 def getRbac():
     try: 
         # asignamos los roles al select

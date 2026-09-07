@@ -28,61 +28,61 @@ def getRbac():
         roles = cursor.fetchall()
         rbacUserRoleForm.rolid.choices = [(rol[0], rol[1]) for rol in roles]
         
-        # realizamos consulta de ruta
-        cursor.execute(""" 
-                        SELECT  u.user_id, u.user_name, u.user_lastname, u.user_user, u.user_number_phone,
-                        r.rol_name, 
-                        CONCAT('[',
-                            GROUP_CONCAT(
-                                CONCAT(
-                                        '{"per_name":"',p.per_name, 
-                                        '","control":', CASE
-                                                            WHEN rp.per_id IS NULL THEN 0
-                                                            ELSE 1
-                                                        END,
-                                        '}'
-                                      )
-                                    ORDER BY
-                                    CASE
-                                        WHEN p.per_name LIKE 'platforms.%%' THEN 1
-                                        WHEN p.per_name LIKE 'accounts.%%' THEN 2
-                                        WHEN p.per_name LIKE 'profiles.%%' THEN 3
-                                        WHEN p.per_name LIKE 'customers.%%' THEN 4
-                                        WHEN p.per_name LIKE 'sales.%%' THEN 5
-                                        WHEN p.per_name LIKE 'rbacs.%%' THEN 6
-                                        WHEN p.per_name LIKE 'management.%%' THEN 7
-                                        WHEN p.per_name LIKE 'codes.%%' THEN 8
-                                    END,
-                                    p.per_name
-                                )
-                            ,']') AS per_name,
-                            r.rol_id
-                        FROM t_user u
-                        
+        cursor.execute("""
+                        SELECT u.user_id, u.user_name, u.user_lastname, u.user_user, u.user_number_phone,
+                            r.rol_id, r.rol_name
+                        FROM t_user u 
                         INNER JOIN t_user_role ur ON ur.user_id = u.user_id
                         INNER JOIN t_role r ON r.rol_id = ur.rol_id
-                        
-                        CROSS JOIN t_permission p
-
-                        LEFT JOIN t_role_permission rp
-                            ON rp.rol_id = r.rol_id
-                            AND rp.per_id = p.per_id
-                            
-                        GROUP BY
-                            u.user_id,
-                            u.user_name,
-                            u.user_lastname,
-                            u.user_user,
-                            u.user_number_phone,
-                            r.rol_name,
-                            r.rol_id
-
-                        ORDER BY
-                            u.user_name ASC
                         """)
-        users = cursor.fetchall()
-        # print(users)
-        return render_template("rbac.html", users = users, rbacUserRoleForm = rbacUserRoleForm)
+        userRole = cursor.fetchall() # contiene todos los usuarios con su rol
+        # print(userRole)
+        userRolePermissions = [] #contiene todos los permisos de cada usuario
+        for r in userRole:
+            cursor.execute(""" 
+                            SELECT
+                                p.*,
+                                CASE
+                                    WHEN rp.rol_id IS NULL THEN 0
+                                    ELSE 1
+                                END AS control
+                            FROM t_permission p
+                            -- conectamos las tablas, traemos todo de la izquierda "p" 
+                            LEFT JOIN t_role_permission rp 
+                                ON rp.per_id = p.per_id 
+                                AND rp.rol_id = %s
+                            -- ordenamos las columnas en categorias
+                            ORDER BY
+                            CASE
+                                WHEN p.per_name LIKE 'platforms.%%' THEN 1
+                                WHEN p.per_name LIKE 'accounts.%%' THEN 2
+                                WHEN p.per_name LIKE 'profiles.%%' THEN 3
+                                WHEN p.per_name LIKE 'customers.%%' THEN 4
+                                WHEN p.per_name LIKE 'sales.%%' THEN 5
+                                WHEN p.per_name LIKE 'rbacs.%%' THEN 6
+                                WHEN p.per_name LIKE 'management.%%' THEN 7
+                                WHEN p.per_name LIKE 'codes.%%' THEN 8
+                            END
+                            """, (r[5],))
+            rolperdata = cursor.fetchall() # contiene todos los permisos de un solo rol
+            print(rolperdata)
+            userRolePermissions.append({               
+                "user_id"          : r[0],
+                "user_name"        : r[1],
+                "user_lastname"    : r[2],
+                "user_user"        : r[3],
+                "user_number_phone": r[4],
+                "rol_id"           : r[5],
+                "rol_name"         : r[6],
+                "rol_permissions": [
+                    {
+                    "per_id"  : rp[0],
+                    "per_name": rp[1],
+                    "control" : rp[2]
+                    } for rp in rolperdata
+                ]
+            }) # agrega todos los permisos de un rol a la lista que contiene todos los permisos de todos los roles
+        return render_template("rbac.html", users = userRolePermissions, rbacUserRoleForm = rbacUserRoleForm)
     except OperationalError as e:
         print("error en userrole", e)
         return abort(500)

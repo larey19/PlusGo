@@ -67,15 +67,9 @@
             <tbody class="">
                 {% for rp in rolesPermissionsData %}
                 <tr>
-
-
-                    <td>
-                        <p class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
-                            {{rp["rol_name"]}}
-                        </p>
+                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis">
+                        {{rp["rol_name"]}}
                     </td>
-
-
                     <td class="text-center">
                         <!-- Ver permisos del rol -->
                         <button class="btn btn-sm btn-outline-secondary permissionsuserrol" data-bs-toggle="modal"
@@ -1195,6 +1189,21 @@
                                             id="permission-codes.consult" disabled>
                                     </div>
                                 </td>
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox" disabled>
+                                    </div>
+                                </td>
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox" disabled>
+                                    </div>
+                                </td>
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox" disabled>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -1212,7 +1221,7 @@
 <div class="card border-0 shadow" data-aos="fade-in-up">
     <!-- Tabla -->
     <div class="card-body">
-        <table class="table table-hover align-middle" id="table">
+        <table class="table table-hover align-middle">
             <thead>
                 <tr>
                     <th class="text-nowrap text-dark-emphasis fw-semibold ">Permisos</th>
@@ -1551,41 +1560,38 @@
             <tbody>
                 {% for u in users %}
                 <tr>
-                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis popover-dismiss text-truncate" role="button" data-user_name="{{u[1]}}" data-user_name="{{u[1]}}" data-user_lastname="{{u[2]}}"
-                        data-user_id="{{u[0]}}" data-user_user="{{u[3]}}" data-user_phone_number="{{u[4]}}"
-                        data-rol_name="{{u[5]}}" data-rol_id="{{u[7]}}">
-                        {{ u[1] }} {{ u[2] if u[2] else ''}}
+                    <td class="text-nowrap fw-semibold text-decoration-none text-dark-emphasis popover-dismiss text-truncate" role="button" data-user_name="{{u['user_name']}}" data-user_name="{{u['user_name']}}" data-user_lastname="{{u['user_lastname']}}"
+                        data-user_id="{{u['user_id']}}" data-user_user="{{u['user_user']}}" data-user_phone_number="{{u['user_number_phone']}}"
+                        data-rol_name="{{u['rol_name']}}" data-rol_id="{{u['rol_id']}}">
+                        {{ u['user_name'] }} {{ u['user_lastname'] if u['user_lastname'] else ''}}
                     </td>
                     <td class="text-nowrap text-dark-emphasis">
-                        {{ u[3] if u[3] else 'Sin Usuario'}}
+                        {{ u['user_user'] if u['user_user'] else 'Sin Usuario'}}
                     </td>
                     <td class="text-nowrap text-dark-emphasis">
-
-                        {% if u[4] | length == 10 %}
-                        ({{ u[4][0:3] }}) {{ u[4][3:6] }}-{{ u[4][6:] }}
+                        {% if u['user_number_phone'] | length == 10 %}
+                        ({{ u['user_number_phone'][0:3] }}) {{ u['user_number_phone'][3:6] }}-{{ u['user_number_phone'][6:] }}
                         {% else %}
                         Sin Numero
                         {% endif %}
                     </td>
                     <td class="text-nowrap text-dark-emphasis">
-
-                        {{ u[5] }}
+                        {{ u['rol_name'] }}
                     </td>
 
                     <td class=" text-nowrap text-center">
-
                         <!-- ver permisos -->
                         <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
-                            data-bs-target="#datapermissionsuserrol" data-user_name="{{u[1]}}"
-                            data-user_lastname="{{u[2]}}" data-rol_name="{{u[5]}}" data-permission='{{u[6]}}'
+                            data-bs-target="#datapermissionsuserrol" data-user_name="{{u['user_name']}}"
+                            data-user_lastname="{{u['user_lastname']}}" data-rol_name="{{u['rol_name']}}" data-permission='{{u["rol_permissions"] | tojson }}'
                             onclick="userrolpermissions(this)">
                             <i class="ti ti-license fs-5"></i>
                         </button>
                         <!-- Editar -->
                         <button class="btn btn-sm btn-outline-primary datauser" data-bs-toggle="modal"
-                            data-bs-target="#editUserModal" data-user_name="{{u[1]}}" data-user_lastname="{{u[2]}}"
-                            data-user_id="{{u[0]}}" data-user_user="{{u[3]}}" data-user_phone_number="{{u[4]}}"
-                            data-rol_name="{{u[5]}}" data-rol_id="{{u[7]}}">
+                            data-bs-target="#editUserModal" data-user_name="{{u['user_name']}}" data-user_lastname="{{u['user_lastname']}}"
+                            data-user_id="{{u['user_id']}}" data-user_user="{{u['user_user']}}" data-user_phone_number="{{u['user_number_phone']}}"
+                            data-rol_name="{{u['rol_name']}}" data-rol_id="{{u['rol_id']}}">
                             <i class="ti ti-edit fs-5"></i>
                         </button>
 
@@ -1723,10 +1729,7 @@
                     </div>
                 </div>
                 <div class="modal-footer bg-light w-100 d-none btnuser">
-                    {{rbacUserRoleForm.btnSubmit(class="btn w-100 validateUser", style="background-color:
-                    rgba(4,17,43,0.92);
-                    color:
-                    white;")}}
+                    {{rbacUserRoleForm.btnSubmit(class="btn w-100 validateUser btn_blue_plusgo")}}
                 </div>
             </form>
         </div>
@@ -1857,10 +1860,7 @@
                     </div>
                 </div>
                 <div class="modal-footer bg-light w-100 d-none btnuser">
-                    {{rbacUserRoleForm.btnSubmit(class="btn w-100 validateUser", style="background-color:
-                    rgba(4,17,43,0.92);
-                    color:
-                    white;")}}
+                    {{rbacUserRoleForm.btnSubmit(class="btn w-100 validateUser btn_blue_plusgo")}}
                 </div>
             </form>
         </div>
@@ -2180,6 +2180,21 @@
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox"
                                             id="permission-codes.consult" disabled>
+                                    </div>
+                                </td>
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox" disabled>
+                                    </div>
+                                </td>
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox" disabled>
+                                    </div>
+                                </td>
+                                <td class="text-white shadows-sm fs-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input m-auto" type="checkbox" disabled>
                                     </div>
                                 </td>
                             </tr>

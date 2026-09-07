@@ -347,9 +347,6 @@ function validateUser(button, event, action, user_id) {
     action === "create" ? "#formUserCreate" : "#formuserupdate",
   );
   form.action = action === "create" ? `/rbac/user` : `/rbac/user/${user_id}`;
-  console.log(button);
-
-  button.disabled = true;
   if (form && form.checkValidity()) {
     Swal.fire({
       title:
@@ -362,8 +359,6 @@ function validateUser(button, event, action, user_id) {
     }).then((result) => {
       if (result.isConfirmed) {
         form.submit();
-      } else {
-        button.disabled = false;
       }
     });
   } else {
@@ -377,123 +372,63 @@ let useruser = false;
 let usernumberphone = false;
 let rolid = false;
 
-function validatechanges(inputValue, input, action) {
-  if (action == "create") {
-    const modal = document.getElementById("createUserModal");
-
-    let username = false;
-    let userlastname = false;
-    let useruser = false;
-    let usernumberphone = false;
-    let rolid = false;
-
-    modal.querySelector(".btnuser").classList.remove("d-none");
-    if (input === "username") {
-      if (!inputValue) {
-        username = false;
-      } else {
-        username = true;
-      }
-    } else if (input === "userlastname") {
-      if (!inputValue) {
-        userlastname = false;
-      } else {
-        userlastname = true;
-      }
-    } else if (input === "useruser") {
-      if (!inputValue) {
-        useruser = false;
-      } else {
-        useruser = true;
-      }
-    } else if (input === "usernumberphone") {
-      if (!inputValue) {
-        usernumberphone = false;
-      } else {
-        usernumberphone = true;
-      }
+function validatechanges(inputValue, input, action, value) {
+  const modal = document.getElementById(
+    action === "create" ? "createUserModal" : "editUserModal",
+  );
+  if (input === "username") {
+    if (value === inputValue && action == "edit") {
+      username = false;
+    } else if (!inputValue) {
+      username = false;
     } else {
-      if (!inputValue) {
-        rolid = false;
-      } else {
-        rolid = true;
-      }
+      username = true;
     }
-    console.log(inputValue, input);
-    // console.log(username, userlastname, useruser, usernumberphone, rolid);
-    if (
-      username === false &&
-      userlastname === false &&
-      useruser === false &&
-      usernumberphone === false &&
-      rolid === false
-    ) {
-      modal.querySelector(".btnuser").classList.add("d-none");
+  } else if (input === "userlastname") {
+    if (value === inputValue && action == "edit") {
+      userlastname = false;
+    } else if (!inputValue) {
+      userlastname = false;
+    } else {
+      userlastname = true;
+    }
+  } else if (input === "useruser") {
+    if (value === inputValue && action == "edit") {
+      useruser = false;
+    } else if (!inputValue) {
+      useruser = false;
+    } else {
+      useruser = true;
+    }
+  } else if (input === "usernumberphone") {
+    if (value === inputValue && action == "edit") {
+      usernumberphone = false;
+    } else if (!inputValue) {
+      usernumberphone = false;
+    } else {
+      usernumberphone = true;
     }
   } else {
-    const modal = document.getElementById("editUserModal");
-
-    modal.querySelector(".btnuser").classList.remove("d-none");
-    const user_name = document
-      .querySelector(".datauser")
-      .getAttribute("data-user_name");
-    const user_lastname = document
-      .querySelector(".datauser")
-      .getAttribute("data-user_lastname");
-    const user_user = document
-      .querySelector(".datauser")
-      .getAttribute("data-user_user");
-    const user_phone_number = document
-      .querySelector(".datauser")
-      .getAttribute("data-user_phone_number");
-    const rol_id = document
-      .querySelector(".datauser")
-      .getAttribute("data-rol_id");
-
-    if (input === "username") {
-      if (user_name === inputValue) {
-        username = false;
-      } else {
-        username = true;
-      }
-    } else if (input === "userlastname") {
-      if (user_lastname === inputValue) {
-        userlastname = false;
-      } else {
-        userlastname = true;
-      }
-    } else if (input === "useruser") {
-      if (user_user === inputValue) {
-        useruser = false;
-      } else {
-        useruser = true;
-      }
-    } else if (input === "usernumberphone") {
-      if (user_phone_number === inputValue) {
-        usernumberphone = false;
-      } else {
-        usernumberphone = true;
-      }
+    if (value === inputValue && action == "edit") {
+      rolid = false;
+    } else if (!inputValue) {
+      rolid = false;
     } else {
-      if (rol_id === inputValue) {
-        rolid = false;
-      } else {
-        rolid = true;
-      }
+      rolid = true;
     }
+  }
+  console.log(inputValue, input);
 
-    // console.log(username, userlastname, useruser, usernumberphone, rolid);
-    // console.log(user_name, user_lastname, user_user, user_phone_number, rol_id);
-
-    if (
-      username === false &&
-      userlastname === false &&
-      useruser === false &&
-      usernumberphone === false &&
-      rolid === false
-    ) {
-      modal.querySelector(".btnuser").classList.add("d-none");
-    }
+  if (
+    username === false &&
+    userlastname === false &&
+    useruser === false &&
+    usernumberphone === false &&
+    rolid === false
+  ) {
+    modal.querySelector(".btnuser").classList.add("d-none");
+  } else {
+    modal.querySelector(".btnuser").classList.remove("d-none");
   }
 }
 
@@ -564,7 +499,7 @@ document.querySelectorAll(".datauser").forEach((user) => {
         UserNameData.classList.remove("d-none");
         modal.querySelector("#usernametext").innerHTML =
           `${UserName.value} <i class="bi bi-chevron-right"></i>`;
-        validatechanges(UserName.value, "username");
+        validatechanges(UserName.value, "username", "edit", user_name);
       } else {
         UserName.reportValidity();
       }
@@ -584,7 +519,12 @@ document.querySelectorAll(".datauser").forEach((user) => {
       UserLastnameInput.classList.add("d-none");
       UserLastnameData.classList.remove("d-none");
       UserLastnameText.innerHTML = `${UserLastname.value.length > 0 ? UserLastname.value : "Sin Apellido"} <i class="bi bi-chevron-right"></i>`;
-      validatechanges(UserLastname.value, "userlastname");
+      validatechanges(
+        UserLastname.value,
+        "userlastname",
+        "edit",
+        user_lastname,
+      );
     };
 
     // usuario
@@ -601,7 +541,7 @@ document.querySelectorAll(".datauser").forEach((user) => {
         UserUserInput.classList.add("d-none");
         UserUserData.classList.remove("d-none");
         UserUserText.innerHTML = `${UserUser.value} <i class="bi bi-chevron-right"></i>`;
-        validatechanges(UserUser.value, "useruser");
+        validatechanges(UserUser.value, "useruser", "edit", user_user);
       } else {
         UserUser.reportValidity();
       }
@@ -623,12 +563,15 @@ document.querySelectorAll(".datauser").forEach((user) => {
         .replace(" ", "")
         .match(/^(\d{3})(\d{3})(\d{4})$/);
       if (partes) {
+                UserNumberPhone.setCustomValidity("");
         UserNumberPhoneInput.classList.add("d-none");
         UserNumberPhoneData.classList.remove("d-none");
         UserNumberPhoneText.innerHTML = `(${partes[1]}) ${partes[2]}-${partes[3]} <i class="bi bi-chevron-right"></i>`;
         validatechanges(
           UserNumberPhone.value.replace(" ", ""),
           "usernumberphone",
+          "edit",
+          user_phone_number,
         );
       } else {
         UserNumberPhone.setCustomValidity("El telefono es requerido");
@@ -727,7 +670,7 @@ document.querySelectorAll(".datauser").forEach((user) => {
 
         RolText.innerHTML = `${this.options[this.selectedIndex].textContent} <i class="bi bi-chevron-right"></i>`;
         leyenda.innerHTML = this.options[this.selectedIndex].textContent;
-        validatechanges(this.value, "rolname");
+        validatechanges(this.value, "rolname", "edit", rol_id);
       };
     } else {
       RolText.innerHTML = `${rol_name}`;
@@ -812,8 +755,7 @@ document.querySelectorAll(".createUser").forEach((user) => {
       if (UserName.checkValidity()) {
         UserNameInput.classList.add("d-none");
         UserNameData.classList.remove("d-none");
-        modal.querySelector("#usernametext").innerHTML =
-          `${UserName.value} <i class="bi bi-chevron-right"></i>`;
+        UserNameText.innerHTML = `${UserName.value} <i class="bi bi-chevron-right"></i>`;
         validatechanges(UserName.value, "username", "create");
       } else {
         UserName.reportValidity();
@@ -862,6 +804,7 @@ document.querySelectorAll(".createUser").forEach((user) => {
         .replace(" ", "")
         .match(/^(\d{3})(\d{3})(\d{4})$/);
       if (partes) {
+        UserNumberPhone.setCustomValidity("");
         UserNumberPhoneInput.classList.add("d-none");
         UserNumberPhoneData.classList.remove("d-none");
         UserNumberPhoneText.innerHTML = `(${partes[1]}) ${partes[2]}-${partes[3]} <i class="bi bi-chevron-right"></i>`;
