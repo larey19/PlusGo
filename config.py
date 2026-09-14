@@ -11,3 +11,4 @@ class config:
     MYSQL_DB        = os.getenv("MYSQL_DB")
     MYSQL_CHARSET   = os.getenv("MYSQL_CHARSET")
     MYSQL_URI       = os.getenv("MYSQL_URI")
+    SECRET_KEY = os.getenv("SECRET_KEY")
