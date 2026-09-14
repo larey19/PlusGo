@@ -45,7 +45,7 @@ def log():
                 return render_template("login.html", form = form)
             
             hash_password = user[4]
-            if password == "pass123" and user[4] == "pass123":
+            if user[6] == "change_password" and (user[4] == "plusgo" and password == "plusgo"):
                 session["passChange"] = True
             elif not check_password_hash(hash_password, password):
                 session["loginBackup"] = form.data

@@ -116,6 +116,7 @@ def createRbac():
             useruser = (rbacUserRoleForm.useruser.data).strip() 
             usernumberphone = ((rbacUserRoleForm.usernumberphone.data).strip().replace("+57","")).replace(" ", "") 
             rolid = (rbacUserRoleForm.rolid.data).strip() 
+            user_state = "change_password"
             
             if len(username) >= 50 and len(userlastname) >= 50 and len(useruser) >= 50 and (len(usernumberphone) > 10 or len(usernumberphone) < 10): 
                 session["rbacUserRoleBackup"] = rbacUserRoleForm.data
@@ -142,8 +143,8 @@ def createRbac():
                 return redirect(session.get("url_back_post"))
             
             cursor.execute("""INSERT INTO t_user 
-                            (user_name, user_lastname, user_user, user_number_phone, user_id) 
-                            VALUES (%s, %s, %s, %s, %s)""", (username, userlastname, useruser, usernumberphone, user_id,))
+                            (user_name, user_lastname, user_user, user_number_phone, user_state, user_id) 
+                            VALUES (%s, %s, %s, %s, %s, %s)""", (username, userlastname, useruser, usernumberphone, user_state, user_id,))
             
             cursor.execute("""
                             INSERT INTO t_user_role 
