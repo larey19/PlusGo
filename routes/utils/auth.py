@@ -55,16 +55,10 @@ def permission(permission_required):
     def decorater(f):
         @wraps(f)
         def decorated(*args, **kwargs): 
-            try:
-                print("CON PERMISO", permission_required, g.permissions)
-                if permission_required not in g.permissions:
-                    print("SIN PERMISO")
-                    return abort(403)     
-            except Exception as e:
-                response = make_response(redirect("/login"))
-                response.delete_cookie("token")
-                print("Error en decorador token", e)
-                return response
+            if permission_required not in g.permissions:
+                print("SIN PERMISO")
+                return abort(403)     
+            # print("CON PERMISO", permission_required, g.permissions)
             return f(*args, **kwargs) 
         return decorated
     return decorater
