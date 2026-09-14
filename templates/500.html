@@ -1,18 +1,29 @@
-{% extends 'layouts/layout_3.html' %}
-{% block body %}
+{% extends 'layouts/layout_3.html' %} {% block body %}
 
+<div class="min-vh-100 d-flex align-items-center justify-content-center text-center">
+    <div class="py-5">
+        <!-- 404 -->
+        <div data-aos="fade-down">
+            <h1 class="fw-bolder text-white text-opacity-75 mb-0">
+                500
+            </h1>
+        </div>
+        <!-- Mensaje -->
+        <div data-aos="zoom-in-up" data-aos-delay="150">
+            <h2 class="fw-bold text-white text-opacity-75 mt-3 mb-2">
+                ¡Ups! Algo no salio como esperabamos
+            </h2>
 
-<div id="notfound">
-    <div class="notfound-bg"></div>
-    
-    <div class="notfound">
-        <div class="notfound-500" data-aos="fade">
-            <h1>500</h1>
+            <p class="text-white text-opacity-50 fs-5 mb-4">
+                Ha ocurrido un error interno en el servidor.
+            </p>
+
+            <!-- Botón -->
+            <a href="/" class="btn btn-light px-4 py-2 fw-bold shadow"> 
+                Inicio
+            </a>
         </div>
-        <div data-aos="zoom-in-up">
-            <h2>Ups, Error en el servidor</h2>
-            <a href="/" class="home-btn">Inicio</a>
-        </div>
+
     </div>
 </div>
 
