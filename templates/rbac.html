@@ -1554,6 +1554,7 @@
                     <th class="text-dark text-nowrap fw-semibold ">Usuario</th>
                     <th class="text-dark text-nowrap fw-semibold ">Num. Telefono</th>
                     <th class="text-dark text-nowrap fw-semibold ">Rol</th>
+                    <th class="text-dark text-nowrap fw-semibold text-center">Estado</th>
                     <th class="text-dark text-nowrap fw-semibold text-center">Acciones</th>
                 </tr>
             </thead>
@@ -1578,6 +1579,21 @@
                     <td class="text-nowrap text-dark-emphasis">
                         {{ u['rol_name'] }}
                     </td>
+                    <td class="text-nowrap text-dark-emphasis text-center">
+                        {% if u['user_state'] == 'active' %}
+                        <span class="badge bg-primary-subtle text-primary-emphasis px-2 rounded-pill">
+                            Activo
+                        </span>
+                        {% elif u['user_state'] == 'change_password' %}
+                        <span class="badge bg-warning-subtle text-warning-emphasis px-2 rounded-pill">
+                            Contraseña
+                        </span>
+                        {% else %}
+                        <span class="badge bg-danger-subtle text-danger-emphasis px-2 rounded-pill">
+                            Inactivo
+                        </span>
+                        {% endif %}
+                    </td>
 
                     <td class=" text-nowrap text-center">
                         <!-- ver permisos -->
@@ -1591,7 +1607,7 @@
                         <button class="btn btn-sm btn-outline-primary datauser" data-bs-toggle="modal"
                             data-bs-target="#editUserModal" data-user_name="{{u['user_name']}}" data-user_lastname="{{u['user_lastname']}}"
                             data-user_id="{{u['user_id']}}" data-user_user="{{u['user_user']}}" data-user_phone_number="{{u['user_number_phone']}}"
-                            data-rol_name="{{u['rol_name']}}" data-rol_id="{{u['rol_id']}}">
+                            data-rol_name="{{u['rol_name']}}" data-rol_id="{{u['rol_id']}}" data-user_state="{{u['user_state']}}">
                             <i class="ti ti-edit fs-5"></i>
                         </button>
 
@@ -1619,6 +1635,7 @@
                         <small class=" text-opacity-50 fw-semibold text-uppercase mt-1 leyendRole"></small>
                     </div>
                     {{ rbacUserRoleForm.csrf_token() }}
+                    {{ rbacUserRoleForm.userstate(hidden=True) }}
                     <div class="border border-1 border-seccondary shadow-sm rounded bg-light bg-opacity-50">
 
                         <div class="p-3 usernamedata d-flex justify-content-between align-items-center d-none"
@@ -1836,6 +1853,27 @@
                             }}
                         </div>
 
+
+                        <hr class="my-0">
+                        
+                        
+                        <div class="p-3  userstatedata d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold">{{ rbacUserRoleForm.userstate.label() }}.</span>
+                            <div class="text-nowrap  text-truncate">
+                                <span class="text-seccondary" id="userstatetext">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 userstateinput d-none">
+                            <div class="d-flex justify-content-between align-items-center text-muted">
+                                {{ rbacUserRoleForm.userstate.label(class="form-label text-dark-emphasis ") }}
+                                <i class="bi bi-chevron-up userstateinputclose" role="button"></i>
+                            </div>
+                            {{ rbacUserRoleForm.userstate(class="select-responsive form-select ", placeholder="Estado")
+                            }}
+                        </div>
 
                         <hr class="my-0">
 

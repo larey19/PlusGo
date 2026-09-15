@@ -241,6 +241,11 @@ class rbacUserRole(FlaskForm):
         "Rol",
         validators=[DataRequired()]
     )
+    userstate = SelectField(
+        "Estado",
+        choices=[("active", "Activo"),("inactive","Inactivo"), ("change_password","Cambiar Contraseña")],
+        validators=[DataRequired()]
+    )
     btnSubmit = SubmitField(
         "Guardar"
     )

@@ -30,13 +30,13 @@ def getRbac():
         
         cursor.execute("""
                         SELECT u.user_id, u.user_name, u.user_lastname, u.user_user, u.user_number_phone,
-                            r.rol_id, r.rol_name
+                            r.rol_id, r.rol_name, u.user_state
                         FROM t_user u 
                         INNER JOIN t_user_role ur ON ur.user_id = u.user_id
                         INNER JOIN t_role r ON r.rol_id = ur.rol_id
                         """)
         userRole = cursor.fetchall() # contiene todos los usuarios con su rol
-        # print(userRole)
+        print(userRole)
         userRolePermissions = [] #contiene todos los permisos de cada usuario
         for r in userRole:
             cursor.execute(""" 
@@ -65,7 +65,7 @@ def getRbac():
                             END
                             """, (r[5],))
             rolperdata = cursor.fetchall() # contiene todos los permisos de un solo rol
-            print(rolperdata)
+            # print(rolperdata)
             userRolePermissions.append({               
                 "user_id"          : r[0],
                 "user_name"        : r[1],
@@ -74,6 +74,7 @@ def getRbac():
                 "user_number_phone": r[4],
                 "rol_id"           : r[5],
                 "rol_name"         : r[6],
+                "user_state"       : r[7],
                 "rol_permissions": [
                     {
                     "per_id"  : rp[0],
@@ -117,7 +118,7 @@ def createRbac():
             usernumberphone = ((rbacUserRoleForm.usernumberphone.data).strip().replace("+57","")).replace(" ", "") 
             rolid = (rbacUserRoleForm.rolid.data).strip() 
             user_state = "change_password"
-            
+            print(rbacUserRoleForm.data)
             if len(username) >= 50 and len(userlastname) >= 50 and len(useruser) >= 50 and (len(usernumberphone) > 10 or len(usernumberphone) < 10): 
                 session["rbacUserRoleBackup"] = rbacUserRoleForm.data
                 flash("Se excedio el limite de caracteres permitidos", "error") 
@@ -203,6 +204,7 @@ def updateRbac(user_id):
             useruser = (rbacUserRoleForm.useruser.data).strip() 
             usernumberphone = ((rbacUserRoleForm.usernumberphone.data).strip().replace("+57","")).replace(" ", "")
             rolid = (rbacUserRoleForm.rolid.data).strip() 
+            user_state = (rbacUserRoleForm.user_state.data).strip()
             # print(rbacUserRoleForm.data)
             # return
             # BLOCK DE VALIDACIONES
@@ -214,7 +216,11 @@ def updateRbac(user_id):
             if usernumberphone and not phonenumbers.is_valid_number(phonenumbers.parse(usernumberphone, "CO")):
                 flash("Telefono Invalido", "error")  
                 return redirect(session.get('url_back_post')) 
-            
+            # validamos el estado
+            if user_state not in ["active", "inactive"]:
+                flash("Estado invalido", "error")  
+                return redirect(session.get('url_back_post'))
+            # seguro que no se pueda editar el gerente
             cursor = current_app.mysql.connection.cursor()
             cursor.execute("""
                             SELECT r.rol_name, (
@@ -250,8 +256,9 @@ def updateRbac(user_id):
                                 user_lastname = %s, 
                                 user_user = %s, 
                                 user_number_phone = %s 
+                                user_state = %s
                             WHERE user_id = %s
-                            """, (username, userlastname, useruser, usernumberphone, user_id,))
+                            """, (username, userlastname, useruser, usernumberphone, user_state, user_id,))
             
             cursor.execute("""
                             UPDATE t_user_role

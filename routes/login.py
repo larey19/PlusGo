@@ -1,4 +1,4 @@
-from flask  import Blueprint, request, current_app, redirect, render_template, make_response, flash, session, abort
+from flask  import Blueprint, request, current_app, redirect, render_template, make_response, flash, session, abort, url_for
 from werkzeug.security import check_password_hash
 from MySQLdb import OperationalError 
 from dotenv import load_dotenv
@@ -82,8 +82,9 @@ def log():
 @login_bp.route("/logout")
 def logout():
     try:
-        response = make_response(redirect("/login"))
+        response = make_response(redirect(url_for("login.login")))
         response.delete_cookie("token")
+        session.clear()
         flash("Has cerrado sesion", "success")
         return response
     except Exception as e:

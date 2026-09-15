@@ -371,6 +371,7 @@ let userlastname = false;
 let useruser = false;
 let usernumberphone = false;
 let rolid = false;
+let userstate = false;
 
 function validatechanges(inputValue, input, action, value) {
   const modal = document.getElementById(
@@ -408,6 +409,14 @@ function validatechanges(inputValue, input, action, value) {
     } else {
       usernumberphone = true;
     }
+  } else if (input === "userstate") {
+    if (value === inputValue && action == "edit") {
+      userstate = false;
+    } else if (!inputValue) {
+      userstate = false;
+    } else {
+      userstate = true;
+    }
   } else {
     if (value === inputValue && action == "edit") {
       rolid = false;
@@ -424,7 +433,8 @@ function validatechanges(inputValue, input, action, value) {
     userlastname === false &&
     useruser === false &&
     usernumberphone === false &&
-    rolid === false
+    rolid === false &&
+    userstate === false
   ) {
     modal.querySelector(".btnuser").classList.add("d-none");
   } else {
@@ -471,12 +481,19 @@ document.querySelectorAll(".datauser").forEach((user) => {
     const RolInput = modal.querySelector(".rolnameinput");
     const RolInputClose = modal.querySelector(".rolnameinputclose");
 
+    const UserState = modal.querySelector("#userstate");
+    const UserStateText = modal.querySelector("#userstatetext");
+    const UserStateData = modal.querySelector(".userstatedata");
+    const UserStateInput = modal.querySelector(".userstateinput");
+    const UserStateInputClose = modal.querySelector(".userstateinputclose");
+
     const user_id = this.getAttribute("data-user_id");
     const user_name = this.getAttribute("data-user_name");
     const user_lastname = this.getAttribute("data-user_lastname");
     const user_user = this.getAttribute("data-user_user");
     const user_phone_number = this.getAttribute("data-user_phone_number");
     const rol_name = this.getAttribute("data-rol_name");
+    const user_state = this.getAttribute("data-user_state");
     const rol_id = this.getAttribute("data-rol_id");
 
     const leyenda = modal.querySelector(".leyendRole");
@@ -563,7 +580,7 @@ document.querySelectorAll(".datauser").forEach((user) => {
         .replace(" ", "")
         .match(/^(\d{3})(\d{3})(\d{4})$/);
       if (partes) {
-                UserNumberPhone.setCustomValidity("");
+        UserNumberPhone.setCustomValidity("");
         UserNumberPhoneInput.classList.add("d-none");
         UserNumberPhoneData.classList.remove("d-none");
         UserNumberPhoneText.innerHTML = `(${partes[1]}) ${partes[2]}-${partes[3]} <i class="bi bi-chevron-right"></i>`;
@@ -583,6 +600,7 @@ document.querySelectorAll(".datauser").forEach((user) => {
       phone: true,
       phoneRegionCode: "CO",
     });
+
     // nombre del rol
     icon.classList.remove(
       "text-primary-emphasis",
@@ -615,7 +633,7 @@ document.querySelectorAll(".datauser").forEach((user) => {
     }
 
     if (rol_name.toLowerCase() != "gerente") {
-      Rol.remove("Gerente");
+      Rol.querySelector(`option[value='Gerente']`)?.remove();
       RolText.innerHTML = `${rol_name} <i class="bi bi-chevron-right"></i>`;
       RolData.role = "button";
       RolData.onclick = () => {
@@ -674,8 +692,34 @@ document.querySelectorAll(".datauser").forEach((user) => {
       };
     } else {
       RolText.innerHTML = `${rol_name}`;
+      if (!Rol.querySelector(`option[value='Gerente']`)) {
+        Rol.add(new Option("Gerente", rol_id, false, true));
+      }
+    }
 
-      Rol.add(new Option("Gerente", rol_id, false, true));
+    // user state
+    if (user_state == "change_password") {
+      UserStateText.innerHTML = `Cambiar contraseña`;
+      if (!UserState.querySelector(`option[value='change_password']`)) {
+        UserState.add(new Option("Cambiar contraseña", "change_password", false, true));
+      }
+    } else {
+      UserState.querySelector(`option[value='change_password']`)?.remove();
+      UserStateText.innerHTML = `${user_state == "active" ? "Activo" : "Inactivo"} <i class="bi bi-chevron-right"></i>`;
+
+      UserState.value = user_state;
+
+      UserStateData.onclick = () => {
+        UserStateData.classList.add("d-none");
+        UserStateInput.classList.remove("d-none");
+      };
+
+      UserStateInputClose.onclick = () => {
+        UserStateInput.classList.add("d-none");
+        UserStateData.classList.remove("d-none");
+        UserStateText.innerHTML = `${UserState.value == "active" ? "Activo" : "Inactivo"} <i class="bi bi-chevron-right"></i>`;
+        validatechanges(UserState.value, "userstate", "edit", user_state);
+      };
     }
 
     modal.querySelector(".validateUser").onclick = function (e) {
@@ -701,6 +745,29 @@ document.querySelectorAll(".datauser").forEach((user) => {
         });
       } else {
         bootstrap.Modal.getInstance(modal).hide();
+        // ocultamos nombre
+        UserNameInput.classList.add("d-none");
+        UserNameData.classList.remove("d-none");
+
+        // ocultamos apellido
+        UserLastnameInput.classList.add("d-none");
+        UserLastnameData.classList.remove("d-none");
+
+        // ocultamos user
+        UserUserInput.classList.add("d-none");
+        UserUserData.classList.remove("d-none");
+
+        // ocultmoa numero de tel
+        UserNumberPhoneInput.classList.add("d-none");
+        UserNumberPhoneData.classList.remove("d-none");
+
+        // ocultamos rol
+        RolInput.classList.add("d-none");
+        RolData.classList.remove("d-none");
+
+        // ocultamos state
+        UserStateInput.classList.add("d-none");
+        UserStateData.classList.remove("d-none");
       }
     };
   });
