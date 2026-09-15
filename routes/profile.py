@@ -1,5 +1,5 @@
 from flask import Blueprint, redirect, request, flash, render_template, current_app, session, jsonify
-from .utils.auth import token
+from .utils.auth import permission, token
 from MySQLdb import OperationalError
 from .utils.wtf import proForm
 import uuid
@@ -8,6 +8,7 @@ profile_bp = Blueprint("profile", __name__, template_folder="../templates")
 
 @profile_bp.route("/profile/<acc_id>")
 @token
+@permission("profiles.view")
 def getProfile(acc_id):
     if request.referrer and '/profile' not in request.referrer:
         session["url_back_get"] = request.referrer 
@@ -33,6 +34,7 @@ def getProfile(acc_id):
 
 @profile_bp.route("/profile", methods = ["POST"])
 @token
+@permission("profiles.create")
 def crtProfile():
     if request.referrer and '/profile' in request.referrer:
         session["url_back_post"] = request.referrer 
@@ -99,6 +101,7 @@ def crtProfile():
 
 @profile_bp.route("/profile/<pro_id>", methods = ["POST"])
 @token
+@permission("profiles.edit")
 def putProfile(pro_id):
     if request.referrer and '/profile' in request.referrer:
         session["url_back_post"] = request.referrer 
@@ -154,6 +157,8 @@ def putProfile(pro_id):
         return render_template("500.html")
 
 @profile_bp.route("/profile/delete/<pro_id>")
+@token
+@permission("profiles.delete")
 def dltProfile(pro_id):
     if request.referrer and '/profile' in request.referrer:
         session["url_back_delete"] = request.referrer 

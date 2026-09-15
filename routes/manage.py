@@ -1,6 +1,6 @@
 from flask import Blueprint, current_app, redirect, request, flash, url_for, render_template, session
 from MySQLdb import OperationalError
-from .utils.auth import token
+from .utils.auth import permission, token
 from .utils.wtf import mngForm
 import uuid
 from email_validator import validate_email,  EmailNotValidError
@@ -9,6 +9,7 @@ manage_bp = Blueprint("manage", __name__, template_folder="../templates")
 
 @manage_bp.route("/manage")
 @token
+@permission("management.view")
 def getManage():
     try:
         mngBackup = session.pop("mngBackup", {})
@@ -44,6 +45,8 @@ def getManage():
         return render_template("500.html")
 
 @manage_bp.route("/manage", methods= ["POST"])
+@token
+@permission("management.create")
 def crtManage():                  
     try:
         form = mngForm()
@@ -98,6 +101,8 @@ def crtManage():
         return render_template("500.html")
 
 @manage_bp.route("/manage/<mng_id>", methods= ["POST"])
+@token
+@permission("management.edit")
 def putManage(mng_id):
     try:
         form = mngForm()
@@ -146,6 +151,8 @@ def putManage(mng_id):
         return render_template("500.html")
 
 @manage_bp.route("/manage/password/<mng_id>", methods= ["POST"])
+@token
+@permission("management.edit")
 def putPassword(mng_id):
     try:
         form = mngForm()
@@ -171,6 +178,8 @@ def putPassword(mng_id):
         return render_template("500.html")
 
 @manage_bp.route("/manage/state/<mng_state>/<mng_id>")
+@token
+@permission("management.state")
 def putState(mng_state, mng_id):
     try:
         mng_state = 'active' if mng_state == 'inactive' else 'inactive'

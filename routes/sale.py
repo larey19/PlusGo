@@ -1,5 +1,5 @@
 from flask import Blueprint, redirect, request, flash, render_template, current_app, session, abort
-from .utils.auth import token
+from .utils.auth import token, permission
 from MySQLdb import OperationalError, IntegrityError
 from MySQLdb.cursors import DictCursor 
 from .utils.wtf import saleForm
@@ -44,6 +44,7 @@ def lcl_Cst_Pla():
  
 @sale_bp.route("/sale")
 @token
+@permission("sales.view")
 def sale():
     try:
         form = saleForm()
@@ -55,6 +56,7 @@ def sale():
 
 @sale_bp.route("/sale/<pla_id>")
 @token
+@permission("sales.view")
 def getSale(pla_id):
     try:
         # si viene de un error del CREAR convierte la fecha a formato date 
@@ -218,6 +220,7 @@ def getSale(pla_id):
 
 @sale_bp.route("/sale", methods = ["POST"])
 @token
+@permission("sales.create")
 def crtSale():
     # GUARDAMOS LA URL 
     if request.referrer and '/sale' in request.referrer:
@@ -315,6 +318,7 @@ def crtSale():
 
 @sale_bp.route("/sale/<sal_id>", methods = ["POST"])
 @token
+@permission("sales.edit")
 def putSale(sal_id):
     # GUARDAMOS URL
     if request.referrer and '/sale' in request.referrer:
@@ -408,6 +412,7 @@ def putSale(sal_id):
 
 @sale_bp.route("/sale/state/<sal_id>")
 @token
+@permission("sales.delete")
 def putState(sal_id):
     if request.referrer and '/sale' in request.referrer:
         session["url_back_post"] = request.referrer

@@ -2,13 +2,14 @@ from flask import Blueprint, redirect, request, flash, render_template, current_
 from MySQLdb import OperationalError
 import phonenumbers
 from phonenumbers import NumberParseException
-from .utils.auth import token
+from .utils.auth import permission, token
 from .utils.wtf import cstForm
 import uuid
 customer_bp = Blueprint("customer", __name__, template_folder= "../templates")
  
 @customer_bp.route("/customer")
 @token
+@permission("customers.view")
 def getCustomer():
     try:
         cstBackup = session.pop("cstBackup", {})
@@ -27,6 +28,7 @@ def getCustomer():
 
 @customer_bp.route("/customer", methods = ["POST"])
 @token
+@permission("customers.create")
 def crtCustomer():
     if request.referrer and '/customer' not in request.referrer:
         session["url_back_post"] = request.referrer 
@@ -68,6 +70,7 @@ def crtCustomer():
 
 @customer_bp.route("/customer/<cst_id>", methods = ["POST"])
 @token
+@permission("customers.edit")
 def putCustomer(cst_id):
     if request.referrer and '/customer' not in request.referrer:
         session["url_back_post"] = request.referrer 
