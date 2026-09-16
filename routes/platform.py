@@ -85,14 +85,20 @@ def putPlatform(pla_id):
                 return redirect("/platform")
             
             cursor.execute("""
-                            SELECT count(p.pro_profile)
-                            FROM t_account a
-                            INNER JOIN t_profile p ON p.acc_id = a.acc_id 
-                            WHERE a.pla_id = %s""", 
+                            SELECT acc_id
+                            FROM t_account
+                            WHERE pla_id = %s""", 
                             (pla_id,)
                         )
-            for p in cursor.fetchall()[0]:
-                if plaprofiles < p:
+            accounts = cursor.fetchall()
+            for p in accounts:
+                cursor.execute("""
+                    SELECT COUNT(*)
+                        FROM t_profile
+                    WHERE acc_id = %s""", 
+                    (p[0],)
+                )
+                if cursor.fetchone()[0] > plaprofiles:
                     flash("Una o mas cuentas superan el limite de perfiles permitidos", "error")  
                     return redirect("/platform")
             

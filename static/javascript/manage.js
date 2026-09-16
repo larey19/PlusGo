@@ -31,7 +31,10 @@ function validatechanges(inputValue, input, action, value) {
   } else if (input === "mngfrom") {
     if (action == "create" && !inputValue) {
       mngfrom = false;
-    } else if (action == "update" && JSON.stringify(inputValue) === JSON.stringify(value.split(", "))) {
+    } else if (
+      action == "update" &&
+      JSON.stringify(inputValue) === JSON.stringify(value.split(", "))
+    ) {
       mngfrom = false;
     } else {
       mngfrom = true;
@@ -39,7 +42,10 @@ function validatechanges(inputValue, input, action, value) {
   } else {
     if (action == "create" && !inputValue) {
       mngpassword = false;
-    } else if (action == "update" || action == "updatePass" && inputValue === value) {
+    } else if (
+      action == "update" ||
+      (action == "updatePass" && inputValue === value)
+    ) {
       mngpassword = false;
     } else {
       mngpassword = true;
@@ -52,13 +58,13 @@ function validatechanges(inputValue, input, action, value) {
   // console.log("mngfrom:", mngfrom);
   // console.log("input:", inputValue, "val:", value);
   // console.log(modal.querySelector(".modal-footer"));
-  
+
   if (
     mngemail === false &&
     mngimap === false &&
     mngpassword === false &&
     mngfrom === false
-  ) {    
+  ) {
     modal.querySelector(".modal-footer").classList.add("d-none");
   } else {
     modal.querySelector(".modal-footer").classList.remove("d-none");
@@ -244,6 +250,7 @@ document.querySelectorAll(".dataManage").forEach((button) => {
 });
 
 function confirmManage(action, form, account) {
+  const btn = form.querySelector("#btnSubmit");
   // console.log(account);
   Swal.fire({
     title: ` ${action === "create" ? "¿Registar cuenta?" : action === "update" ? "¿Actualizar cuenta?" : action === "password" ? "¿Actualizar Contraseña de App?" : "¿Cambiar estado de la cuenta?"}`,
@@ -260,10 +267,18 @@ function confirmManage(action, form, account) {
     cancelButtonText: "Cancelar",
   }).then((result) => {
     if (result.isConfirmed) {
+      let dots = 0;
+      btn.loadingInterval = setInterval(() => {
+        dots = (dots + 1) % 4;
+        btn.value = "Cargando" + ".".repeat(dots);
+      }, 400);
       action != "state"
         ? form.submit()
         : (window.location.href =
-            "/manage/state/" + account['state'] + "/" + account["id"]);
+            "/manage/state/" + account["state"] + "/" + account["id"]);
+    } else {
+      clearInterval(btn.loadingInterval);
+      btn.value = "Guardar";
     }
   });
 }

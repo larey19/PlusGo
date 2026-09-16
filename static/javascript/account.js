@@ -305,6 +305,7 @@ document.querySelectorAll(".accEdit").forEach((button) => {
 });
 
 function confirmAccount(action, form, id) {
+  const btn = form.querySelector("#btnSubmit");
   Swal.fire({
     title: ` ${action === "register" ? "¿Registar Cuenta?" : action === "update" ? "¿Actualizar Cuenta?" : "¿Cambiar estado de la cuenta?"}`,
     icon: action === "state" ? "warning" : "info",
@@ -318,9 +319,17 @@ function confirmAccount(action, form, id) {
     cancelButtonText: "Cancelar",
   }).then((result) => {
     if (result.isConfirmed) {
+      let dots = 0;
+      btn.loadingInterval = setInterval(() => {
+        dots = (dots + 1) % 4;
+        btn.value = "Cargando" + ".".repeat(dots);
+      }, 400);
       action != "state"
         ? form.submit()
         : (window.location.href = "/account/state/" + id);
+    } else {
+      clearInterval(btn.loadingInterval)
+      btn.value = "Guardar";
     }
   });
 }

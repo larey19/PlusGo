@@ -82,7 +82,9 @@ $(document).ready(function () {
     },
   });
 });
+// ==================================================== // ==================================================== 
 // ==================================================== ROLES
+// ==================================================== // ==================================================== 
 // MODAL DE PERMISOS DE ROL
 function rolpermissions(button) {
   const rol_name = button.getAttribute("data-rol_name");
@@ -98,7 +100,27 @@ function rolpermissions(button) {
     }
   });
 }
-// MODAL DE REGISTRO DE ROL
+
+// ALERTAS DE ROLES
+function rbac() {
+  Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    // didOpen: (toast) => {
+    //   toast.onmouseenter = Swal.stopTimer;
+    //   toast.onmouseleave = Swal.resumeTimer;
+    // },
+  }).fire({
+    icon: "info",
+    // title:  action == "copy" ? "Venta Duplicada" : "Venta Borrada",
+    text: "No hay permisos seleccionados",
+  });
+}
+
+//============================== MODAL DE REGISTRO DE ROL
 document.querySelectorAll(".createRolPermissions").forEach((button) => {
   button.addEventListener("click", function () {
     // console.log(this)
@@ -144,6 +166,7 @@ document.querySelectorAll(".createRolPermissions").forEach((button) => {
     });
     submitForm.onclick = function (event) {
       event.preventDefault();
+      const btn = form.querySelector("#btnSubmit");
       if (form && form.checkValidity()) {
         form.querySelectorAll(".form-check-input").forEach((checkbox) => {
           if (checkbox.checked) {
@@ -160,21 +183,25 @@ document.querySelectorAll(".createRolPermissions").forEach((button) => {
             cancelButtonText: "Cancelar",
           }).then((result) => {
             if (result.isConfirmed) {
+              let dots = 0;
+              btn.loadingInterval = setInterval(() => {
+                dots = (dots + 1) % 4;
+                btn.value = "Cargando" + ".".repeat(dots);
+              }, 400);
               form.submit();
+            } else {
+              clearInterval(btn.loadingInterval);
+              btn.value = "Guardar";
             }
           });
         } else {
-          flashy("No hay permisos seleccionados", {
-            Animation: "bounce",
-            closable: false,
-            icon: `<i class="bi bi-exclamation-triangle-fill"></i>`,
-          });
+          rbac();
         }
       }
     };
   });
 });
-// MODAL DE EDICION DE ROL
+//============================== MODAL DE EDICION DE ROL
 document.querySelectorAll(".datarolper").forEach((rp) => {
   rp.addEventListener("click", function () {
     let permission = []; // permisos seleccionados
@@ -229,7 +256,7 @@ document.querySelectorAll(".datarolper").forEach((rp) => {
     });
 
     submitForm.onclick = function (event) {
-      console.log(this);
+      const btn = form.querySelector("#btnSubmit");
 
       event.preventDefault();
       if (form && form.checkValidity()) {
@@ -243,15 +270,19 @@ document.querySelectorAll(".datarolper").forEach((rp) => {
             cancelButtonText: "Cancelar",
           }).then((result) => {
             if (result.isConfirmed) {
+              let dots = 0;
+              btn.loadingInterval = setInterval(() => {
+                dots = (dots + 1) % 4;
+                btn.value = "Cargando" + ".".repeat(dots);
+              }, 400);
               form.submit();
+            } else {
+              clearInterval(btn.loadingInterval);
+              btn.value = "Guardar";
             }
           });
         } else {
-          flashy("No hay permisos seleccionados", {
-            Animation: "bounce",
-            closable: false,
-            icon: `<i class="bi bi-exclamation-triangle-fill"></i>`,
-          });
+          rbac();
         }
       }
     };
@@ -338,14 +369,15 @@ document.querySelectorAll(".datarolper").forEach((rp) => {
     }
   });
 });
-
-//=========================================== CONFIRMACIONES
-
+// ==================================================== // ==================================================== 
+//=========================================== USUARIO
+// ==================================================== // ==================================================== 
 function validateUser(button, event, action, user_id) {
   event.preventDefault();
   form = button.closest(
     action === "create" ? "#formUserCreate" : "#formuserupdate",
   );
+  const btn = form.querySelector("#btnSubmit");
   form.action = action === "create" ? `/rbac/user` : `/rbac/user/${user_id}`;
   if (form && form.checkValidity()) {
     Swal.fire({
@@ -358,7 +390,15 @@ function validateUser(button, event, action, user_id) {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
+        let dots = 0;
+        btn.loadingInterval = setInterval(() => {
+          dots = (dots + 1) % 4;
+          btn.value = "Cargando" + ".".repeat(dots);
+        }, 400);
         form.submit();
+      } else {
+        clearInterval(btn.loadingInterval);
+        btn.value = "Guardar";
       }
     });
   } else {
@@ -698,17 +738,19 @@ document.querySelectorAll(".datauser").forEach((user) => {
     }
 
     // user state
+    UserState.value = user_state;
     if (user_state == "change_password") {
       UserStateText.innerHTML = `Cambiar contraseña`;
       if (!UserState.querySelector(`option[value='change_password']`)) {
-        UserState.add(new Option("Cambiar contraseña", "change_password", false, true));
+        UserState.add(
+          new Option("Cambiar contraseña", "change_password", false, true),
+        );
       }
+    } else if (rol_name.toLowerCase() == "gerente") {
+      UserStateText.innerHTML = `Activo`;
     } else {
       UserState.querySelector(`option[value='change_password']`)?.remove();
       UserStateText.innerHTML = `${user_state == "active" ? "Activo" : "Inactivo"} <i class="bi bi-chevron-right"></i>`;
-
-      UserState.value = user_state;
-
       UserStateData.onclick = () => {
         UserStateData.classList.add("d-none");
         UserStateInput.classList.remove("d-none");
@@ -979,9 +1021,7 @@ function userrolpermissions(button) {
     }
   });
 }
-
 // COMPLEMENTOS USUARIO
-
 $(".modal").on("shown.bs.modal", function () {
   $(this)
     .find(".select-responsive")

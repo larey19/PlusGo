@@ -43,7 +43,7 @@
                 {% for p in platform %}
                 <tr>
                     <td class="fw-semibold text-dark-emphasis text-nowrap">
-                        <a href="{{url_for('account.getAccount', pla_id = p[0])}}"
+                        <a href="{{url_for('account.getAccount', pla_id = p[0]) if 'accounts.view' in session['permissionData'] else '#'}}"
                             class="text-decoration-none  text-dark-emphasis">
                             {{ p[1] }}
                         </a>

@@ -204,9 +204,7 @@ def updateRbac(user_id):
             useruser = (rbacUserRoleForm.useruser.data).strip() 
             usernumberphone = ((rbacUserRoleForm.usernumberphone.data).strip().replace("+57","")).replace(" ", "")
             rolid = (rbacUserRoleForm.rolid.data).strip() 
-            user_state = (rbacUserRoleForm.user_state.data).strip()
-            # print(rbacUserRoleForm.data)
-            # return
+            user_state = (rbacUserRoleForm.userstate.data).strip()
             # BLOCK DE VALIDACIONES
             if len(username) >= 50 and len(userlastname) >= 50 and len(useruser) >= 50 and (len(usernumberphone) > 10 or len(usernumberphone) < 10): 
                 flash("Se excedio el limite de caracteres permitidos", "error") 
@@ -255,7 +253,7 @@ def updateRbac(user_id):
                             SET user_name = %s, 
                                 user_lastname = %s, 
                                 user_user = %s, 
-                                user_number_phone = %s 
+                                user_number_phone = %s, 
                                 user_state = %s
                             WHERE user_id = %s
                             """, (username, userlastname, useruser, usernumberphone, user_state, user_id,))

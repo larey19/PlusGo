@@ -176,6 +176,7 @@ function validatechanges(inputValue, input, action, value) {
 
 // CONFIMACION
 function confirmPlatform(action, form) {
+  const btn = form.querySelector("#btnSubmit");
   Swal.fire({
     title: ` ${action === "register" ? "¿Registar Plataforma?" : "¿Actualizar Plataforma?"}`,
     icon: "info",
@@ -185,7 +186,15 @@ function confirmPlatform(action, form) {
     cancelButtonText: "Cancelar",
   }).then((result) => {
     if (result.isConfirmed) {
+      let dots = 0;
+      btn.loadingInterval = setInterval(() => {
+        dots = (dots + 1) % 4;
+        btn.value = "Cargando" + ".".repeat(dots);
+      }, 400);
       form.submit();
+    } else {
+      clearInterval(btn.loadingInterval);
+      btn.value = "Guardar";
     }
   });
 }

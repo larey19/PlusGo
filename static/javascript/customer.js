@@ -102,7 +102,7 @@ document.querySelectorAll(".dataCustomer").forEach((button) => {
         }).then((result) => {
           if (!result.isConfirmed) {
             bootstrap.Modal.getInstance(modal).hide();
-            modal.querySelector(".modal-footer").classList.add("d-none")
+            modal.querySelector(".modal-footer").classList.add("d-none");
           }
         });
       } else {
@@ -158,6 +158,7 @@ document.querySelectorAll(".cstCrt").forEach((button) => {
 });
 
 function confirmCustomer(action, form, id) {
+  const btn = form.querySelector("#btnSubmit");
   Swal.fire({
     title: `${action === "create" ? "¿Registar Cliente?" : "¿Actualizar Cliente?"}`,
     icon: "info",
@@ -167,7 +168,15 @@ function confirmCustomer(action, form, id) {
     cancelButtonText: "Cancelar",
   }).then((result) => {
     if (result.isConfirmed) {
+      let dots = 0;
+      btn.loadingInterval = setInterval(() => {
+        dots = (dots + 1) % 4;
+        btn.value = "Cargando" + ".".repeat(dots);
+      }, 400);
       form.submit();
+    } else {
+      clearInterval(btn.loadingInterval);
+      btn.value = "Guardar";
     }
   });
 }

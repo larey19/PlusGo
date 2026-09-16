@@ -1,18 +1,20 @@
-// ========== ANIMACION CARGA DE PAGINA
+// ========== PWA
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/static/pwa/sw.js");
 }
-
-document.querySelectorAll(".formlogin").forEach((form) => {
-  form.addEventListener("input", function (x) {
+document.querySelectorAll("#btnSubmit").forEach((btn) => {
+  btn.addEventListener("click", function() {
+    const btn_value_old = this.value;
+    const form = this.closest("form");
+    console.log(this, form, btn_value_old);
     if (form && form.checkValidity()) {
-      document.querySelectorAll(".btnsubmit").forEach((btn) => {
-        btn.classList.remove("disabled");
-      });
+      let dots = 0;
+      setInterval(() => {
+        dots = (dots + 1) % 4;
+        this.value = "Cargando" + ".".repeat(dots);
+      }, 400);
     } else {
-      document.querySelectorAll(".btnsubmit").forEach((btn) => {
-        btn.classList.add("disabled");
-      });
+      this.value = btn_value_old;
     }
-  });
+  })
 });

@@ -16,6 +16,7 @@ function confirmLogout() {
 //=========================================== CONFIRMACIONES
 
 function validatePassword(button, event, user_id) {
+  const btn = form.querySelector("#btnSubmit");
   event.preventDefault();
   form = button.closest("#formpassword");
   const passnew = form.querySelector("#userpasswordnew");
@@ -42,7 +43,15 @@ function validatePassword(button, event, user_id) {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
+        let dots = 0;
+        btn.loadingInterval = setInterval(() => {
+          dots = (dots + 1) % 4;
+          btn.value = "Cargando" + ".".repeat(dots);
+        }, 400);
         form.submit();
+      } else {
+        clearInterval(btn.loadingInterval);
+        btn.value = "Guardar";
       }
     });
   } else {

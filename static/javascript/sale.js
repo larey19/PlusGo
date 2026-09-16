@@ -122,7 +122,8 @@ document.querySelectorAll("#copySale").forEach((sl) => {
       });
       salstate.value = sal_state;
       propin.value = pro_pin_profile;
-      propin.disabled = false;
+      buttonpin(buttonPin, propin, modal);
+
       saldescription.textContent = sal_description;
       copySale("copy");
     } else {
@@ -138,9 +139,9 @@ document.querySelectorAll("#copySale").forEach((sl) => {
       saldescription.value = "";
       salstate.value = "";
       propin.value = "";
-      propin.disabled = true;
       clrDescription.classList.add("d-none");
       copySale("cut");
+      buttonpin(buttonPin, propin, modal);
     }
   };
 });
@@ -174,7 +175,9 @@ document.querySelectorAll(".dataSaleDetails").forEach((sale) => {
 
     const proProfile = document.getElementById("pro_profile");
     const proPinProfile = document.getElementById("pro_pin_profile");
-    const contentProPinProfile = document.getElementById("content-pro_pin_profile");
+    const contentProPinProfile = document.getElementById(
+      "content-pro_pin_profile",
+    );
 
     const dataAcc = document.getElementById("dataAcc");
     const copyButton = document.getElementById("copyButton");
@@ -262,7 +265,7 @@ document.querySelectorAll(".dataSaleCreate").forEach((sale) => {
 
     proid.value = pro_id;
 
-    if (pro_pin_profile && !propin.value) {
+    if (pro_pin_profile && propin.disabled) {
       propin.value = pro_pin_profile;
     }
 
@@ -512,6 +515,7 @@ document.querySelectorAll(".dataSaleUpdate").forEach((sale) => {
 
 // CONFIRMACIONES DE ACCIONES
 function confirmSale(action, form, sale) {
+  const btn = form.querySelector("#btnSubmit");
   console.log(sale);
   Swal.fire({
     title: ` ${action === "create" ? "¿Registar venta?" : action === "update" ? "¿Actualizar venta?" : "¿Eliminar la venta?"}`,
@@ -526,9 +530,17 @@ function confirmSale(action, form, sale) {
     cancelButtonText: "Cancelar",
   }).then((result) => {
     if (result.isConfirmed) {
+      let dots = 0;
+      btn.loadingInterval = setInterval(() => {
+        dots = (dots + 1) % 4;
+        btn.value = "Cargando" + ".".repeat(dots);
+      }, 400);
       action != "delete"
         ? form.submit()
         : (window.location.href = "/sale/state/" + sale["id"]);
+    } else {
+      clearInterval(btn.loadingInterval);
+      btn.value = "Guardar";
     }
   });
 }
@@ -687,17 +699,12 @@ $(document).on("shown.bs.modal", ".modal", function () {
 
 // input de pin del perfil modales registro y edicion
 buttonpin = (icon, input, modal) => {
-  modal.addEventListener("hide.bs.modal", () => {
-    icon.classList.replace("ti-pencil-off", "ti-pencil");
-    input.setAttribute("disabled", true);
-  });
-
   if (icon.classList.contains("ti-pencil")) {
     icon.classList.replace("ti-pencil", "ti-pencil-off");
-    input.removeAttribute("disabled");
+    input.disabled = false;
   } else {
     icon.classList.replace("ti-pencil-off", "ti-pencil");
-    input.setAttribute("disabled", true);
+    input.disabled = true;
   }
 };
 

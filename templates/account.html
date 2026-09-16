@@ -47,7 +47,7 @@
                 {% for acc in account %}
                 <tr>
                     <td class="text-nowrap fw-semibold text-dark-emphasis text-nowrap">
-                        <a href="{{url_for('profile.getProfile', acc_id = acc[0])}}"
+                        <a href="{{ url_for('profile.getProfile', acc_id = acc[0]) if 'profiles.view' in session['permissionData'] else '#'}}"
                             class="text-decoration-none text-dark-emphasis">
                             {{ acc[1] }}
                         </a>
