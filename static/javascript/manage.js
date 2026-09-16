@@ -250,7 +250,6 @@ document.querySelectorAll(".dataManage").forEach((button) => {
 });
 
 function confirmManage(action, form, account) {
-  const btn = form.querySelector("#btnSubmit");
   // console.log(account);
   Swal.fire({
     title: ` ${action === "create" ? "¿Registar cuenta?" : action === "update" ? "¿Actualizar cuenta?" : action === "password" ? "¿Actualizar Contraseña de App?" : "¿Cambiar estado de la cuenta?"}`,
@@ -267,15 +266,17 @@ function confirmManage(action, form, account) {
     cancelButtonText: "Cancelar",
   }).then((result) => {
     if (result.isConfirmed) {
-      let dots = 0;
-      btn.loadingInterval = setInterval(() => {
-        dots = (dots + 1) % 4;
-        btn.value = "Cargando" + ".".repeat(dots);
-      }, 400);
-      action != "state"
-        ? form.submit()
-        : (window.location.href =
-            "/manage/state/" + account["state"] + "/" + account["id"]);
+      if (action == "state") {
+        window.location.href = "/manage/state/" + account["state"] + "/" + account["id"];
+      } else {
+        const btn = form.querySelector("#btnSubmit");
+        let dots = 0;
+        btn.loadingInterval = setInterval(() => {
+          dots = (dots + 1) % 4;
+          btn.value = "Cargando" + ".".repeat(dots);
+        }, 400);
+        form.submit();
+      }
     } else {
       clearInterval(btn.loadingInterval);
       btn.value = "Guardar";

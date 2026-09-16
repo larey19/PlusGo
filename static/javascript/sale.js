@@ -515,7 +515,6 @@ document.querySelectorAll(".dataSaleUpdate").forEach((sale) => {
 
 // CONFIRMACIONES DE ACCIONES
 function confirmSale(action, form, sale) {
-  const btn = form.querySelector("#btnSubmit");
   console.log(sale);
   Swal.fire({
     title: ` ${action === "create" ? "¿Registar venta?" : action === "update" ? "¿Actualizar venta?" : "¿Eliminar la venta?"}`,
@@ -530,14 +529,17 @@ function confirmSale(action, form, sale) {
     cancelButtonText: "Cancelar",
   }).then((result) => {
     if (result.isConfirmed) {
-      let dots = 0;
-      btn.loadingInterval = setInterval(() => {
-        dots = (dots + 1) % 4;
-        btn.value = "Cargando" + ".".repeat(dots);
-      }, 400);
-      action != "delete"
-        ? form.submit()
-        : (window.location.href = "/sale/state/" + sale["id"]);
+      if (action == "delete") {
+        window.location.href = "/sale/state/" + sale["id"];
+      } else {
+        const btn = form.querySelector("#btnSubmit");
+        let dots = 0;
+        btn.loadingInterval = setInterval(() => {
+          dots = (dots + 1) % 4;
+          btn.value = "Cargando" + ".".repeat(dots);
+        }, 400);
+        form.submit();
+      }
     } else {
       clearInterval(btn.loadingInterval);
       btn.value = "Guardar";
