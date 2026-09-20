@@ -27,7 +27,7 @@ def token(f):
                             WHERE user_id = %s
                             """, (data['user_id'],))
             permissionData = [x[0] for x in cursor.fetchall()]
-            # print(permissionData)
+            print(permissionData)
             session['permissionData'] = permissionData
         except Exception as e:
             response = make_response(redirect("/login"))
@@ -55,7 +55,7 @@ def permission(permission_required):
             if permission_required not in session.get("permissionData"):
                 print("SIN PERMISO")
                 return abort(403)     
-            # print("CON PERMISO", permission_required, g.permissions)
+            print("CON PERMISO", permission_required, session.get("permissionData"))
             return f(*args, **kwargs) 
         return decorated
     return decorater
