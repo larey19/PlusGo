@@ -71,14 +71,16 @@ function launchConfetti() {
 }
 document.querySelectorAll("#btnSubmit").forEach((btn) => {
   btn.onclick = (event) => {
-    // event.preventDefault()
+    event.preventDefault();
     const form = btn.closest("form");
     if (form && form.checkValidity()) {
       requestAnimationFrame(() => {
         btn.classList.add("disabled");
         btn.closest(".content-btn-submit").classList.add("loading");
-      })
-      // form.submit()
+        requestAnimationFrame(() => {
+          form.submit();
+        });
+      });
     }
   };
 });
