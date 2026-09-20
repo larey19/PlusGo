@@ -1,4 +1,4 @@
-from flask import request, redirect, make_response, current_app, g, abort, session
+from flask import request, redirect, make_response, current_app, abort, session
 from dotenv import load_dotenv
 from functools import wraps
 import jwt
@@ -29,9 +29,6 @@ def token(f):
             permissionData = [x[0] for x in cursor.fetchall()]
             # print(permissionData)
             session['permissionData'] = permissionData
-            g.user_id      = data['user_id']
-            g.permissions  = permissionData
-            # print(g.permissions)
         except Exception as e:
             response = make_response(redirect("/login"))
             response.delete_cookie("token")
@@ -55,7 +52,7 @@ def permission(permission_required):
     def decorater(f):
         @wraps(f)
         def decorated(*args, **kwargs): 
-            if permission_required not in g.permissions:
+            if permission_required not in session.get("permissionData"):
                 print("SIN PERMISO")
                 return abort(403)     
             # print("CON PERMISO", permission_required, g.permissions)
