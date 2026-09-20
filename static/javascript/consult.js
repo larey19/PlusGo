@@ -70,17 +70,27 @@ function launchConfetti() {
   });
 }
 document.querySelectorAll("#btnSubmit").forEach((btn) => {
-  btn.onclick = (event) => {
-    event.preventDefault();
+  btn.onclick = (e) => {
     const form = btn.closest("form");
-    if (form && form.checkValidity()) {
-      requestAnimationFrame(() => {
-        btn.classList.add("disabled");
-        btn.closest(".content-btn-submit").classList.add("loading");
-      });
+    if (!form || !form.checkValidity()) return;
+
+    e.preventDefault();
+
+    // evita doble envío
+    if (btn.classList.contains("disabled")) return;
+
+    btn.classList.add("disabled");
+    btn.closest(".content-btn-submit").classList.add("loading");
+
+    // esperar a que el navegador pinte el estado de carga
+    requestAnimationFrame(() => {
       setTimeout(() => {
-        form.submit();
+        if (form.requestSubmit) {
+          form.requestSubmit();
+        } else {
+          form.submit();
+        }
       }, 50);
-    }
+    });
   };
 });
