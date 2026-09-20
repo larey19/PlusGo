@@ -184,15 +184,15 @@ body {
 
 .btn-submit-loading {
   inset: 0;
-  color: transparent;
   position: absolute;
-  pointer-events: none;
+  color: white;
   margin: auto;
+  display: none;
 }
 .content-btn-submit.loading #btnSubmit {
   color: transparent;
 }
 
 .content-btn-submit.loading .btn-submit-loading {
-  color: white;
+  display: block;
 }
