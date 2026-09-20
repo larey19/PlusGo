@@ -70,27 +70,11 @@ function launchConfetti() {
   });
 }
 document.querySelectorAll("#btnSubmit").forEach((btn) => {
-  btn.onclick = (e) => {
+  btn.onclick = () => {
     const form = btn.closest("form");
-    if (!form || !form.checkValidity()) return;
-
-    e.preventDefault();
-
-    // evita doble envío
-    if (btn.classList.contains("disabled")) return;
-
-    btn.classList.add("disabled");
-    btn.closest(".content-btn-submit").classList.add("loading");
-
-    // esperar a que el navegador pinte el estado de carga
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        if (form.requestSubmit) {
-          form.requestSubmit();
-        } else {
-          form.submit();
-        }
-      }, 2000);
-    });
+    if (form && form.checkValidity()) {
+      btn.classList.add("disabled");
+      btn.closest(".content-btn-submit").classList.add("loading");
+    }
   };
 });

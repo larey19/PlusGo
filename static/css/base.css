@@ -182,43 +182,17 @@ body {
   width: 100%;
 }
 
-.btn-loading-text {
+.btn-submit-loading {
   inset: 0;
-  color: white;
-  display: none;
+  color: transparent;
   position: absolute;
-  align-items: center;
-  justify-content: center;
   pointer-events: none;
+  margin: auto;
 }
-
-.btn-loading-text::after {
-  content: "";
-  animation: btn_loading 1.2s steps(1) infinite;
-}
-
-@keyframes btn_loading {
-  0% {
-    content: "Cargando";
-  }
-
-  25% {
-    content: "Cargando.";
-  }
-
-  50% {
-    content: "Cargando..";
-  }
-
-  75% {
-    content: "Cargando...";
-  }
-}
-
 .content-btn-submit.loading #btnSubmit {
   color: transparent;
 }
 
-.content-btn-submit.loading .btn-loading-text {
-  display: flex;
+.content-btn-submit.loading .btn-submit-loading {
+  color: white;
 }
