@@ -76,8 +76,11 @@ in get_flashed_messages(with_categories=true) %}
         </div>
         <div class="col-12">
           <div class="content-btn-submit">
-            <div>{{ form.btnSubmit(class="btn w-100 btn_blue_plusgo shadow btn-lg") }}</div>
-            <span class="btn-loading-text"> </span>
+            {{ form.btnSubmit(class="btn w-100 btn_blue_plusgo shadow btn-lg")
+            }}
+            <span
+              class="spinner-grow spinner-grow-sm btn-submit-loading"
+            ></span>
           </div>
         </div>
       </form>
@@ -147,8 +150,11 @@ in get_flashed_messages(with_categories=true) %}
           </div>
           <div class="col-12">
             <div class="content-btn-submit">
-              <div>{{ form.btnSubmit(class="btn w-100 btn_blue_plusgo shadow btn-lg") }}</div>
-              <span class="btn-loading-text"> </span>
+              {{ form.btnSubmit(class="btn w-100 btn_blue_plusgo shadow btn-lg")
+              }}
+              <span
+                class="spinner-grow spinner-grow-sm btn-submit-loading"
+              ></span>
             </div>
           </div>
         </form>

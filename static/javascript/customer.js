@@ -168,7 +168,8 @@ function confirmCustomer(action, form, id) {
     cancelButtonText: "Cancelar",
   }).then((result) => {
     if (result.isConfirmed) {
-      btn.classList.add("disabled");
+      btn.value = ""
+      btn.classList.add("disabled")
       btn.closest(".content-btn-submit").classList.add("loading");
       form.submit();
     }

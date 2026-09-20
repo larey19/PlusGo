@@ -183,6 +183,7 @@ document.querySelectorAll(".createRolPermissions").forEach((button) => {
             cancelButtonText: "Cancelar",
           }).then((result) => {
             if (result.isConfirmed) {
+              btn.value = "";
               btn.classList.add("disabled");
               btn.closest(".content-btn-submit").classList.add("loading");
               form.submit();
@@ -264,6 +265,7 @@ document.querySelectorAll(".datarolper").forEach((rp) => {
             cancelButtonText: "Cancelar",
           }).then((result) => {
             if (result.isConfirmed) {
+              btn.value = "";
               btn.classList.add("disabled");
               btn.closest(".content-btn-submit").classList.add("loading");
               form.submit();
@@ -378,6 +380,7 @@ function validateUser(button, event, action, user_id) {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
+        btn.value = "";
         btn.classList.add("disabled");
         btn.closest(".content-btn-submit").classList.add("loading");
         form.submit();

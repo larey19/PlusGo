@@ -534,6 +534,7 @@ function confirmSale(action, form, sale) {
         window.location.href = "/sale/state/" + sale["id"];
       } else {
         const btn = form.querySelector("#btnSubmit");
+        btn.value = "";
         btn.classList.add("disabled");
         btn.closest(".content-btn-submit").classList.add("loading");
         form.submit();

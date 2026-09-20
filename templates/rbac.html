@@ -493,11 +493,8 @@
                 </div>
                 <div class="modal-footer bg-light w-100 d-none btnRolPer">
                     <div class="content-btn-submit">
-                        <div>
                         {{ rbacRolPerForm.btnSubmit(class="btn w-100 btn_blue_plusgo validateRolPer") }}
-                        </div>
-                        <span class="btn-loading-text">
-                        </span>
+                        <span class="spinner-grow spinner-grow-sm btn-submit-loading"></span>
                     </div>
                 </div>
             </form>
@@ -873,11 +870,8 @@
                 </div>
                 <div class=" modal-footer bg-light w-100 d-none btnRolPer">
                     <div class="content-btn-submit">
-                        <div>
                         {{ rbacRolPerForm.btnSubmit(class="btn w-100 btn_blue_plusgo validateRolPer") }}
-                        </div>
-                        <span class="btn-loading-text">
-                        </span>
+                        <span class="spinner-grow spinner-grow-sm btn-submit-loading"></span>
                     </div>
                 </div>
             </form>
@@ -1232,7 +1226,7 @@
 {% elif request.path == '/rbac/permission' and permission %}
 <div class="card border-0 shadow" data-aos="fade-in-up">
     <!-- Tabla -->
-    <div class="card-body">
+    <div class="card-body  table-responsive">
         <table class="table table-hover align-middle">
             <thead>
                 <tr>
@@ -1759,11 +1753,8 @@
                 </div>
                 <div class="modal-footer bg-light w-100 d-none btnuser">
                     <div class="content-btn-submit">
-                        <div>
                         {{ rbacUserRoleForm.btnSubmit(class="btn w-100 btn_blue_plusgo validateUser") }}
-                        </div>
-                        <span class="btn-loading-text">
-                        </span>
+                        <span class="spinner-grow spinner-grow-sm btn-submit-loading"></span>
                     </div>                    
                 </div>
             </form>
@@ -1917,11 +1908,8 @@
                 </div>
                 <div class="modal-footer bg-light w-100 d-none btnuser">
                     <div class="content-btn-submit">
-                        <div>
                         {{ rbacUserRoleForm.btnSubmit(class="btn w-100 btn_blue_plusgo validateUser") }}
-                        </div>
-                        <span class="btn-loading-text">
-                        </span>
+                        <span class="spinner-grow spinner-grow-sm btn-submit-loading"></span>
                     </div>                    
                 </div>
             </form>

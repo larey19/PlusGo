@@ -271,6 +271,7 @@ function confirmManage(action, form, account) {
           "/manage/state/" + account["state"] + "/" + account["id"];
       } else {
         const btn = form.querySelector("#btnSubmit");
+        btn.value = "";
         btn.classList.add("disabled");
         btn.closest(".content-btn-submit").classList.add("loading");
         form.submit();

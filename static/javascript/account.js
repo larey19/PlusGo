@@ -322,6 +322,7 @@ function confirmAccount(action, form, id) {
         window.location.href = "/account/state/" + id;
       } else {
         const btn = form.querySelector("#btnSubmit");
+        btn.value = "";
         btn.classList.add("disabled");
         btn.closest(".content-btn-submit").classList.add("loading");
         form.submit();

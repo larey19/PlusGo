@@ -43,6 +43,7 @@ function validatePassword(button, event, user_id) {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
+        btn.value = "";
         btn.classList.add("disabled");
         btn.closest(".content-btn-submit").classList.add("loading");
         form.submit();
