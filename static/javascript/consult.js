@@ -90,7 +90,7 @@ document.querySelectorAll("#btnSubmit").forEach((btn) => {
         } else {
           form.submit();
         }
-      }, 50);
+      }, 2000);
     });
   };
 });
