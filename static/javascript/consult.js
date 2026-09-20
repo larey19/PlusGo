@@ -76,6 +76,7 @@ document.querySelectorAll("#btnSubmit").forEach((btn) => {
     if (form && form.checkValidity()) {
       btn.classList.add("disabled");
       btn.closest(".content-btn-submit").classList.add("loading");
+      form.submit()
     }
   };
 });
