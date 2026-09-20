@@ -9,7 +9,7 @@ dashboard_bp = Blueprint("dashboard", __name__, template_folder= "../templates")
 @dashboard_bp.route("/")
 @token
 def dashboard():
-
+    try:
         PasswordForm = userPasswordForm()
         cursor = current_app.mysql.connection.cursor()
         cursor.execute("""
@@ -186,3 +186,11 @@ def dashboard():
                                     user = user,
                                     PasswordForm = PasswordForm
                                     )
+    except OperationalError as e:
+        print(e)
+        flash("Conexion fallida, Intenta más tarde.", "error")
+        return abort(500)
+    except Exception as e:
+        print(e)
+        flash("Ocurrio un error, Intenta más tarde.", "error")
+        return abort(500)

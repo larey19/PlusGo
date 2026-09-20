@@ -62,7 +62,6 @@ def log():
                 samesite="Lax",
                 max_age=3600
             ) 
-            session["user_id"] = user[0]
             flash (f"Bienvenido {user[1] if user[1] else ''}", "success")
             return response
         print(form.errors)

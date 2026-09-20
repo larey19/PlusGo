@@ -27,7 +27,7 @@ def token(f):
                             WHERE user_id = %s
                             """, (data['user_id'],))
             permissionData = [x[0] for x in cursor.fetchall()]
-            print(permissionData)
+            session["user_id"] = data["user_id"]
             session['permissionData'] = permissionData
         except Exception as e:
             response = make_response(redirect("/login"))
