@@ -267,19 +267,14 @@ function confirmManage(action, form, account) {
   }).then((result) => {
     if (result.isConfirmed) {
       if (action == "state") {
-        window.location.href = "/manage/state/" + account["state"] + "/" + account["id"];
+        window.location.href =
+          "/manage/state/" + account["state"] + "/" + account["id"];
       } else {
         const btn = form.querySelector("#btnSubmit");
-        let dots = 0;
-        btn.loadingInterval = setInterval(() => {
-          dots = (dots + 1) % 4;
-          btn.value = "Cargando" + ".".repeat(dots);
-        }, 400);
+        btn.classList.add("disabled");
+        btn.closest(".content-btn-submit").classList.add("loading");
         form.submit();
       }
-    } else {
-      clearInterval(btn.loadingInterval);
-      btn.value = "Guardar";
     }
   });
 }

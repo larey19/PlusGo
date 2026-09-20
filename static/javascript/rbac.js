@@ -82,9 +82,9 @@ $(document).ready(function () {
     },
   });
 });
-// ==================================================== // ==================================================== 
+// ==================================================== // ====================================================
 // ==================================================== ROLES
-// ==================================================== // ==================================================== 
+// ==================================================== // ====================================================
 // MODAL DE PERMISOS DE ROL
 function rolpermissions(button) {
   const rol_name = button.getAttribute("data-rol_name");
@@ -183,15 +183,9 @@ document.querySelectorAll(".createRolPermissions").forEach((button) => {
             cancelButtonText: "Cancelar",
           }).then((result) => {
             if (result.isConfirmed) {
-              let dots = 0;
-              btn.loadingInterval = setInterval(() => {
-                dots = (dots + 1) % 4;
-                btn.value = "Cargando" + ".".repeat(dots);
-              }, 400);
+              btn.classList.add("disabled");
+              btn.closest(".content-btn-submit").classList.add("loading");
               form.submit();
-            } else {
-              clearInterval(btn.loadingInterval);
-              btn.value = "Guardar";
             }
           });
         } else {
@@ -270,15 +264,9 @@ document.querySelectorAll(".datarolper").forEach((rp) => {
             cancelButtonText: "Cancelar",
           }).then((result) => {
             if (result.isConfirmed) {
-              let dots = 0;
-              btn.loadingInterval = setInterval(() => {
-                dots = (dots + 1) % 4;
-                btn.value = "Cargando" + ".".repeat(dots);
-              }, 400);
+              btn.classList.add("disabled");
+              btn.closest(".content-btn-submit").classList.add("loading");
               form.submit();
-            } else {
-              clearInterval(btn.loadingInterval);
-              btn.value = "Guardar";
             }
           });
         } else {
@@ -369,12 +357,12 @@ document.querySelectorAll(".datarolper").forEach((rp) => {
     }
   });
 });
-// ==================================================== // ==================================================== 
+// ==================================================== // ====================================================
 //=========================================== USUARIO
-// ==================================================== // ==================================================== 
+// ==================================================== // ====================================================
 function validateUser(button, event, action, user_id) {
   event.preventDefault();
-  form = button.closest(
+  const form = button.closest(
     action === "create" ? "#formUserCreate" : "#formuserupdate",
   );
   const btn = form.querySelector("#btnSubmit");
@@ -390,15 +378,9 @@ function validateUser(button, event, action, user_id) {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        let dots = 0;
-        btn.loadingInterval = setInterval(() => {
-          dots = (dots + 1) % 4;
-          btn.value = "Cargando" + ".".repeat(dots);
-        }, 400);
+        btn.classList.add("disabled");
+        btn.closest(".content-btn-submit").classList.add("loading");
         form.submit();
-      } else {
-        clearInterval(btn.loadingInterval);
-        btn.value = "Guardar";
       }
     });
   } else {

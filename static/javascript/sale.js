@@ -534,16 +534,10 @@ function confirmSale(action, form, sale) {
         window.location.href = "/sale/state/" + sale["id"];
       } else {
         const btn = form.querySelector("#btnSubmit");
-        let dots = 0;
-        btn.loadingInterval = setInterval(() => {
-          dots = (dots + 1) % 4;
-          btn.value = "Cargando" + ".".repeat(dots);
-        }, 400);
+        btn.classList.add("disabled");
+        btn.closest(".content-btn-submit").classList.add("loading");
         form.submit();
       }
-    } else {
-      clearInterval(btn.loadingInterval);
-      btn.value = "Guardar";
     }
   });
 }
