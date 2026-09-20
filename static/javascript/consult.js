@@ -77,10 +77,10 @@ document.querySelectorAll("#btnSubmit").forEach((btn) => {
       requestAnimationFrame(() => {
         btn.classList.add("disabled");
         btn.closest(".content-btn-submit").classList.add("loading");
-        requestAnimationFrame(() => {
-          form.submit();
-        });
       });
+      setTimeout(() => {
+        form.submit();
+      }, 50);
     }
   };
 });
