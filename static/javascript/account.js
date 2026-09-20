@@ -318,7 +318,7 @@ function confirmAccount(action, form, id) {
     cancelButtonText: "Cancelar",
   }).then((result) => {
   if (result.isConfirmed) {
-      if (action == "delete") {
+      if (action == "state") {
         window.location.href = "/account/state/" + id;
       } else {
         const btn = form.querySelector("#btnSubmit");

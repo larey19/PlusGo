@@ -268,8 +268,9 @@ document.querySelectorAll(".dataSaleCreate").forEach((sale) => {
     if (pro_pin_profile && propin.disabled) {
       propin.value = pro_pin_profile;
     }
-
-    inputdate(saldate);
+    if (!saldate.value) {
+      inputdate(saldate);
+    }
     new Cleave(salprice, {
       numeral: true,
       numeralThousandsGroupStyle: "thousand",
