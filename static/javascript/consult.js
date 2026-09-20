@@ -70,7 +70,8 @@ function launchConfetti() {
   });
 }
 document.querySelectorAll("#btnSubmit").forEach((btn) => {
-  btn.onclick = () => {
+  btn.onclick = (event) => {
+    event.preventDefault()
     const form = btn.closest("form");
     if (form && form.checkValidity()) {
       btn.classList.add("disabled");
