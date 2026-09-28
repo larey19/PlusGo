@@ -790,12 +790,13 @@ inputdate = (input, date_start, date_end) => {
 // centra la plataforma selecionada y si no tiene ningun venta disposible oculta boton de copiar
 document.addEventListener("DOMContentLoaded", function () {
   const activo = document.querySelector(".text-primary");
+  const sale = document.querySelector(".dataSaleCreate");
+  const copys = document.querySelectorAll("#copySale");
   if (activo) {
     activo.scrollIntoView({ inline: "center" });
   }
-
-  if (!document.querySelector(".copy")) {
-    document.querySelectorAll("#copySale").forEach((copy) => {
+  if (!sale) {
+    copys.forEach((copy) => {
       copy.classList.add("d-none");
     });
   }

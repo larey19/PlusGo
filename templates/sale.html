@@ -159,7 +159,7 @@
                     {% if 'sales.view' or 'sales.create' or 'sales.edit' or 'sales.delete' in
                     session['permissionData']%}
                     <td class="text-center text-nowrap">
-                        {% if 'sales.view' in session['permissionData'] and data['sal_state'] %}
+                        {% if 'sales.view' in session['permissionData'] and data['sal_id'] %}
                         <!-- Ver -->
                         <button class="btn btn-sm btn-outline-secondary dataSaleDetails" data-bs-toggle="modal"
                             data-bs-target="#getSale"
@@ -179,10 +179,10 @@
                         </button>
                         {% endif %}
 
-                        {% if 'sales.create' in session['permissionData'] %}
+                        {% if 'sales.create' in session['permissionData'] and not data['sal_id'] %}
                         <!-- Vender -->
                         <button
-                            class="btn btn-sm dataSaleCreate btn_blue_plusgo_outline {{'d-none' if data['sal_id'] != None}}"
+                            class="btn btn-sm dataSaleCreate btn_blue_plusgo_outline"
                             data-bs-toggle="modal" data-bs-target="#crtSale" data-pro_id="{{data['pro_id']}}"
                             data-pro_pin_profile="{{data['pro_pin_profile'] if data['pro_pin_profile'] else ''}}"
                             data-acc_email="{% if data['acc_number_phone'] %}({{data['acc_number_phone'][0:3] if data['acc_number_phone']}}) {{data['acc_number_phone'][3:6] if data['acc_number_phone']}}-{{data['acc_number_phone'][6:] if data['acc_number_phone']}}{% else %}{{data['acc_email'] if data['acc_email'] else 'Sin Cuenta'}}{% endif %}">
@@ -190,7 +190,7 @@
                         </button>
                         {% endif %}
 
-                        {% if 'sales.edit' in session['permissionData'] and data['sal_state']%}
+                        {% if 'sales.edit' in session['permissionData'] and data['sal_id'] %}
                         <!-- Editar -->
                         <button class="btn btn-sm btn-outline-primary dataSaleUpdate" data-bs-toggle="modal"
                             data-bs-target="#editSale{{'' if data['sal_id'] != None else None}}"
@@ -206,7 +206,7 @@
                         </button>
                         {% endif %}
 
-                        {% if 'sales.create' in session['permissionData'] and data['sal_state']%}
+                        {% if 'sales.create' in session['permissionData'] and data['sal_id']%}
                         <!-- COPIAR -->
                         <button id="copySale" class="btn btn-sm btn_blue_plusgo_outline copy"
                             data-sal_date_start="{{data['sal_date_start'].strftime('%d/%m/%Y')}}"
@@ -219,7 +219,7 @@
                         </button>
                         {% endif %}
 
-                        {% if 'sales.delete' in session['permissionData'] and data['sal_state']%}
+                        {% if 'sales.delete' in session['permissionData'] and data['sal_id']%}
                         <!-- Eliminar -->
                         <button class="btn btn-sm btn-outline-danger"
                             onclick="confirmSale('delete','', {account: `{% if data['acc_email'] %}{{data['acc_email']}}{% elif data['acc_number_phone'] %}({{data['acc_number_phone'][0:3]}}){{data['acc_number_phone'][3:6]}}-{{data['acc_number_phone'][6:]}}{% else %}{{data['acc_user']}}{% endif %}`, id : `{{data['sal_id']}}`})">
