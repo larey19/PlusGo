@@ -39,7 +39,7 @@ in get_flashed_messages(with_categories=true) %}
       class="col-sm-5 d-none d-sm-flex align-items-center justify-content-center bg-white"
     >
       <form
-        action="{{url_for('login.log')}}"
+        action="{{url_for('login.login')}}"
         method="POST"
         class="row g-3 formlogin"
         style="width: 90%; max-width: 430px"
@@ -74,6 +74,12 @@ in get_flashed_messages(with_categories=true) %}
             </i>
           </div>
         </div>
+        <div class="col-12">
+          {{form.rememberme(class="form-check-input shadow-sm me-1")}}
+          {{form.rememberme.label(class="form-check-label text-black
+          text-opacity-75 small")}}
+        </div>
+
         <div class="col-12">
           <div class="content-btn-submit">
             {{ form.btnSubmit(class="btn w-100 btn_blue_plusgo shadow btn-lg")
@@ -112,7 +118,7 @@ in get_flashed_messages(with_categories=true) %}
       <!-- FORM MOBILE FULL -->
       <div class="bg-white rounded-top-4 h-100">
         <form
-          action="{{url_for('login.log')}}"
+          action="{{url_for('login.login')}}"
           method="POST"
           class="row g-3 formlogin m-auto pt-2"
           style="width: 90%"
@@ -148,6 +154,13 @@ in get_flashed_messages(with_categories=true) %}
               </i>
             </div>
           </div>
+
+          <div class="col-12">
+            {{form.rememberme(class="form-check-input shadow-sm me-1")}}
+            {{form.rememberme.label(class="form-check-label text-black
+            text-opacity-75 small")}}
+          </div>
+
           <div class="col-12">
             <div class="content-btn-submit">
               {{ form.btnSubmit(class="btn w-100 btn_blue_plusgo shadow btn-lg")

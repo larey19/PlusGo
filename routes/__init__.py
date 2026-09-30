@@ -6,8 +6,9 @@ from .rbacpermission import rbacpermission_bp
 from .dashboard import dashboard_bp
 from .platform import platform_bp
 from .account import account_bp
-from .profile import profile_bp
 from .sale import sale_bp
+from .profile import profile_bp
+from .session import session_bp
 from .customer import customer_bp
 from .trigger import trigger_bp
 from .manage import manage_bp
@@ -23,8 +24,9 @@ def routes (app):
     app.register_blueprint(rbacpermission_bp)
     app.register_blueprint(user_bp)
     app.register_blueprint(platform_bp)
-    app.register_blueprint(profile_bp)
+    app.register_blueprint(session_bp)
     app.register_blueprint(account_bp)
+    app.register_blueprint(profile_bp)
     app.register_blueprint(sale_bp)
     app.register_blueprint(customer_bp)
     app.register_blueprint(trigger_bp)

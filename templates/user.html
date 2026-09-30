@@ -15,7 +15,7 @@
 </div>
 
 <div class="d-flex flex-column gap-3 mb-2">
-    <div data-aos="zoom-in-up">
+    <div data-aos="fade-in-up">
         <div class="card border-1 border-ligth shadow-sm">
             <div class="card-body d-flex justify-content-between align-items-center getUser" role="button"
                 data-bs-toggle="modal" data-bs-target="#getUser" data-user_name="{{user[1]}}"
@@ -30,7 +30,7 @@
             </div>
         </div>
     </div>
-    <div data-aos="zoom-in-up">
+    <div data-aos="fade-in-up">
         <div class="card border-1 border-ligth shadow-sm">
             <div class="card-body d-flex justify-content-between align-items-center" role="button"
                 data-bs-toggle="modal" data-bs-target="#permissionUser">
@@ -44,7 +44,7 @@
             </div>
         </div>
     </div>
-    <div data-aos="zoom-in-up">
+    <div data-aos="fade-in-up">
         <div class="card border-1 border-ligth shadow-sm">
             <div class="card-body d-flex justify-content-between align-items-center" role="button"
                 data-bs-toggle="modal" data-bs-target="#passwordUser">
@@ -58,22 +58,21 @@
             </div>
         </div>
     </div>
-    <div data-aos="zoom-in-up">
+    <div data-aos="fade-in-up">
         <div class="card border-1 border-ligth shadow-sm">
-            <div class="card-body d-flex justify-content-between align-items-center" data-bs-toggle="modal"
-                data-bs-target="#">
+            <div class="card-body d-flex justify-content-between align-items-center" role="button" onclick="window.location.href = `{{ url_for('session.getSessions') }}`">
                 <div class="d-flex align-items-center">
                     <i class="ti ti-devices fs-4 text-primary me-2"></i>
-                    <small class="text-dark-emphasis fw-medium">Dispositivos Vinculados. (PROX)</small>
+                    <small class="text-dark-emphasis fw-medium">Dispositivos Vinculados.</small>
                 </div>
                 <div>
-                    <i class="bi bi-dash-lg"></i>
+                    <i class="bi bi-chevron-right"></i>
                 </div>
             </div>
         </div>
     </div>
     <hr>
-    <div data-aos="zoom-in-up">
+    <div data-aos="fade-in-up">
         <div class="card border-1 border-ligth shadow-sm">
             <div class="card-body d-flex justify-content-between align-items-center" data-bs-toggle="modal"
                 role="button" onclick="confirmLogout()">
@@ -108,17 +107,17 @@
                     <table class="table table-hover align-middle" id="table">
                         <thead>
                             <tr>
-                                <th class="text-nowrap text-black text-opacity-75 fw-semibold ">Permisos</th>
-                                <th class="text-nowrap text-black text-opacity-75 fw-semibold text-center">Ver</th>
-                                <th class="text-nowrap text-black text-opacity-75 fw-semibold text-center">Crear</th>
-                                <th class="text-nowrap text-black text-opacity-75 fw-semibold text-center">Editar</th>
-                                <th class="text-nowrap text-black text-opacity-75 fw-semibold text-center">Eliminar</th>
+                                <th class="text-nowrap  text-dark-emphasis   fw-semibold ">Permisos</th>
+                                <th class="text-nowrap  text-dark-emphasis   fw-semibold text-center">Ver</th>
+                                <th class="text-nowrap  text-dark-emphasis   fw-semibold text-center">Crear</th>
+                                <th class="text-nowrap  text-dark-emphasis   fw-semibold text-center">Editar</th>
+                                <th class="text-nowrap  text-dark-emphasis   fw-semibold text-center">Eliminar</th>
                             </tr>
                         </thead>
                         <tbody>
                             <!-- PLATAFORMAS -->
                             <tr>
-                                <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">Gst.
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark  ">Gst.
                                     Plataformas</td>
 
                                 <!-- VIEW -->
@@ -157,7 +156,7 @@
 
                             <!-- CUENTAS -->
                             <tr>
-                                <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">Gst.
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark  ">Gst.
                                     Cuentas
                                 </td>
 
@@ -197,7 +196,7 @@
 
                             <!-- PERFILES -->
                             <tr>
-                                <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">Gst.
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark  ">Gst.
                                     Perfiles
                                 </td>
 
@@ -237,7 +236,7 @@
 
                             <!-- CLIENTES -->
                             <tr>
-                                <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">Gst.
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark  ">Gst.
                                     Clientes
                                 </td>
 
@@ -276,7 +275,7 @@
 
                             <!-- VENTAS -->
                             <tr>
-                                <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">Gst.
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark  ">Gst.
                                     Ventas
                                 </td>
 
@@ -316,7 +315,7 @@
 
                             <!-- RBAC -->
                             <tr>
-                                <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">Gst.
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark  ">Gst.
                                     Roles y
                                     Permisos</td>
 
@@ -356,7 +355,7 @@
 
                             <!-- MANAGEMENT -->
                             <tr>
-                                <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">Gst.
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark  ">Gst.
                                     de
                                     codigos</td>
 
@@ -396,7 +395,7 @@
 
                             <!-- CÓDIGOS -->
                             <tr>
-                                <td class="text-nowrap fw-semibold text-decoration-none text-dark text-opacity-75">
+                                <td class="text-nowrap fw-semibold text-decoration-none text-dark  ">
                                     Consulta de
                                     Códigos</td>
 
@@ -448,18 +447,18 @@
 
                     {{ PasswordForm.csrf_token() }}
                     <div class="p-4">
-                        <p class="text-black text-opacity-75 text-break">Protege tu cuenta con una contraseña exclusiva
+                        <p class=" text-dark-emphasis   text-break">Protege tu cuenta con una contraseña exclusiva
                             de al menos 5 caracteres.</p>
                         <div class=" userpassword">
                             <div class="form-floating position-relative">
                                 {{PasswordForm.userpassword(class="form-control shadow-sm", placeholder="****")}}
                                 <label class="form-label">{{PasswordForm.userpassword.label()}}*</label>
-                                <i class="fs-5 text-opacity-75 text-black ti ti-eye fs-5 position-absolute top-50 button-50 end-0 translate-middle"
+                                <i class="fs-5    text-dark-emphasis ti ti-eye fs-5 position-absolute top-50 button-50 end-0 translate-middle"
                                     role="button" onclick="password('{{PasswordForm.userpassword.id}}',this)">
                                 </i>
                             </div>
                             <small>
-                                <a href="#" class="text-black text-opacity-25 pe-none">¿Olvidaste tu contraseña?</a>
+                                <a href="#" class=" text-dark-emphasis text-opacity-25 pe-none">¿Olvidaste tu contraseña?</a>
                             </small>
                         </div>
                         <hr>
@@ -468,7 +467,7 @@
                                 {{PasswordForm.userpasswordnew(class="form-control shadow-sm", placeholder="****")}}
                                 <label class="form-label">{{PasswordForm.userpasswordnew.label()}}*</label>
                                 <i id="eyeIcon"
-                                    class=" fs-5 text-opacity-75 text-black ti ti-eye fs-5 position-absolute top-50 button-50 end-0 translate-middle"
+                                    class=" fs-5    text-dark-emphasis ti ti-eye fs-5 position-absolute top-50 button-50 end-0 translate-middle"
                                     role="button" onclick="password('{{PasswordForm.userpasswordnew.id}}',this)">
                                 </i>
                             </div>
@@ -478,7 +477,7 @@
                                 {{PasswordForm.userpasswordcheck(class="form-control shadow-sm", placeholder="****")}}
                                 <label class="form-label">{{PasswordForm.userpasswordcheck.label()}}*</label>
                                 <i id="eyeIcon"
-                                    class=" fs-5 text-opacity-75 text-black ti ti-eye fs-5 position-absolute top-50 button-50 end-0 translate-middle"
+                                    class=" fs-5    text-dark-emphasis ti ti-eye fs-5 position-absolute top-50 button-50 end-0 translate-middle"
                                     role="button" onclick="password('{{PasswordForm.userpasswordcheck.id}}',this)">
                                 </i>
                             </div>
@@ -486,9 +485,8 @@
                         <div class="userclosesession">
                             <div class="form-check ">
                                 {{PasswordForm.userclosesession(class="form-check-input
-                                shadow-sm",
-                                disabled=true)}}{{PasswordForm.userclosesession.label(class="form-check-label text-black
-                                text-opacity-75")}}
+                                shadow-sm" )}}{{PasswordForm.userclosesession.label(class="form-check-label text-dark-emphasis
+                                 ")}}
                             </div>
                         </div>
 

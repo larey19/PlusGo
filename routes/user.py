@@ -104,6 +104,7 @@ def putPassword(user_id):
             user_password_old_check  = (form.userpassword.data).strip()
             user_password_new_check = (form.userpasswordcheck.data).strip()
             user_password_new        = generate_password_hash(form.userpasswordnew.data)
+            userclosesession    = form.userclosesession.data
             cursor = current_app.mysql.connection.cursor()
             cursor.execute("SELECT user_password FROM t_user WHERE user_id = %s",(user_id,))
             user_password_old = cursor.fetchone()
@@ -123,6 +124,16 @@ def putPassword(user_id):
                 return redirect(session.get('url_back_post'))
             
             cursor.execute("UPDATE t_user SET user_password = %s WHERE user_id = %s", (user_password_new, user_id,))
+            
+            if (userclosesession): 
+                    cursor.execute("""
+                        UPDATE t_sessions
+                        SET ses_state = 'closed',
+                            ses_closed_at = NOW()
+                        WHERE ses_user_id = %s 
+                            AND ses_state = 'active'
+                    """, (user_id,))
+            
             cursor.connection.commit()
             flash("Actualizacion de contraseña Exitosa", "success")
             return redirect(session.get('url_back_post'))

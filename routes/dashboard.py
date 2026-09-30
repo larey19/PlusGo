@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash, current_app, session, abort
+from flask import Blueprint, render_template, flash, current_app, session, abort, g
 import json
 from .utils.auth import token
 from .utils.wtf import userPasswordForm
@@ -165,7 +165,7 @@ def dashboard():
                             INNER JOIN t_role r ON r.rol_id = ur.rol_id
                             INNER JOIN t_user u ON u.user_id = ur.user_id
                         WHERE u.user_id = %s
-                        """, (session.get("user_id"),))
+                        """, (g.user_id,))
         user = cursor.fetchone()
 
         return render_template("dashboard.html",

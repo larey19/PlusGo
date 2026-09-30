@@ -15,3 +15,5 @@ phonenumbers
 flask-wtf
 # Reescribir los links del correo (server-side, con BeautifulSoup)
 beautifulsoup4
+# para detectar dispositivo de la sesion
+user-agents

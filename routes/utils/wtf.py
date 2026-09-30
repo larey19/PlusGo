@@ -13,6 +13,10 @@ class loginForm(FlaskForm):
         "Contraseña",
         validators=[DataRequired(), length(min=5)]
     )
+    rememberme = BooleanField(
+        "Recuerdame",
+        validators=[Optional()]
+    )
     btnSubmit = SubmitField("Iniciar Sesion")
 
 class saleForm(FlaskForm):
