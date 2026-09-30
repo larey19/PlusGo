@@ -31,7 +31,7 @@ def token(f):
                             WHERE user_id = %s
                             """, (token['user_id'],))
             permissionData = [x[0] for x in cursor.fetchall()]
-            session['permissionData'] = permissionData
+            g.permissionData = permissionData
             # ======================== FIN DE PERMISOS
             
             # ==================================== MODIFICAMOS LA SESION
