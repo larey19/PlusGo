@@ -76,6 +76,7 @@ def permission(permission_required):
     def decorater(f):
         @wraps(f)
         def decorated(*args, **kwargs): 
+            print(g.permissionData)
             if permission_required not in g.permissionData:
                 # print("SIN PERMISO")
                 return abort(403)     
