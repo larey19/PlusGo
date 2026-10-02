@@ -42,6 +42,8 @@ def token(f):
                                 AND ses_state = 'closed'
                             """, (g.session_id,))
             ses_state = cursor.fetchone()
+            
+            print(g.permissionData, g.user_id)
             if ses_state:
                 response = make_response(redirect(url_for("login.login")))  
                 response.delete_cookie("token")
@@ -76,7 +78,6 @@ def permission(permission_required):
     def decorater(f):
         @wraps(f)
         def decorated(*args, **kwargs): 
-            print(g.permissionData)
             if permission_required not in g.permissionData:
                 # print("SIN PERMISO")
                 return abort(403)     

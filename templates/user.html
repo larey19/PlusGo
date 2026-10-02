@@ -124,7 +124,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'platforms.view' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -132,7 +132,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'platforms.create'
-                                            in session['permissionData'] %}checked{% endif %} disabled>
+                                            in g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -140,7 +140,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'platforms.edit' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -148,7 +148,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'platforms.delete'
-                                            in session['permissionData'] %}checked{% endif %} disabled>
+                                            in g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
                             </tr>
@@ -164,7 +164,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'accounts.view' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -172,7 +172,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'accounts.create'
-                                            in session['permissionData'] %}checked{% endif %} disabled>
+                                            in g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -180,7 +180,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'accounts.edit' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -188,7 +188,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'accounts.state' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
                             </tr>
@@ -204,7 +204,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'profiles.view' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -212,7 +212,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'profiles.create'
-                                            in session['permissionData'] %}checked{% endif %} disabled>
+                                            in g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -220,7 +220,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'profiles.edit' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -228,7 +228,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'profiles.delete'
-                                            in session['permissionData'] %}checked{% endif %} disabled>
+                                            in g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
                             </tr>
@@ -244,7 +244,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'customers.view' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -252,7 +252,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'customers.create'
-                                            in session['permissionData'] %}checked{% endif %} disabled>
+                                            in g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -260,7 +260,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'customers.edit' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -283,7 +283,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'sales.view' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -291,7 +291,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'sales.create' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -299,7 +299,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'sales.edit' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -307,7 +307,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'sales.delete' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
                             </tr>
@@ -323,7 +323,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'rbacs.view' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -331,7 +331,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'rbacs.create' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -339,7 +339,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'rbacs.edit' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -347,7 +347,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'rbacs.delete' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
                             </tr>
@@ -363,7 +363,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'management.view'
-                                            in session['permissionData'] %}checked{% endif %} disabled>
+                                            in g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -371,7 +371,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'management.create'
-                                            in session['permissionData'] %}checked{% endif %} disabled>
+                                            in g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -379,7 +379,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'management.edit'
-                                            in session['permissionData'] %}checked{% endif %} disabled>
+                                            in g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 
@@ -387,7 +387,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'management.state'
-                                            in session['permissionData'] %}checked{% endif %} disabled>
+                                            in g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
                             </tr>
@@ -403,7 +403,7 @@
                                 <td class="text-white shadows-sm fs-3">
                                     <div class="form-check">
                                         <input class="form-check-input m-auto" type="checkbox" {% if 'codes.consult' in
-                                            session['permissionData'] %}checked{% endif %} disabled>
+                                            g['permissionData'] %}checked{% endif %} disabled>
                                     </div>
                                 </td>
 

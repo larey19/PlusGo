@@ -212,7 +212,7 @@
                             <th class="text-dark text-nowrap fw-semibold">Cuenta</th>
                             <th class=" text-center text-dark text-nowrap fw-semibold">Perfil</th>
 
-                            {% if 'sales.view' in session['permissionData']%}
+                            {% if 'sales.view' in g['permissionData']%}
                             <th class="text-dark text-nowrap fw-semibold">Abrir</th>
                             {% endif %}
                         </tr>
@@ -257,7 +257,7 @@
                             </td>
 
                             <td class="text-center text-dark-emphasis text-nowrap">Perfil {{sale[6]}}</td>
-                            {% if 'sales.view' in session['permissionData']%}
+                            {% if 'sales.view' in g['permissionData']%}
                             <td class="text-center">
                                 <!-- abir venta -->
                                 <a href="{{url_for('sale.getSale', pla_id = sale[7], cst_name = sale[0], cst_lastname = sale[1] , pro_profile = sale[6])}}"
@@ -300,7 +300,7 @@
                             <th class="text-center text-dark text-nowrap fw-semibold">
                                 Vencimiento
                             </th>
-                            {% if 'accounts.view' in session['permissionData']%}
+                            {% if 'accounts.view' in g['permissionData']%}
                             <th class="text-center text-dark text-nowrap fw-semibold">
                                 Abrir
                             </th>
@@ -319,7 +319,7 @@
                             <td class="text-nowrap text-dark-emphasis text-nowrap">{{ acc[2] }}</td>
                             <td class="text-center text-dark-emphasis text-nowrap" data-order="{{acc[3].strftime('%YYYY-%MM-%DD')}}">{{ acc[3].strftime('%d/%m/%Y') }}
                             </td>
-                            {% if 'accounts.view' in session['permissionData']%}
+                            {% if 'accounts.view' in g['permissionData']%}
                             <td class="text-center text-dark text-nowrap">
                                 <a href="{{url_for('account.getAccount', pla_id = acc[0], acc_nickname = acc[2])}}"
                                     class="btn btn-sm btn-outline-secondary">

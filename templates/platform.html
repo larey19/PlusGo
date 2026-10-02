@@ -8,7 +8,7 @@
       >Gestion de plataformas de PlusGo</small
     >
   </div>
-  {% if 'platforms.create' in session['permissionData'] %}
+  {% if 'platforms.create' in g['permissionData'] %}
   <div>
     <button
       class="btn d-none d-lg-flex btn_blue_plusgo shadow-sm plaCrt"
@@ -37,8 +37,8 @@
           <th class="text-dark text-nowrap fw-semibold">Nombre</th>
           <th class="text-dark text-nowrap fw-semibold">Max. Perfiles</th>
           <th class="text-dark text-nowrap fw-semibold text-center">Mensaje</th>
-          {% if 'accounts.view' in session['permissionData'] or 'platforms.edit'
-          in session['permissionData'] %}
+          {% if 'accounts.view' in g['permissionData'] or 'platforms.edit'
+          in g['permissionData'] %}
           <th class="text-dark text-nowrap fw-semibold text-center">
             Acciones
           </th>
@@ -50,7 +50,7 @@
         <tr>
           <td class="fw-semibold text-dark-emphasis text-nowrap">
             <a
-              href="{{url_for('account.getAccount', pla_id = p[0]) if 'accounts.view' in session['permissionData'] else '#'}}"
+              href="{{url_for('account.getAccount', pla_id = p[0]) if 'accounts.view' in g['permissionData'] else '#'}}"
               class="text-decoration-none text-dark-emphasis"
             >
               {{ p[1] }}
@@ -64,10 +64,10 @@
             ></i>
             <!-- </div> -->
           </td>
-          {% if 'accounts.view' in session['permissionData'] or 'platforms.edit'
-          in session['permissionData'] %}
+          {% if 'accounts.view' in g['permissionData'] or 'platforms.edit'
+          in g['permissionData'] %}
           <td class="text-center text-dark-emphasis text-nowrap">
-            {% if 'accounts.view' in session['permissionData'] %}
+            {% if 'accounts.view' in g['permissionData'] %}
             <!-- Ver cuentas -->
             <a
               href="{{url_for('account.getAccount', pla_id = p[0])}}"
@@ -75,7 +75,7 @@
             >
               <i class="ti ti-mail fs-5"></i>
             </a>
-            {% endif %} {% if 'platforms.edit' in session['permissionData'] %}
+            {% endif %} {% if 'platforms.edit' in g['permissionData'] %}
             <!-- Editar -->
             <button
               class="btn btn-sm btn-outline-primary plaUpd"

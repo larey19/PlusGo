@@ -15,7 +15,7 @@
     >
       <i class="bi bi-arrow-left"></i>
     </a>
-    {% if 'accounts.create' in session['permissionData'] %}
+    {% if 'accounts.create' in g['permissionData'] %}
     <button
       class="btn d-none d-lg-flex btn_blue_plusgo accCrt"
       data-bs-toggle="modal"
@@ -47,9 +47,9 @@
           </th>
           <th class="text-center text-dark text-nowrap fw-semibold">Cuenta</th>
           <th class="text-center text-dark text-nowrap fw-semibold">Estado</th>
-          {% if 'profiles.view' in session['permissionData'] or 'accounts.edit'
-          in session['permissionData'] or 'accounts.state' in
-          session['permissionData'] %}
+          {% if 'profiles.view' in g['permissionData'] or 'accounts.edit'
+          in g['permissionData'] or 'accounts.state' in
+          g['permissionData'] %}
           <th class="text-center text-dark text-nowrap fw-semibold">
             Acciones
           </th>
@@ -61,7 +61,7 @@
         <tr>
           <td class="text-nowrap fw-semibold text-dark-emphasis text-nowrap">
             <a
-              href="{{ url_for('profile.getProfile', acc_id = acc[0]) if 'profiles.view' in session['permissionData'] else '#'}}"
+              href="{{ url_for('profile.getProfile', acc_id = acc[0]) if 'profiles.view' in g['permissionData'] else '#'}}"
               class="text-decoration-none text-dark-emphasis"
             >
               {{ acc[1] }}
@@ -93,16 +93,16 @@
             >
             {% endif %}
           </td>
-          {% if 'profiles.view' in session['permissionData'] or 'accounts.edit'
-          in session['permissionData'] or 'accounts.state' in
-          session['permissionData'] %}
+          {% if 'profiles.view' in g['permissionData'] or 'accounts.edit'
+          in g['permissionData'] or 'accounts.state' in
+          g['permissionData'] %}
           <td class="text-center text-nowrap">
             <!-- Perfiles -->
             <!-- <a href="{{url_for('profile.getProfile', acc_id = acc[0])}}"
                                     class="btn btn-sm btn-outline-secondary">
                                     <i class="bi bi-person-lines-fill"></i>
                                 </a> -->
-            {% if 'profiles.view' in session['permissionData'] %}
+            {% if 'profiles.view' in g['permissionData'] %}
 
             <button
               class="btn btn-sm btn-outline-secondary dataProfiles"
@@ -116,7 +116,7 @@
             >
               <i class="ti ti-tags fs-5"></i>
             </button>
-            {% endif %} {% if 'accounts.edit' in session['permissionData'] %}
+            {% endif %} {% if 'accounts.edit' in g['permissionData'] %}
 
             <!-- Editar -->
             <button
@@ -134,7 +134,7 @@
             >
               <i class="ti ti-edit fs-5"></i>
             </button>
-            {% endif %} {% if 'accounts.state' in session['permissionData'] %}
+            {% endif %} {% if 'accounts.state' in g['permissionData'] %}
 
             <!-- Estado -->
             <button

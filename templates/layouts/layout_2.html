@@ -200,7 +200,7 @@
               <i class="ti ti-home fw-medium fs-5"></i>
               <span class="text-truncate"> Panel Principal </span>
             </a>
-            {% if 'platforms.view' in session['permissionData'] %}
+            {% if 'platforms.view' in g['permissionData'] %}
             <a
               href="{{url_for('platform.getPlatform')}}"
               class="shadows-sm text-nowrap text-decoration-none rounded p-1 w-100 d-flex align-items-center gap-2 {{'text-primary-emphasis bg-primary-subtle fw-medium shadow-sm border-2 border-start border-primary' if  '/platform' in request.path or '/account' in request.path and '/trigger' not in request.path else 'text-white text-opacity-75'}}"
@@ -208,7 +208,7 @@
               <i class="ti ti-stack-2 fw-medium fs-5"></i>
               <span class="text-truncate"> Plataformas </span>
             </a>
-            {% endif %} {% if 'customers.view' in session['permissionData'] %}
+            {% endif %} {% if 'customers.view' in g['permissionData'] %}
             <a
               href="{{url_for('customer.getCustomer')}}"
               class="shadows-sm text-nowrap text-decoration-none rounded p-1 w-100 d-flex align-items-center gap-2 {{'text-primary-emphasis bg-primary-subtle fw-medium shadow-sm border-2 border-start border-primary' if  request.path == '/customer' else 'text-white text-opacity-75'}}"
@@ -216,7 +216,7 @@
               <i class="ti ti-users fw-medium fs-5"></i>
               <span class="text-truncate"> Clientes </span>
             </a>
-            {% endif %} {% if 'sales.view' in session['permissionData']%}
+            {% endif %} {% if 'sales.view' in g['permissionData']%}
             <a
               href="{{url_for('sale.sale')}}"
               class="shadows-sm text-nowrap text-decoration-none rounded p-1 w-100 d-flex align-items-center gap-2 {{'text-primary-emphasis bg-primary-subtle fw-medium shadow-sm border-2 border-start border-primary' if '/sale' in request.path and '/trigger' not in request.path else 'text-white text-opacity-75'}}"
@@ -251,7 +251,7 @@
               <span class="text-truncate"> Importar </span>
             </a>
 
-            {% if 'rbacs.view' in session['permissionData']%}
+            {% if 'rbacs.view' in g['permissionData']%}
             <hr class="my-1 text-light text-opacity-75" />
 
             <a
@@ -262,7 +262,7 @@
               <span class="text-truncate"> Permisos </span>
             </a>
 
-            {% endif %} {% if 'management.view' in session['permissionData']%}
+            {% endif %} {% if 'management.view' in g['permissionData']%}
             <hr class="my-1 text-light text-opacity-75" />
             <a
               href="{{url_for('manage.getManage')}}"
@@ -271,7 +271,7 @@
               <i class="ti ti-mail-cog fw-medium fs-5"></i>
               <span class="text-truncate"> Codigos </span>
             </a>
-            {% endif %} {% if 'codes.consult' in session['permissionData']%}
+            {% endif %} {% if 'codes.consult' in g['permissionData']%}
             <a
               href="{{url_for('consult.consult')}}"
               class="shadows-sm  text-nowrap text-decoration-none rounded p-1 w-100 d-flex align-items-center gap-2 {{'text-primary-emphasis bg-primary-subtle  shadow-sm border-2 border-start border-primary shadow-sm border-2 border-start border-primary' if  request.path == '/consult' else 'text-white text-opacity-75'}}"
@@ -314,7 +314,7 @@
               <i class="ti ti-home fw-medium fs-5"></i>
               <span class="text-truncate"> Panel Principal </span>
             </a>
-            {% if 'platforms.view' in session['permissionData'] %}
+            {% if 'platforms.view' in g['permissionData'] %}
             <a
               href="{{url_for('platform.getPlatform')}}"
               class="shadows-sm text-nowrap text-decoration-none rounded p-1 w-100 d-flex align-items-center gap-2 {{'text-primary-emphasis bg-primary-subtle fw-medium shadow-sm border-2 border-start border-primary' if  '/platform' in request.path or '/account' in request.path and '/trigger' not in request.path else 'text-light text-opacity-75'}}"
@@ -322,7 +322,7 @@
               <i class="ti ti-stack-2 fw-medium fs-5"></i>
               <span class="text-truncate"> Plataformas </span>
             </a>
-            {% endif %} {% if 'customers.view' in session['permissionData'] %}
+            {% endif %} {% if 'customers.view' in g['permissionData'] %}
             <a
               href="{{url_for('customer.getCustomer')}}"
               class="shadows-sm text-nowrap text-decoration-none rounded p-1 w-100 d-flex align-items-center gap-2 {{'text-primary-emphasis bg-primary-subtle fw-medium shadow-sm border-2 border-start border-primary' if  request.path == '/customer' else 'text-light text-opacity-75'}}"
@@ -330,7 +330,7 @@
               <i class="ti ti-users fw-medium fs-5"></i>
               <span class="text-truncate"> Clientes </span>
             </a>
-            {% endif %} {% if 'sales.view' in session['permissionData']%}
+            {% endif %} {% if 'sales.view' in g['permissionData']%}
             <a
               href="{{url_for('sale.sale')}}"
               class="shadows-sm text-nowrap text-decoration-none rounded p-1 w-100 d-flex align-items-center gap-2 {{'text-primary-emphasis bg-primary-subtle fw-medium shadow-sm border-2 border-start border-primary' if  request.path == '/sale' and '/trigger' not in request.path else 'text-light text-opacity-75'}}"
@@ -366,7 +366,7 @@
               <span class="text-truncate"> Importar </span>
             </a>
 
-            {% if 'rbacs.view' in session['permissionData']%}
+            {% if 'rbacs.view' in g['permissionData']%}
             <hr class="my-1 text-light text-opacity-75" />
             <a
               href="{{url_for('rbacuserrole.getRbac')}}"
@@ -375,7 +375,7 @@
               <i class="ti ti-user-cog fw-medium fs-5"></i>
               <span class="text-truncate"> Permisos </span>
             </a>
-            {% endif %} {% if 'management.view' in session['permissionData']%}
+            {% endif %} {% if 'management.view' in g['permissionData']%}
             <hr class="my-1 text-light text-opacity-75" />
             <a
               href="{{url_for('manage.getManage')}}"
@@ -384,7 +384,7 @@
               <i class="ti ti-mail-cog fw-medium fs-5"></i>
               <span class="text-truncate"> Codigos </span>
             </a>
-            {% endif %} {% if 'codes.consult' in session['permissionData']%}
+            {% endif %} {% if 'codes.consult' in g['permissionData']%}
             <a
               href="{{url_for('consult.consult')}}"
               class="shadows-sm  text-nowrap text-decoration-none rounded p-1 w-100 d-flex align-items-center gap-2 {{'text-primary-emphasis bg-primary-subtle  shadow-sm border-2 border-start border-primary shadow-sm border-2 border-start border-primary' if  request.path == '/consult' else 'text-light text-opacity-75'}}"
