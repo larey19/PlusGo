@@ -96,7 +96,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-light">
-                <h5 class="modal-title fw-bold text-nowrap text-truncate">Permisos del {{user[6]}} {{user[1] if user[1]
+                <h5 class="modal-title fw-bold text-nowrap text-truncate">Permisos del {{user[7]}} {{user[1] if user[1]
                     else
                     ''}}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -515,13 +515,13 @@
             <form action="{{url_for('user.putAccounts', user_id = user[0])}}" method="post" id="formuser">
                 <div class="modal-body p-4">
                     <div class="d-flex flex-column align-items-center mb-3">
-                        <div class="rounded-circle {{'bg-primary-subtle' if user[6].lower() == 'gerente' else ('bg-info-subtle' if user[6].lower() == 'admin' else 'bg-success-subtle')}} shadow-sm d-flex justify-content-center align-items-center"
+                        <div class="rounded-circle {{'bg-primary-subtle' if user[7].lower() == 'gerente' else ('bg-info-subtle' if user[7].lower() == 'admin' else 'bg-success-subtle')}} shadow-sm d-flex justify-content-center align-items-center"
                             style="height: 150px; width: 150px;">
-                            <i class="bi bi-person-fill {{'text-primary-emphasis' if user[6].lower() == 'gerente' else ('text-info-emphasis' if user[6].lower() == 'admin' else 'text-success-emphasis')}} datauser"
+                            <i class="bi bi-person-fill {{'text-primary-emphasis' if user[7].lower() == 'gerente' else ('text-info-emphasis' if user[7].lower() == 'admin' else 'text-success-emphasis')}} datauser"
                                 style="font-size: 80px"></i>
                         </div>
                         <small
-                            class="{{'text-primary-emphasis' if user[6].lower() == 'gerente' else ('text-info-emphasis' if user[6].lower() == 'admin' else 'text-success-emphasis')}} text-opacity-50 fw-semibold text-uppercase mt-1">{{user[6]}}</small>
+                            class="{{'text-primary-emphasis' if user[7].lower() == 'gerente' else ('text-info-emphasis' if user[7].lower() == 'admin' else 'text-success-emphasis')}} text-opacity-50 fw-semibold text-uppercase mt-1">{{user[7]}}</small>
                     </div>
                     {{ form.csrf_token() }}
                     <div class="border border-1 border-seccondary shadow-sm rounded bg-light bg-opacity-50">
@@ -622,7 +622,7 @@
                             <span class="fw-semibold">Rol.</span>
                             <div class="text-nowrap  text-truncate">
                                 <span class="text-seccondary">
-                                    {{ user[6] }}
+                                    {{ user[7] }}
                                 </span>
                             </div>
                         </div>
