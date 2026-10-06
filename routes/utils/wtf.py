@@ -98,6 +98,10 @@ class accForm(FlaskForm):
         "Fecha Pago",
         validators=[DataRequired()]
     )
+    accprice = StringField(
+        "Precio",
+        validators=[DataRequired(), length(max=7)]
+    )
     accemail = EmailField(
         "Correo",
         validators=[Optional(), length(max=100, min=10)]

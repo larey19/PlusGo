@@ -1,16 +1,15 @@
 let accnickname = false;
 let accprovider = false;
 let accdatepay = false;
+let accprice = false;
 let accemail = false;
 let accnumberphone = false;
 let accuser = false;
 let accpassword = false;
 let crtPros = false;
 
-function validatechanges(inputValue, input, action, value) {
-  const modal = document.getElementById(
-    action == "create" ? "createModal" : "editModal",
-  );
+function validatechanges(action, inputValue, input, value) {
+  const modal = document.getElementById(action == "create" ? "createModal" : "editModal");
 
   // modal.querySelector(".btnuser").classList.remove("d-none");
   if (input === "accnickname") {
@@ -28,6 +27,14 @@ function validatechanges(inputValue, input, action, value) {
       accprovider = false;
     } else {
       accprovider = true;
+    }
+  } else if (input === "accprice") {
+    if (!inputValue && action === "create") {
+      accprice = false;
+    } else if (action === "update" && inputValue === value) {
+      accprice = false;
+    } else {
+      accprice = true;
     }
   } else if (input === "accdatepay") {
     if (!inputValue && action === "create") {
@@ -77,29 +84,17 @@ function validatechanges(inputValue, input, action, value) {
     }
   }
 
-  // console.log(inputValue, value, input);
-  // console.log(
-  //   accnickname,
-  //   accprovider,
-  //   accdatepay,
-  //   accemail,
-  //   accnumberphone,
-  //   accuser,
-  //   accpassword,
-  // );
-  if (
-    accnickname === false &&
-    accprovider === false &&
-    accdatepay === false &&
-    accemail === false &&
-    accnumberphone === false &&
-    accuser === false &&
-    crtPros === false &&
-    accpassword === false
-  ) {
-    modal.querySelector(".modal-footer").classList.add("d-none");
-  } else {
+  console.log(inputValue, value, input, action);
+  console.log(accnickname, accprovider, accdatepay, accemail, accprice, accnumberphone, accuser, accpassword);
+  if (action === "create" && accnickname === true && accprovider === true && accdatepay === true && accprice === true && (accemail === true || accnumberphone === true || accuser === true)) {
     modal.querySelector(".modal-footer").classList.remove("d-none");
+  } else if (
+    action === "update" && !modal.querySelector(".step2").classList.contains("d-none") &&
+    (accnickname === true || accprovider === true || accdatepay === true || accprice === true || accemail === true || accnumberphone === true || accuser === true || accpassword === true)
+  ) {
+    modal.querySelector(".modal-footer").classList.remove("d-none");
+  } else {
+    modal.querySelector(".modal-footer").classList.add("d-none");
   }
 }
 
@@ -107,61 +102,154 @@ document.querySelectorAll(".accCrt").forEach((button) => {
   button.onclick = function () {
     const modal = document.getElementById("createModal");
     const form = modal.querySelector("form");
+
     const accnickname = modal.querySelector("#accnickname");
     const accprovider = modal.querySelector("#accprovider");
     const accdatepay = modal.querySelector("#accdatepay");
+    const accprice = modal.querySelector("#accprice");
     const accemail = modal.querySelector("#accemail");
     const accnumberphone = modal.querySelector("#accnumberphone");
     const accuser = modal.querySelector("#accuser");
     const accpassword = modal.querySelector("#accpassword");
+
+    const back = modal.querySelector(".back");
+    const next = modal.querySelectorAll(".next");
+    const step1 = modal.querySelector(".step1");
+    const step2 = modal.querySelector(".step2");
+    const content_form_step2 = modal.querySelector(".content_form_step2");
+    const content_select_account_type = modal.querySelector(".content_select_account_type");
+    const select_account_type = modal.querySelector(".select_account_type");
+    const change_account_type = modal.querySelector(".change_account_type");
+    const account_type_label = modal.querySelector(".account_type_label");
+    const email = modal.querySelector(".email");
+    const phone = modal.querySelector(".phone");
+    const user = modal.querySelector(".user");
     const buttonDates = modal.querySelector(".buttonDates");
     const crtPros = modal.querySelector("#crtPros");
-    inputdate(accdatepay);
+
+    // ==========================================================================================
+    // ===================================================================== VISUALES
+    // ===========================================================================================
+
+    back.onclick = function () {
+      step1.classList.remove("d-none");
+      step2.classList.add("d-none");
+      modal.querySelector("#progress1").classList.replace("bi-check-circle", "bi-circle-fill");
+      modal.querySelector("#progress2").classList.replace("bi-circle-fill", "bi-circle");
+      modal.querySelector(".modal-footer").classList.add("d-none");
+    };
+
+    next.forEach((btn) => {
+      btn.onclick = function () {
+        if (form && form.reportValidity()) {
+          step1.classList.add("d-none");
+          step2.classList.remove("d-none");
+          modal.querySelector("#progress1").classList.replace("bi-circle-fill", "bi-check-circle");
+          modal.querySelector("#progress2").classList.replace("bi-circle", "bi-circle-fill");
+          validatechanges("create");
+        }
+      };
+    });
+
+    select_account_type.onchange = function () {
+      if (this.value === "email") {
+        content_select_account_type.classList.add("d-none");
+        content_form_step2.classList.remove("d-none");
+        email.classList.remove("d-none");
+        account_type_label.innerHTML = `Correo`;
+        if (accemail.value.trim() != "") {
+          validatechanges("create");
+        }
+      } else if (this.value === "phone") {
+        content_select_account_type.classList.add("d-none");
+        content_form_step2.classList.remove("d-none");
+        phone.classList.remove("d-none");
+        account_type_label.innerHTML = `Telefono`;
+        if (accnumberphone.value.trim() != "") {
+          validatechanges("create");
+        }
+      } else {
+        content_select_account_type.classList.add("d-none");
+        content_form_step2.classList.remove("d-none");
+        user.classList.remove("d-none");
+        account_type_label.innerHTML = `Usuario`;
+        if (accuser.value.trim() != "") {
+          validatechanges("create");
+        }
+      }
+    };
+
+    change_account_type.onclick = function () {
+      content_select_account_type.classList.remove("d-none");
+      modal.querySelector(".modal-footer").classList.add("d-none");
+      content_form_step2.classList.add("d-none");
+      email.classList.add("d-none");
+      phone.classList.add("d-none");
+      user.classList.add("d-none");
+    };
+
+    // ==========================================================================================
+    // ===================================================================== LOGICA
+    // ===========================================================================================
+    // accnickname
     accnickname.onchange = function () {
-      validatechanges(this.value, "accnickname", "create");
+      validatechanges("create", this.value, "accnickname");
     };
     accprovider.onchange = function () {
-      validatechanges(this.value, "accprovider", "create");
+      validatechanges("create", this.value, "accprovider");
     };
     buttonDates.onclick = function () {
       setinputdate(accdatepay, "default");
     };
+    // accdate
+    inputdate(accdatepay);
+    validatechanges("create", accdatepay.value, "accdatepay");
     accdatepay.onchange = function () {
-      validatechanges(this.value, "accdatepay", "create");
+      validatechanges("create", this.value, "accdatepay");
     };
     $(accdatepay).on("apply.daterangepicker", function () {
-      validatechanges(this.value, "accdatepay", "create");
+      validatechanges("create", this.value, "accdatepay");
     });
     $(accdatepay).on("cancel.daterangepicker", function () {
-      validatechanges(this.value, "accdatepay", "create");
+      validatechanges("create", this.value, "accdatepay");
     });
-    ["keydown", "paste", "drop"].forEach((event) =>
-      accdatepay.addEventListener(event, (e) => e.preventDefault()),
-    );
+    ["keydown", "paste", "drop"].forEach((event) => accdatepay.addEventListener(event, (e) => e.preventDefault()));
+    // accprice
+    accprice.onchange = function () {
+      validatechanges("create", this.value, "accprice");
+    };
+    new Cleave(accprice, {
+      numeral: true,
+      numeralThousandsGroupStyle: "thousand",
+    });
+    // accemail
     accemail.onchange = function () {
-      validatechanges(this.value, "accemail", "create");
+      validatechanges("create", this.value, "accemail");
     };
+    // accnumberphone
     accnumberphone.onchange = function () {
-      validatechanges(this.value, "accnumberphone", "create");
+      validatechanges("create", this.value, "accnumberphone");
     };
+    // accuser
     accuser.onchange = function () {
-      validatechanges(this.value, "accuser", "create");
+      validatechanges("create", this.value, "accuser");
     };
+    // accpassword
     accpassword.onchange = function () {
-      validatechanges(this.value, "accpassword", "create");
+      validatechanges("create", this.value, "accpassword");
     };
+    // crtPros
     crtPros.onchange = function () {
-      validatechanges(this.checked ? this.value : "", "crtPros", "create");
+      validatechanges("create", this.checked ? this.value : "", "crtPros");
     };
 
+    // ==========================================================================================
+    // ===================================================================== SUBMIT
+    // ===========================================================================================
     modal.querySelector("#btnSubmit").onclick = function (clv) {
       clv.preventDefault();
 
-      if (
-        form &&
-        form.checkValidity() &&
-        (accemail.value || accnumberphone.value || accuser.value)
-      ) {
+      if (form && form.checkValidity() && (accemail.value || accnumberphone.value || accuser.value)) {
         confirmAccount("register", form);
       } else {
         if (!accemail.value || !accnumberphone.value || !accuser.value) {
@@ -190,7 +278,7 @@ document.querySelectorAll(".accEdit").forEach((button) => {
     const accnumberphone = modal.querySelector("#accnumberphone");
     const accuser = modal.querySelector("#accuser");
     const accpassword = modal.querySelector("#accpassword");
-    const buttonDates = modal.querySelector(".buttonDates");
+    const accprice = modal.querySelector("#accprice");
 
     const acc_id = this.getAttribute("data-acc_id");
     const acc_nickname = this.getAttribute("data-acc_nickname");
@@ -200,8 +288,101 @@ document.querySelectorAll(".accEdit").forEach((button) => {
     const acc_number_phone = this.getAttribute("data-acc_number_phone");
     const acc_user = this.getAttribute("data-acc_user");
     const acc_password = this.getAttribute("data-acc_password");
+    const acc_price = this.getAttribute("data-acc_price");
 
-    inputdate(accdatepay, acc_date_pay);
+    const back = modal.querySelector(".back");
+    const next = modal.querySelectorAll(".next");
+    const step1 = modal.querySelector(".step1");
+    const step2 = modal.querySelector(".step2");
+    const content_form_step2 = modal.querySelector(".content_form_step2");
+    const content_select_account_type = modal.querySelector(".content_select_account_type");
+    const select_account_type = modal.querySelector(".select_account_type");
+    const change_account_type = modal.querySelector(".change_account_type");
+    const account_type_label = modal.querySelector(".account_type_label");
+    const email = modal.querySelector(".email");
+    const phone = modal.querySelector(".phone");
+    const user = modal.querySelector(".user");
+    const buttonDates = modal.querySelector(".buttonDates");
+
+    // ==========================================================================================
+    // ===================================================================== VISUALES
+    // ===========================================================================================
+
+    back.onclick = function () {
+      step1.classList.remove("d-none");
+      step2.classList.add("d-none");
+      modal.querySelector("#progress1").classList.replace("bi-check-circle", "bi-circle-fill");
+      modal.querySelector("#progress2").classList.replace("bi-circle-fill", "bi-circle");
+      modal.querySelector(".modal-footer").classList.add("d-none");
+    };
+
+    next.forEach((btn) => {
+      btn.onclick = function () {
+        if (form && form.reportValidity()) {
+          step1.classList.add("d-none");
+          step2.classList.remove("d-none");
+          modal.querySelector("#progress1").classList.replace("bi-circle-fill", "bi-check-circle");
+          modal.querySelector("#progress2").classList.replace("bi-circle", "bi-circle-fill");
+          validatechanges("update");
+        }
+      };
+    });
+
+    if (acc_email.trim() != "") {
+      select_account_type.value = "email";
+      email.classList.remove("d-none");
+      account_type_label.innerHTML = `Correo`;
+    } else if (acc_number_phone.trim() != "") {
+      select_account_type.value = "phone";
+      phone.classList.remove("d-none");
+      account_type_label.innerHTML = `Telefono`;
+    } else {
+      select_account_type.value = "user";
+      user.classList.remove("d-none");
+      account_type_label.innerHTML = `Usuario`;
+    }
+
+    select_account_type.onchange = function () {
+      if (this.value === "email") {
+        content_select_account_type.classList.add("d-none");
+        content_form_step2.classList.remove("d-none");
+        email.classList.remove("d-none");
+        account_type_label.innerHTML = `Correo`;
+        if (accemail.value.trim() != "") {
+          validatechanges("update");
+        }
+      } else if (this.value === "phone") {
+        content_select_account_type.classList.add("d-none");
+        content_form_step2.classList.remove("d-none");
+        phone.classList.remove("d-none");
+        account_type_label.innerHTML = `Telefono`;
+        if (accnumberphone.value.trim() != "") {
+          validatechanges("update");
+        }
+      } else {
+        content_select_account_type.classList.add("d-none");
+        content_form_step2.classList.remove("d-none");
+        user.classList.remove("d-none");
+        account_type_label.innerHTML = `Usuario`;
+        if (accuser.value.trim() != "") {
+          validatechanges("update");
+        }
+      }
+    };
+
+    change_account_type.onclick = function () {
+      content_select_account_type.classList.remove("d-none");
+      modal.querySelector(".modal-footer").classList.add("d-none");
+      content_form_step2.classList.add("d-none");
+      email.classList.add("d-none");
+      phone.classList.add("d-none");
+      user.classList.add("d-none");
+    };
+
+    // ==========================================================================================
+    // ===================================================================== LOGICA
+    // ===========================================================================================
+
     accnickname.value = acc_nickname;
     accprovider.value = acc_provider;
     accdatepay.value = acc_date_pay;
@@ -209,12 +390,13 @@ document.querySelectorAll(".accEdit").forEach((button) => {
     accnumberphone.value = acc_number_phone;
     accuser.value = acc_user;
     accpassword.value = acc_password;
-
+    accprice.value = acc_price;
+    
     accnickname.onchange = function () {
-      validatechanges(this.value, "accnickname", "update", acc_nickname);
+      validatechanges("update", this.value, "accnickname", acc_nickname);
     };
     accprovider.onchange = function () {
-      validatechanges(this.value, "accprovider", "update", acc_provider);
+      validatechanges("update", this.value, "accprovider", acc_provider);
     };
     buttonDates.onclick = function () {
       if (accdatepay.value) {
@@ -223,29 +405,35 @@ document.querySelectorAll(".accEdit").forEach((button) => {
         setinputdate(accdatepay, "default", acc_date_pay);
       }
     };
+    inputdate(accdatepay, acc_date_pay);
     accdatepay.onchange = function () {
-      validatechanges(this.value, "accdatepay", "update", acc_date_pay);
+      validatechanges("update", this.value, "accdatepay", acc_date_pay);
     };
     $(accdatepay).on("apply.daterangepicker", function () {
-      validatechanges(this.value, "accdatepay", "update", acc_date_pay);
+      validatechanges("update", this.value, "accdatepay", acc_date_pay);
     });
     $(accdatepay).on("cancel.daterangepicker", function () {
-      validatechanges(this.value, "accdatepay", "update", acc_date_pay);
+      validatechanges("update", this.value, "accdatepay", acc_date_pay);
     });
-    ["keydown", "paste", "drop"].forEach((event) =>
-      accdatepay.addEventListener(event, (e) => e.preventDefault()),
-    );
+    ["keydown", "paste", "drop"].forEach((event) => accdatepay.addEventListener(event, (e) => e.preventDefault()));
     accemail.onchange = function () {
-      validatechanges(this.value, "accemail", "update", acc_email);
+      validatechanges("update", this.value, "accemail", acc_email);
     };
+    accprice.onchange = function () {
+      validatechanges("update", this.value, "accprice", acc_price);
+    };
+    new Cleave(accprice, {
+      numeral: true,
+      numeralThousandsGroupStyle: "thousand",
+    });
     accnumberphone.onchange = function () {
-      validatechanges(this.value, "accnumberphone", "update", acc_number_phone);
+      validatechanges("update", this.value, "accnumberphone", acc_number_phone);
     };
     accuser.onchange = function () {
-      validatechanges(this.value, "accuser", "update", acc_user);
+      validatechanges("update", this.value, "accuser", acc_user);
     };
     accpassword.onchange = function () {
-      validatechanges(this.value, "accpassword", "update", acc_password);
+      validatechanges("update", this.value, "accpassword", acc_password);
     };
 
     modal.querySelector(".btn-close").onclick = function (event) {
@@ -257,7 +445,8 @@ document.querySelectorAll(".accEdit").forEach((button) => {
         accemail.value != acc_email ||
         accpassword.value != acc_password ||
         accnumberphone.value != acc_number_phone ||
-        accuser.value != acc_user
+        accuser.value != acc_user ||
+        accprice.value != acc_price
       ) {
         Swal.fire({
           title: "Hay cambios sin guardar",
@@ -271,22 +460,26 @@ document.querySelectorAll(".accEdit").forEach((button) => {
         }).then((result) => {
           if (!result.isConfirmed) {
             bootstrap.Modal.getInstance(modal).hide();
-
+            step1.classList.remove("d-none");
+            step2.classList.add("d-none");
+            modal.querySelector("#progress1").classList.replace("bi-check-circle", "bi-circle-fill");
+            modal.querySelector("#progress2").classList.replace("bi-circle-fill", "bi-circle");
             modal.querySelector(".modal-footer").classList.add("d-none");
           }
         });
       } else {
+        step1.classList.remove("d-none");
+        step2.classList.add("d-none");
+        modal.querySelector("#progress1").classList.replace("bi-check-circle", "bi-circle-fill");
+        modal.querySelector("#progress2").classList.replace("bi-circle-fill", "bi-circle");
+        modal.querySelector(".modal-footer").classList.add("d-none");
         bootstrap.Modal.getInstance(modal).hide();
       }
     };
 
     modal.querySelector("#btnSubmit").onclick = function (clv) {
       clv.preventDefault();
-      if (
-        form &&
-        form.checkValidity() &&
-        (accemail.value || accnumberphone.value || accuser.value)
-      ) {
+      if (form && form.checkValidity() && (accemail.value || accnumberphone.value || accuser.value)) {
         form.action = `/account/${acc_id}`;
         confirmAccount("update", form);
       } else {
@@ -308,10 +501,7 @@ function confirmAccount(action, form, id) {
   Swal.fire({
     title: ` ${action === "register" ? "¿Registar Cuenta?" : action === "update" ? "¿Actualizar Cuenta?" : "¿Cambiar estado de la cuenta?"}`,
     icon: action === "state" ? "warning" : "info",
-    text:
-      action === "state"
-        ? "Recuerda, no debe haber ninguna venta activa con esta cuenta"
-        : "",
+    text: action === "state" ? "Recuerda, no debe haber ninguna venta activa con esta cuenta" : "",
     showCancelButton: true,
     confirmButtonColor: action != "state" ? "rgba(4,17,43,0.92)" : "#d33",
     confirmButtonText: "Sí, guardar",
@@ -440,9 +630,7 @@ setinputdate = (input, action, value) => {
   } else if (action === "default") {
     $(input).data("daterangepicker").setStartDate(moment());
   } else {
-    $(input)
-      .data("daterangepicker")
-      .setStartDate(moment(value, "DD/MM/YYYY").add(30, "days"));
+    $(input).data("daterangepicker").setStartDate(moment(value, "DD/MM/YYYY").add(30, "days"));
   }
 };
 inputdate = (input, value) => {
@@ -460,31 +648,12 @@ inputdate = (input, value) => {
       customRangeLabel: "Personalizado",
       weekLabel: "S",
       daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
-      monthNames: [
-        "Enero",
-        "Febrero",
-        "Marzo",
-        "Abril",
-        "Mayo",
-        "Junio",
-        "Julio",
-        "Agosto",
-        "Septiembre",
-        "Octubre",
-        "Noviembre",
-        "Diciembre",
-      ],
+      monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
       firstDay: 1,
     },
     isCustomDate: function (date) {
       const hoy = value ? moment(value, "DD/MM/YYYY") : moment().startOf("day");
-      const especiales = [
-        hoy.clone().add(10, "days"),
-        hoy.clone().add(15, "days"),
-        hoy.clone().add(30, "days"),
-        hoy.clone().add(60, "days"),
-        hoy.clone().add(90, "days"),
-      ];
+      const especiales = [hoy.clone().add(10, "days"), hoy.clone().add(15, "days"), hoy.clone().add(30, "days"), hoy.clone().add(60, "days"), hoy.clone().add(90, "days")];
 
       if (especiales.some((d) => d.isSame(date, "day"))) {
         return "dia-especial";
@@ -506,11 +675,9 @@ document.querySelectorAll(".dataProfiles").forEach((pro) => {
     document.getElementById("acc_nickname_modal").innerHTML = `
     ${this.getAttribute("data-acc_nickname")}
     `;
-    document.getElementById("max_profile_account").innerHTML =
-      `${this.getAttribute("data-acc_profiles")}`;
+    document.getElementById("max_profile_account").innerHTML = `${this.getAttribute("data-acc_profiles")}`;
 
-    document.getElementById("max_profile_platform").innerHTML =
-      `${this.getAttribute("data-pla_max_profiles")}`;
+    document.getElementById("max_profile_platform").innerHTML = `${this.getAttribute("data-pla_max_profiles")}`;
   });
 });
 
@@ -520,10 +687,7 @@ async function action(btn, type, acc_id, pro_id) {
   if (type === "show") {
     // Código para mostrar el formulario (Flecha abajo)
     btn.closest(".content_profile").classList.add("d-none");
-    btn
-      .closest(".content_profiles")
-      .querySelector(".content_form-profile")
-      .classList.remove("d-none");
+    btn.closest(".content_profiles").querySelector(".content_form-profile").classList.remove("d-none");
   } else if (type === "hide") {
     // Código para ocultar el formulario (Flecha arriba)
     const form_action = form.getAttribute("data-form_pro_id");
@@ -555,11 +719,7 @@ async function action(btn, type, acc_id, pro_id) {
         console.log(error);
         setTimeout(() => {
           content_message.querySelector(".alert").classList.remove("show");
-          setTimeout(
-            () =>
-              content_message.querySelector(".alert").classList.add("d-none"),
-            150,
-          );
+          setTimeout(() => content_message.querySelector(".alert").classList.add("d-none"), 150);
         }, 3000);
         return (content_message.innerHTML = `
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -596,11 +756,7 @@ async function action(btn, type, acc_id, pro_id) {
         console.log(error);
         setTimeout(() => {
           content_message.querySelector(".alert").classList.remove("show");
-          setTimeout(
-            () =>
-              content_message.querySelector(".alert").classList.add("d-none"),
-            150,
-          );
+          setTimeout(() => content_message.querySelector(".alert").classList.add("d-none"), 150);
         }, 3000);
         return (content_message.innerHTML = `
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -612,21 +768,14 @@ async function action(btn, type, acc_id, pro_id) {
             `);
       }
     } else {
-      btn
-        .closest(".content_profiles")
-        .querySelector(".content_form-profile")
-        .classList.add("d-none");
+      btn.closest(".content_profiles").querySelector(".content_form-profile").classList.add("d-none");
 
       if (btn.closest(".content_profiles").querySelector(".content_profile")) {
-        btn
-          .closest(".content_profiles")
-          .querySelector(".content_profile")
-          .classList.remove("d-none");
+        btn.closest(".content_profiles").querySelector(".content_profile").classList.remove("d-none");
       }
 
       if (btn.getAttribute("data-plus") == "true") {
-        document.querySelector(".content_modal-profiles").innerHTML =
-          `<div class="d-flex justify-content-center m-2">
+        document.querySelector(".content_modal-profiles").innerHTML = `<div class="d-flex justify-content-center m-2">
           <i class="bi bi-plus-circle-fill plus_profile fs-3 text-primary" role="button" onclick="action(this, 'plus', '${acc_id}')"></i>
       </div>`;
       }
@@ -678,9 +827,7 @@ async function action(btn, type, acc_id, pro_id) {
         </div>
       </div>`;
   } else {
-    btn
-      .closest(".content_profiles")
-      .querySelector("#content_adition_profile").innerHTML = `
+    btn.closest(".content_profiles").querySelector("#content_adition_profile").innerHTML = `
       <div class="content_profiles">
         <div class="col-12 p-3 border border-secondary-1 rounded content_form-profile">
           <form data-form_pro_id="new_profile">
@@ -716,11 +863,9 @@ async function getProfile(acc_id) {
   const response = await fetch(`/get/profile/${acc_id}`);
   if (response.ok) {
     const profiles = await response.json();
-    document.getElementById("max_profile_account").innerHTML =
-      `${profiles.length}`;
+    document.getElementById("max_profile_account").innerHTML = `${profiles.length}`;
     if (profiles.length === 0) {
-      return (document.querySelector(".content_modal-profiles").innerHTML =
-        `<div class="d-flex justify-content-center mx-auto">
+      return (document.querySelector(".content_modal-profiles").innerHTML = `<div class="d-flex justify-content-center mx-auto">
           <i class="bi bi-plus-circle-fill plus_profile fs-3 text-primary" role="button" onclick="action(this, 'plus', '${acc_id}')"></i>
       </div>`);
     }
@@ -811,6 +956,17 @@ $(document).on("shown.bs.modal", ".modal", function () {
       theme: "bootstrap-5",
       width: "100%",
       placeholder: "Estado",
+      allowClear: false,
+      dropdownParent: modal,
+      minimumResultsForSearch: Infinity,
+    });
+  });
+  // normal
+  modal.find(".select_account_type").each(function () {
+    $(this).select2({
+      theme: "bootstrap-5",
+      width: "100%",
+      placeholder: "Seleccionar",
       allowClear: false,
       dropdownParent: modal,
       minimumResultsForSearch: Infinity,

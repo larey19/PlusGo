@@ -4,30 +4,15 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
   <div>
     <h3 class="fw-bold text-dark m-0">Cuentas de {{pla_name}}</h3>
-    <small class="text-dark-emphasis fw-medium"
-      >Gestión de cuentas de la plataforma</small
-    >
+    <small class="text-dark-emphasis fw-medium">Gestión de cuentas de la plataforma</small>
   </div>
   <div class="d-flex">
-    <a
-      href="{{url_for('platform.getPlatform')}}"
-      class="btn btn-outline-secondary me-2"
-    >
+    <a href="{{url_for('platform.getPlatform')}}" class="btn btn-outline-secondary me-2">
       <i class="bi bi-arrow-left"></i>
     </a>
     {% if 'accounts.create' in g['permissionData'] %}
-    <button
-      class="btn d-none d-lg-flex btn_blue_plusgo accCrt"
-      data-bs-toggle="modal"
-      data-bs-target="#createModal"
-    >
-      <i class="ti ti-mail-plus fs-5 me-1"></i> Nueva Cuenta
-    </button>
-    <button
-      class="btn d-lg-none btn_blue_plusgo accCrt"
-      data-bs-toggle="modal"
-      data-bs-target="#createModal"
-    >
+    <button class="btn d-none d-lg-flex btn_blue_plusgo accCrt" data-bs-toggle="modal" data-bs-target="#createModal"><i class="ti ti-mail-plus fs-5 me-1"></i> Nueva Cuenta</button>
+    <button class="btn d-lg-none btn_blue_plusgo accCrt" data-bs-toggle="modal" data-bs-target="#createModal">
       <i class="ti ti-mail-plus fs-5"></i>
     </button>
     {% endif %}
@@ -42,17 +27,12 @@
         <tr>
           <th class="text-dark text-nowrap fw-semibold">Apodo</th>
           <th class="text-dark text-nowrap fw-semibold">Proveedor</th>
-          <th class="text-center text-dark text-nowrap fw-semibold">
-            Fecha Pago
-          </th>
+          <th class="text-center text-dark text-nowrap fw-semibold">Fecha Pago</th>
+          <th class="text-dark text-nowrap fw-semibold">Precio</th> 
           <th class="text-center text-dark text-nowrap fw-semibold">Cuenta</th>
           <th class="text-center text-dark text-nowrap fw-semibold">Estado</th>
-          {% if 'profiles.view' in g['permissionData'] or 'accounts.edit'
-          in g['permissionData'] or 'accounts.state' in
-          g['permissionData'] %}
-          <th class="text-center text-dark text-nowrap fw-semibold">
-            Acciones
-          </th>
+          {% if 'profiles.view' in g['permissionData'] or 'accounts.edit' in g['permissionData'] or 'accounts.state' in g['permissionData'] %}
+          <th class="text-center text-dark text-nowrap fw-semibold">Acciones</th>
           {% endif %}
         </tr>
       </thead>
@@ -60,42 +40,27 @@
         {% for acc in account %}
         <tr>
           <td class="text-nowrap fw-semibold text-dark-emphasis text-nowrap">
-            <a
-              href="{{ url_for('profile.getProfile', acc_id = acc[0]) if 'profiles.view' in g['permissionData'] else '#'}}"
-              class="text-decoration-none text-dark-emphasis"
-            >
-              {{ acc[1] }}
-            </a>
+            <a href="{{ url_for('profile.getProfile', acc_id = acc[0]) if 'profiles.view' in g['permissionData'] else '#'}}" class="text-decoration-none text-dark-emphasis"> {{ acc[1] }} </a>
           </td>
           <td class="text-nowrap text-dark-emphasis">{{ acc[2] }}</td>
-          <td
-            class="text-center text-nowrap text-dark-emphasis"
-            data-order="{{acc[3].strftime('%YYYY-%MM-%DD')}}"
-          >
-            {{ acc[3].strftime("%d/%m/%Y") }}
+          <td class="text-center text-nowrap text-dark-emphasis" data-order="{{acc[3].strftime('%YYYY-%MM-%DD')}}">{{ acc[3].strftime("%d/%m/%Y") }}</td>
+          <td class="text-center text-nowrap">
+            {% if acc[14] != None and acc[14] >= 0%}
+            <span class="badge bg-primary-subtle text-primary-emphasis"> $ {{"{:,.0f}".format(acc[14]).replace(",",".")}} </span>
+            {% endif %}
           </td>
           <td class="text-center text-nowrap text-dark-emphasis">
-            {% if acc[4] %} {{acc[4]}} {% elif acc[5] %} ({{acc[5][0:3]}})
-            {{acc[5][3:6]}}-{{acc[5][6:]}} {% elif acc[13] %} {{acc[13]}} {%
-            else %} Sin cuenta {% endif %}
+            {% if acc[4] %} {{acc[4]}} {% elif acc[5] %} ({{acc[5][0:3]}}) {{acc[5][3:6]}}-{{acc[5][6:]}} {% elif acc[13] %} {{acc[13]}} {% else %} Sin cuenta {% endif %}
           </td>
 
           <td class="text-nowrap text-dark-emphasis text-center">
             {% if acc[7] == "enable" %}
-            <span
-              class="badge bg-primary-subtle text-primary-emphasis px-2 rounded-pill"
-              >Activa</span
-            >
+            <span class="badge bg-primary-subtle text-primary-emphasis px-2 rounded-pill">Activa</span>
             {% else %}
-            <span
-              class="badge bg-danger-subtle text-danger-emphasis px-2 rounded-pill"
-              >Desactivada</span
-            >
+            <span class="badge bg-danger-subtle text-danger-emphasis px-2 rounded-pill">Desactivada</span>
             {% endif %}
           </td>
-          {% if 'profiles.view' in g['permissionData'] or 'accounts.edit'
-          in g['permissionData'] or 'accounts.state' in
-          g['permissionData'] %}
+          {% if 'profiles.view' in g['permissionData'] or 'accounts.edit' in g['permissionData'] or 'accounts.state' in g['permissionData'] %}
           <td class="text-center text-nowrap">
             <!-- Perfiles -->
             <!-- <a href="{{url_for('profile.getProfile', acc_id = acc[0])}}"
@@ -130,6 +95,7 @@
               data-acc_email="{{acc[4]}}"
               data-acc_number_phone="{{acc[5]}}"
               data-acc_user="{{acc[13]}}"
+              data-acc_price='{{"{:.0f}".format(acc[14])}}'
               data-acc_password="{{acc[6]}}"
             >
               <i class="ti ti-edit fs-5"></i>
@@ -137,10 +103,7 @@
             {% endif %} {% if 'accounts.state' in g['permissionData'] %}
 
             <!-- Estado -->
-            <button
-              class="btn btn-sm btn-outline-danger"
-              onclick="confirmAccount('state','','{{acc[0]}}')"
-            >
+            <button class="btn btn-sm btn-outline-danger" onclick="confirmAccount('state','','{{acc[0]}}')">
               <i class="ti ti-power fs-5"></i>
             </button>
             {% endif %}
@@ -154,13 +117,7 @@
 </div>
 
 <!-- Modal Editar -->
-<div
-  class="modal fade"
-  id="editModal"
-  data-bs-backdrop="static"
-  data-bs-keyboard="false"
-  tabindex="-1"
->
+<div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header bg-light">
@@ -168,62 +125,66 @@
         <button type="button" class="btn-close"></button>
       </div>
       <form method="post" id="form_upd">
-        <div class="modal-body row g-2">
-          <div class="col-6 col-md-4">
-            {{form.hidden_tag()}} {{form.accnickname.label(class="form-label
-            text-dark-emphasis")}}* {{form.accnickname(class="form-control",
-            placeholder="La normal")}}
-          </div>
-          <div class="col-6 col-md-4">
-            {{form.accprovider.label(class="form-label text-dark-emphasis")}}*
-            {{form.accprovider(class="form-control", placeholder="Yo mismo")}}
-          </div>
-          <div class="col-12 col-md-4">
-            {{form.accdatepay.label(class="form-label text-dark-emphasis")}}*
-            <div class="position-relative">
-              {{form.accdatepay(class="form-control", placeholder="Seleccione la
-              fecha", autocomplete="off", inputmode="none")}}
-              <i
-                class="fs-4 ti ti-calendar-event position-absolute top-50 button-50 end-0 translate-middle bg-white buttonDates"
-                role="button"
-              ></i>
+        {{form.hidden_tag()}}
+        <div class="d-flex justify-content-center gap-1 mt-2">
+          <i class="bi bi-circle-fill text-primary-emphasis back" id="progress1" role="button"></i>
+          <i class="bi bi-circle text-primary-emphasis next" id="progress2" role="button"></i>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-2 step1">
+            <div class="col-5">{{form.accnickname.label(class="form-label text-dark-emphasis")}}* {{form.accnickname(class="form-control", placeholder="La normal")}}</div>
+            <div class="col-7">{{form.accprovider.label(class="form-label text-dark-emphasis")}}* {{form.accprovider(class="form-control", placeholder="Yo mismo")}}</div>
+            <div class="col-7">
+              {{form.accdatepay.label(class="form-label text-dark-emphasis")}}*
+              <div class="position-relative">
+                {{form.accdatepay(class="form-control", placeholder="Seleccione la fecha", autocomplete="off", inputmode="none")}}
+                <i class="fs-4 ti ti-calendar-event position-absolute top-50 button-50 end-0 translate-middle bg-white buttonDates" role="button"></i>
+              </div>
+            </div>
+            <div class="col-5">{{form.accprice.label(class="form-label text-dark-emphasis")}}* {{form.accprice(class="form-control", placeholder="20,000")}}</div>
+            <div class="col-12 d-flex justify-content-end">
+              <button class="btn next btn_blue_plusgo" type="button">Continuar <i class="bi bi-arrow-right text-light my-auto"></i></button>
             </div>
           </div>
-          <div class="col-12 col-md-4">
-            {{form.accemail.label(class="form-label text-dark-emphasis")}}*
-            {{form.accemail(class="form-control",
-            placeholder="plusgo@gmail.com") }}
-          </div>
-          <div class="col-6 col-md-4">
-            {{form.accnumberphone.label(class="form-label
-            text-dark-emphasis")}}* {{form.accnumberphone(class="form-control",
-            placeholder="3008000333") }}
-          </div>
-          <div class="col-6 col-md-4">
-            {{form.accuser.label(class="form-label text-dark-emphasis")}}*
-            {{form.accuser(class="form-control", placeholder="plusgo123")}}
-          </div>
-          <div class="col-12 col-md-12">
-            {{form.accpassword.label(class="form-label text-dark-emphasis")}}
-            <div class="position-relative">
-              {{form.accpassword(class="form-control", placeholder="******")}}
 
-              <i
-                id="eyeIcon"
-                class="fs-4 ti ti-eye position-absolute top-50 button-50 end-0 translate-middle"
-                onclick="password('{{form.accpassword.id}}', this)"
-                role="button"
-              >
-              </i>
+          <div class="step2 d-none">
+            <div class="content_select_account_type d-none">
+              <label for="select" class="form-label text-dark-emphasis">Tipo de cuenta</label>
+              <select class="form-control select_account_type">
+                <option value="" selected></option>
+                <option value="email">Correo</option>
+                <option value="phone">Telefono</option>
+                <option value="user">Usuario</option>
+              </select>
+            </div>
+
+            <div class="row g-2 content_form_step2">
+              <div class="col-12 email d-none">{{form.accemail.label(class="form-label text-dark-emphasis")}}* {{form.accemail(class="form-control", placeholder="plusgo@gmail.com")}}</div>
+              <div class="col-12 phone d-none">
+                {{form.accnumberphone.label(class="form-label text-dark-emphasis")}}* {{form.accnumberphone(class="form-control accphonenumber", placeholder="3008000333")}}
+              </div>
+              <div class="col-12 user d-none">{{form.accuser.label(class="form-label text-dark-emphasis")}}* {{form.accuser(class="form-control accuser", placeholder="plusgo123")}}</div>
+              <div class="col-12 col-md-12">
+                {{form.accpassword.label(class="form-label text-dark-emphasis")}}
+                <div class="position-relative">
+                  {{form.accpassword(class="form-control", placeholder="******")}}
+                  <i id="eyeIcon" class="fs-4 ti ti-eye position-absolute top-50 button-50 end-0 translate-middle" onclick="password('{{form.accpassword.id}}', this)" role="button"> </i>
+                </div>
+              </div>
+              <div>
+                <div class="icon-link btn btn-sm btn_blue_plusgo_outline position-absolute top-0 end-0 mt-2 me-3 change_account_type" role="button">
+                  <i class="ti ti-repeat"></i> <span class="account_type_label">Tipo de cuenta</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+
         <div class="modal-footer bg-light d-none">
           <div class="content-btn-submit">
-            {{ form.btnSubmit(class="btn w-100 btn_blue_plusgo") }}
-            <span
-              class="spinner-grow spinner-grow-sm btn-submit-loading"
-            ></span>
+            <div>{{ form.btnSubmit(class="btn w-100 btn_blue_plusgo") }}</div>
+            <span class="spinner-grow spinner-grow-sm btn-submit-loading"> </span>
           </div>
         </div>
       </form>
@@ -232,84 +193,75 @@
 </div>
 
 <!-- Modal Crear -->
-<div
-  class="modal fade"
-  id="createModal"
-  data-bs-backdrop="static"
-  data-bs-keyboard="false"
-  tabindex="-1"
->
+<div class="modal fade" id="createModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header bg-light">
         <h5 class="modal-title fw-bold text-dark">Nueva Cuenta</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-        ></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-
       <form action="{{url_for('account.crtAccount')}}" method="post">
-        <div class="modal-body row g-2">
-          <div class="col-6 col-md-4">
-            {{form.hidden_tag()}} {{form.accnickname.label(class="form-label
-            text-dark-emphasis")}}* {{form.accnickname(class="form-control",
-            placeholder="La normal")}}
-          </div>
-          <div class="col-6 col-md-4">
-            {{form.accprovider.label(class="form-label text-dark-emphasis")}}*
-            {{form.accprovider(class="form-control", placeholder="Yo mismo")}}
-          </div>
-          <div class="col-12 col-md-4">
-            {{form.accdatepay.label(class="form-label text-dark-emphasis")}}*
-            <div class="position-relative">
-              {{form.accdatepay(class="form-control", placeholder="Seleccione la
-              fecha", autocomplete="off", inputmode="none")}}
-              <i
-                class="fs-4 ti ti-calendar-event position-absolute top-50 button-50 end-0 translate-middle bg-white buttonDates"
-                role="button"
-              ></i>
+        {{form.hidden_tag()}}
+        <div class="d-flex justify-content-center gap-1 mt-2">
+          <i class="bi bi-circle-fill text-primary-emphasis back" id="progress1" role="button"></i>
+          <i class="bi bi-circle text-primary-emphasis next" id="progress2" role="button"></i>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-2 step1">
+            <div class="col-5">{{form.accnickname.label(class="form-label text-dark-emphasis")}}* {{form.accnickname(class="form-control", placeholder="La normal")}}</div>
+            <div class="col-7">{{form.accprovider.label(class="form-label text-dark-emphasis")}}* {{form.accprovider(class="form-control", placeholder="Yo mismo")}}</div>
+            <div class="col-7">
+              {{form.accdatepay.label(class="form-label text-dark-emphasis")}}*
+              <div class="position-relative">
+                {{form.accdatepay(class="form-control", placeholder="Seleccione la fecha", autocomplete="off", inputmode="none")}}
+                <i class="fs-4 ti ti-calendar-event position-absolute top-50 button-50 end-0 translate-middle bg-white buttonDates" role="button"></i>
+              </div>
+            </div>
+            <div class="col-5">{{form.accprice.label(class="form-label text-dark-emphasis")}}* {{form.accprice(class="form-control", placeholder="20,000")}}</div>
+            <div class="col-12 d-flex justify-content-end">
+              <button class="btn next btn_blue_plusgo" type="button">Continuar <i class="bi bi-arrow-right text-light my-auto"></i></button>
             </div>
           </div>
 
-          <div class="col-12 col-md-4">
-            {{form.accemail.label(class="form-label text-dark-emphasis")}}*
-            {{form.accemail(class="form-control",
-            placeholder="plusgo@gmail.com")}}
-          </div>
-          <div class="col-6 col-md-4">
-            {{form.accnumberphone.label(class="form-label
-            text-dark-emphasis")}}* {{form.accnumberphone(class="form-control
-            accphonenumber", placeholder="3008000333")}}
-          </div>
-          <div class="col-6 col-md-4">
-            {{form.accuser.label(class="form-label text-dark-emphasis")}}*
-            {{form.accuser(class="form-control accuser",
-            placeholder="plusgo123")}}
-          </div>
-          <div class="col-12 col-md-12">
-            {{form.accpassword.label(class="form-label text-dark-emphasis")}}
-            <div class="position-relative">
-              {{form.accpassword(class="form-control", placeholder="******")}}
-              <i
-                id="eyeIcon"
-                class="fs-4 ti ti-eye position-absolute top-50 button-50 end-0 translate-middle"
-                onclick="password('{{form.accpassword.id}}', this)"
-                role="button"
-              >
-              </i>
+          <div class="step2 d-none">
+            <div class="content_select_account_type">
+              <label for="select" class="form-label text-dark-emphasis">Tipo de cuenta</label>
+              <select class="form-control select_account_type">
+                <option value="" selected></option>
+                <option value="email">Correo</option>
+                <option value="phone">Telefono</option>
+                <option value="user">Usuario</option>
+              </select>
             </div>
-          </div>
-          <div class="col-12 form-check ms-2">
-            {{form.crtPros(class="form-check-input")}}
-            {{form.crtPros.label(class="form-check-label text-dark-emphasis")}}
+
+            <div class="row g-2 content_form_step2 d-none">
+              <div class="col-12 email d-none">{{form.accemail.label(class="form-label text-dark-emphasis")}}* {{form.accemail(class="form-control", placeholder="plusgo@gmail.com")}}</div>
+              <div class="col-12 phone d-none">
+                {{form.accnumberphone.label(class="form-label text-dark-emphasis")}}* {{form.accnumberphone(class="form-control accphonenumber", placeholder="3008000333")}}
+              </div>
+              <div class="col-12 user d-none">{{form.accuser.label(class="form-label text-dark-emphasis")}}* {{form.accuser(class="form-control accuser", placeholder="plusgo123")}}</div>
+              <div class="col-12 col-md-12">
+                {{form.accpassword.label(class="form-label text-dark-emphasis")}}
+                <div class="position-relative">
+                  {{form.accpassword(class="form-control", placeholder="******")}}
+                  <i id="eyeIcon" class="fs-4 ti ti-eye position-absolute top-50 button-50 end-0 translate-middle" onclick="password('{{form.accpassword.id}}', this)" role="button"> </i>
+                </div>
+              </div>
+              <div class="col-12 form-check ms-2">{{form.crtPros(class="form-check-input")}} {{form.crtPros.label(class="form-check-label text-dark-emphasis")}}</div>
+              <div>
+                <div class="icon-link btn btn-sm btn_blue_plusgo_outline position-absolute top-0 end-0 mt-2 me-3 change_account_type" role="button">
+                  <i class="ti ti-repeat"></i> <span class="account_type_label">Tipo de cuenta</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
         <div class="modal-footer bg-light d-none">
           <div class="content-btn-submit">
             <div>{{ form.btnSubmit(class="btn w-100 btn_blue_plusgo") }}</div>
-            <span class="btn-loading-text"> </span>
+            <span class="spinner-grow spinner-grow-sm btn-submit-loading"> </span>
           </div>
         </div>
       </form>
@@ -320,30 +272,15 @@
 <!-- ================================================================= -->
 
 <!-- Modal perfiles -->
-<div
-  class="modal fade"
-  id="profilesModal"
-  data-bs-backdrop="static"
-  data-bs-keyboard="false"
-  tabindex="-1"
->
+<div class="modal fade" id="profilesModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
   <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header bg-light">
         <h5 class="modal-title fw-bold">
           Perfiles de <span id="acc_nickname_modal"></span>
-          <small class="fw-normal text-muted"
-            >(<span id="max_profile_account"></span>/<span
-              id="max_profile_platform"
-            ></span
-            >)
-          </small>
+          <small class="fw-normal text-muted">(<span id="max_profile_account"></span>/<span id="max_profile_platform"></span>) </small>
         </h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-        ></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body row g-2 content_modal-profiles"></div>
     </div>

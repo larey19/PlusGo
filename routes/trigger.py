@@ -69,7 +69,8 @@ def getTriggerAccount():
                             acc_email,
                             acc_number_phone,
                             acc_user,
-                            pla_name 
+                            pla_name,
+                            acc_price
                         FROM trg_account 
                         ORDER BY trg_date DESC""")
         trg = cursor.fetchall()
@@ -86,6 +87,7 @@ def getTriggerAccount():
             "acc_number_phone":trg[8],
             "acc_user":trg[9],
             "pla_name":trg[10],
+            "acc_price":trg[11]
         } for trg in trg]
         return render_template("trigger.html", account = data)
     except OperationalError as e:

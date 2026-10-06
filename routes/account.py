@@ -49,7 +49,8 @@ def getAccount(pla_id):
                             FROM t_profile 
                             WHERE t_profile.acc_id = t_account.acc_id
                         ) AS profiles,
-                        t_account.acc_user
+                        t_account.acc_user,
+                        t_account.acc_price
                     FROM t_account
                     JOIN t_platform ON t_account.pla_id = t_platform.pla_id 
                     WHERE t_platform.pla_id = %s
@@ -79,6 +80,7 @@ def crtAccount():
             accnickname = (form.accnickname.data).strip()
             accprovider = (form.accprovider.data).strip()
             accdatepay = (form.accdatepay.data).strip()
+            accprice = (form.accprice.data).strip().replace(',','').replace('.','')
             accemail = (form.accemail.data).strip()
             accnumberphone = (((form.accnumberphone.data).strip()).replace("+57","")).replace(" ", "")
             accuser = (form.accuser.data).strip()
@@ -122,6 +124,7 @@ def crtAccount():
                 acc_nickname, 
                 acc_provider, 
                 acc_date_pay, 
+                acc_price, 
                 acc_email, 
                 acc_number_phone, 
                 acc_user,
@@ -138,11 +141,13 @@ def crtAccount():
                     %s,
                     %s,
                     %s,
+                    %s,
                     %s)""", (
                         accid, 
                         accnickname, 
                         accprovider, 
                         accdatepay, 
+                        accprice, 
                         accemail, 
                         accnumberphone, 
                         accuser,
@@ -208,6 +213,7 @@ def putAccount(acc_id):
             accnickname = (form.accnickname.data).strip()
             accprovider = (form.accprovider.data).strip()
             accdatepay = (form.accdatepay.data).strip()
+            accprice = (form.accprice.data).strip().replace(',','').replace('.','')
             accemail = (form.accemail.data).strip()
             accnumberphone = (((form.accnumberphone.data).strip()).replace("+57","")).replace(" ", "")
             accuser = (form.accuser.data).strip()
@@ -251,6 +257,7 @@ def putAccount(acc_id):
                 acc_nickname     = %s, 
                 acc_provider     = %s, 
                 acc_date_pay     = %s, 
+                acc_price        = %s, 
                 acc_password     = %s,
                 acc_email        = %s,
                 acc_number_phone = %s,
@@ -259,6 +266,7 @@ def putAccount(acc_id):
                         accnickname, 
                         accprovider, 
                         accdatepay,
+                        accprice,
                         accpassword, 
                         accemail, 
                         accnumberphone, 
