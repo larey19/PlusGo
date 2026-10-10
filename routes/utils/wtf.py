@@ -7,11 +7,13 @@ from wtforms.validators import DataRequired, NumberRange,length, Optional
 class loginForm(FlaskForm):
     user = StringField(
         "Usuario",
-        validators = [DataRequired(), length(min=5, max=50)]
+        validators = [DataRequired(), length(min=5, max=50)],
+        render_kw={"autocomplete": "off"}
     )
     password = PasswordField(
         "Contraseña",
-        validators=[DataRequired(), length(min=5)]
+        validators=[DataRequired(), length(min=5)],
+        render_kw={"autocomplete": "off"}
     )
     rememberme = BooleanField(
         "Recuerdame",
@@ -104,19 +106,23 @@ class accForm(FlaskForm):
     )
     accemail = EmailField(
         "Correo",
-        validators=[Optional(), length(max=100, min=10)]
+        validators=[Optional(), length(max=100, min=10)],
+        render_kw={"autocomplete": "off"}
     )
     accnumberphone = TelField(
         "Num. de celular",
-        validators=[Optional(), length(max=20, min=10)]
+        validators=[Optional(), length(max=20, min=10)],
+        render_kw={"autocomplete": "off"}
     )
     accuser = StringField(
         "Usuario",
-        validators=[Optional(), length(max=50, min=3)]
+        validators=[Optional(), length(max=50, min=3)],
+        render_kw={"autocomplete": "off"}
     )
     accpassword = PasswordField(
         "Contraseña",
-        validators= [Optional()]
+        validators= [Optional()],
+        render_kw={"autocomplete": "new-password"}
     )
     crtPros = BooleanField(
         "¿Crear todos los perfiles automaticamente?"
